@@ -19,7 +19,8 @@
 <style>
 :root{--bg:#1a2f1a;--bg2:rgba(255,255,255,0.04);--border:rgba(255,255,255,0.09);--gold:#c9a84c;--gold2:#e8c96a;--green:#7bc67a;--cream:#f5f0e8;--muted:rgba(255,255,255,0.35);--red:#e05555}
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{height:100%;margin:0;padding:0;background:var(--bg);overflow:hidden}
+html{height:100%;background:var(--bg)}
+body{height:100%;margin:0;padding:0;background:var(--bg);display:flex;flex-direction:column;overflow:hidden}
 
 #splash{position:fixed;inset:0;background:#1a2f1a;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;transition:opacity .5s}
 #splash svg{width:90px;height:90px}
@@ -172,8 +173,7 @@ tr:last-child td{border-bottom:none}
 .auth-ok.show{display:block}
 
 /* LAYOUT FIJO iOS — evita que el nav se mueva al hacer scroll */
-#app-wrapper{display:flex;flex-direction:column;height:100%;min-height:0;overflow:hidden;background:var(--bg)}
-#content-wrap{flex:1 1 0;min-height:0;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;overscroll-behavior-y:contain;position:relative}
+#content-wrap{flex:1 1 0;min-height:0;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;overscroll-behavior-y:contain}
 @media(max-width:480px){
   .f3{grid-template-columns:1fr 1fr}
   .chcp-box{flex-direction:column}
@@ -183,7 +183,6 @@ tr:last-child td{border-bottom:none}
 </style>
 </head>
 <body>
-<div id="app-wrapper">
 <div id="content-wrap">
 <div id="splash">
   <svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
@@ -565,7 +564,6 @@ tr:last-child td{border-bottom:none}
     <svg viewBox="0 0 24 24"><path d="M9 3H5a2 2 0 0 0-2 2v4m6-6h10a2 2 0 0 1 2 2v4M9 3v18m0 0h10a2 2 0 0 0 2-2V9M9 21H5a2 2 0 0 1-2-2V9m0 0h18"/></svg>Fórmula
   </button>
 </nav>
-</div><!-- /app-wrapper -->
 
 <script>
 // ── SUPABASE AUTH CLIENT ─────────────────────────────────────────
