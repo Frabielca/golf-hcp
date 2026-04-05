@@ -300,13 +300,17 @@ tr:last-child td{border-bottom:none}
         <option value="">— Selecciona un campo —</option>
       </select>
     </div>
-    <!-- Selector barra de salida -->
+    <!-- Selector barra de salida (siempre visible al elegir campo) -->
     <div id="p-barra-wrap" style="display:none;margin-bottom:14px">
       <div class="field">
         <label>Barra de salida</label>
         <select id="p-barra" onchange="onBarraAntes()">
           <option value="">— Selecciona barra —</option>
         </select>
+      </div>
+      <div id="p-barra-aviso" style="display:none;margin-top:8px;padding:10px 13px;background:rgba(201,168,76,.08);border:1px solid rgba(201,168,76,.25);border-radius:5px;font-size:11px;color:var(--gold2);line-height:1.6">
+        &#9888;&#65039; Este campo no tiene barras de salida definidas.<br>
+        <span style="color:var(--muted)">Ve a <strong style="color:var(--cream)">Campos &rarr; &#9999; Editar</strong> para a&ntilde;adir las barras Blanca, Amarilla, Azul o Roja con su CR y Slope.</span>
       </div>
     </div>
     <div class="fields f3">
@@ -541,25 +545,30 @@ function onCampoAntes(){
   const campoId=parseInt($('p-campo').value);
   const campo=campos.find(c=>c.id===campoId);
   const barraWrap=$('p-barra-wrap');
+  const barraAviso=$('p-barra-aviso');
   if(campo){
-    // Rellenar Par
     $('p-par').value=campo.par_total;
-    // Mostrar barras si las tiene
+    // Mostrar siempre el bloque de barra
+    barraWrap.style.display='block';
     if(campo.barras&&campo.barras.length>0){
-      barraWrap.style.display='block';
+      // Tiene barras — mostrar selector, ocultar aviso
+      $('p-barra').style.display='';
+      if(barraAviso)barraAviso.style.display='none';
       buildBarraSelect('p-barra',campo,'');
-      // Preseleccionar primera barra y rellenar CR/Slope
       const primera=campo.barras[0];
       $('p-barra').value=primera.color;
       $('p-cr').value=primera.cr;
       $('p-slope').value=primera.slope;
     }else{
-      barraWrap.style.display='none';
+      // Sin barras — ocultar selector, mostrar aviso
+      $('p-barra').style.display='none';
+      if(barraAviso)barraAviso.style.display='block';
       $('p-cr').value=campo.cr||'';
       $('p-slope').value=campo.slope||'';
     }
   }else{
     barraWrap.style.display='none';
+    if(barraAviso)barraAviso.style.display='none';
     $('p-cr').value='';$('p-slope').value='';$('p-par').value='';
   }
   calcCHCP();
@@ -882,7 +891,8 @@ function limpiarCamposAntes(){
   $('chcp-detail').innerHTML='Selecciona un campo para ver los golpes de ventaja.';
   $('chcp-name').style.display='none';
   if($('p-barra-wrap'))$('p-barra-wrap').style.display='none';
-  if($('p-barra'))$('p-barra').value='';
+  if($('p-barra')){$('p-barra').value='';$('p-barra').style.display='';}
+  if($('p-barra-aviso'))$('p-barra-aviso').style.display='none';
 }
 
 function calcCHCP(){
