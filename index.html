@@ -633,6 +633,7 @@ function showAuthOk(id,msg){const el=$(id);if(el){el.textContent=msg;el.classLis
 function hideAuthMsg(id){const el=$(id);if(el)el.classList.remove('show');}
 
 async function doLogin(){
+  if(_loggingOut){toast('Cerrando sesión anterior…',false);return;}
   const email=$('login-email').value.trim();
   const pass=$('login-pass').value;
   if(!email||!pass){showAuthError('login-error','Introduce email y contraseña.');return;}
@@ -694,20 +695,23 @@ async function doReset(){
 }
 
 let _loggingOut = false;
-function doLogout(){
+async function doLogout(){
   if(_loggingOut) return;
   _loggingOut = true;
   // Limpiar estado local inmediatamente
   jugadorActivo=null;rounds=[];campos=[];
   try { localStorage.removeItem('golfhcp-last-uid'); } catch(e) {}
+  // Limpiar storage de sesión para evitar sesiones fantasma
+  try { localStorage.removeItem('golfhcp-auth-session'); } catch(e) {}
   renderAll();renderCampos();
   $('active-player-bar').classList.add('hidden');
   limpiarCamposAntes();
   if($('login-email'))$('login-email').value='';
   if($('login-pass'))$('login-pass').value='';
   showScreen('auth-login');
-  // Cerrar sesión en Supabase en background
-  supabaseClient.auth.signOut().finally(()=>{ _loggingOut=false; });
+  // Esperar a que signOut complete antes de permitir nuevo login
+  try { await supabaseClient.auth.signOut({scope:'local'}); } catch(e) {}
+  _loggingOut = false;
 }
 
 let _loggingIn = false;
@@ -1376,11 +1380,26 @@ async function guardarEditCampo(){
   const btn=$('btn-guardar-edit-campo');btn.textContent='Guardando…';btn.disabled=true;
   try{
     const firstB=barrasEdit[0]||{cr:70,slope:120};
-    const {error:upC}=await supabaseClient.from('campos').update({nombre,cr:firstB.cr,slope:firstB.slope,par_total:parTotal}).eq('id',id);if(upC)throw upC;
-    await supabaseClient.from('hoyos').delete().eq('campo_id',id);
-    if(hoyos.length===18){const {error:ih}=await supabaseClient.from('hoyos').insert(hoyos.map(h=>({campo_id:id,...h,user_id:jugadorActivo?.id||null})));if(ih)throw ih;}
-    await supabaseClient.from('barras').delete().eq('campo_id',id);
-    if(barrasEdit.length>0){const {error:ib}=await supabaseClient.from('barras').insert(barrasEdit.map(b=>({...b,user_id:jugadorActivo?.id||null})));if(ib)throw ib;}
+    const uid=jugadorActivo?.id;
+    if(!uid)throw new Error('Sin sesión activa. Recarga la app.');
+    // Verificar sesión antes de operar
+    const {data:{session:ses}}=await supabaseClient.auth.getSession();
+    if(!ses)throw new Error('Sesión expirada. Vuelve a iniciar sesión.');
+    const {data:upData,error:upC}=await supabaseClient.from('campos')
+      .update({nombre,cr:firstB.cr,slope:firstB.slope,par_total:parTotal})
+      .eq('id',id).eq('user_id',uid).select();
+    if(upC)throw upC;
+    if(!upData||upData.length===0)throw new Error('No se pudo actualizar: sin permisos o campo no encontrado.');
+    await supabaseClient.from('hoyos').delete().eq('campo_id',id).eq('user_id',uid);
+    if(hoyos.length>0){
+      const {error:ih}=await supabaseClient.from('hoyos').insert(hoyos.map(h=>({campo_id:id,...h,user_id:uid})));
+      if(ih)throw ih;
+    }
+    await supabaseClient.from('barras').delete().eq('campo_id',id).eq('user_id',uid);
+    if(barrasEdit.length>0){
+      const {error:ib}=await supabaseClient.from('barras').insert(barrasEdit.map(b=>({...b,user_id:uid})));
+      if(ib)throw ib;
+    }
     await loadCampos();cerrarModal('modal-campo');toast('✓ Campo actualizado');
   }catch(e){const msg=e?.message||e?.details||JSON.stringify(e)||'Error desconocido';if(errDivE){errDivE.textContent='❌ '+msg;errDivE.style.display='block';}toast('❌ Error al guardar',true);console.error('guardarEditCampo:',e);}
   finally{btn.textContent='Guardar Cambios';btn.disabled=false;}
