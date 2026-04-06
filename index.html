@@ -569,7 +569,16 @@ tr:last-child td{border-bottom:none}
 // ── SUPABASE AUTH CLIENT ─────────────────────────────────────────
 const SB_URL='https://buuphupprlvtngkcyyur.supabase.co';
 const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ1dXBodXBwcmx2dG5na2N5eXVyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ5MDA3NTcsImV4cCI6MjA5MDQ3Njc1N30.sHi-UnaStyz1G-S1wSYrZYZA0TReClvlZvYdAbuejaI';
-const supabaseClient=supabase.createClient(SB_URL,SB_KEY);
+// Supabase client con persistencia robusta para iOS PWA
+const supabaseClient=supabase.createClient(SB_URL,SB_KEY,{
+  auth:{
+    storage:window.localStorage,
+    persistSession:true,
+    autoRefreshToken:true,
+    detectSessionInUrl:false,
+    storageKey:'golfhcp-auth-session'
+  }
+});
 
 // API REST helper — usa el token de sesión activo
 async function sb(path,method='GET',body=null){
@@ -660,6 +669,7 @@ async function doReset(){
 
 async function doLogout(){
   await supabaseClient.auth.signOut();
+  try { localStorage.removeItem('golfhcp-last-uid'); } catch(e) {}
   jugadorActivo=null;rounds=[];campos=[];
   renderAll();renderCampos();
   $('active-player-bar').classList.add('hidden');
@@ -671,6 +681,8 @@ async function doLogout(){
 }
 
 async function onUserLoggedIn(user){
+  // Guardar uid en localStorage como backup para iOS
+  try { localStorage.setItem('golfhcp-last-uid', user.id); } catch(e) {}
   // Obtener nombre del perfil
   let nombre=user.user_metadata?.nombre||user.email.split('@')[0];
   try{
@@ -1434,12 +1446,31 @@ async function init(){
     }
   });
 
-  // Comprobar sesión existente
-  const {data:{session}}=await supabaseClient.auth.getSession();
+  // Recuperar sesión — método robusto para iOS PWA
+  // iOS a veces pierde la sesión al cerrar; intentamos refrescarla
+  let session = null;
+  try {
+    const { data } = await supabaseClient.auth.getSession();
+    session = data?.session;
+    // Si hay sesión pero el token puede estar caducado, refrescarlo
+    if(session){
+      const { data: refreshed } = await supabaseClient.auth.refreshSession();
+      if(refreshed?.session) session = refreshed.session;
+    }
+  } catch(e) {
+    // Sin conexión — intentar recuperar del localStorage directamente
+    try {
+      const raw = localStorage.getItem('golfhcp-auth-session');
+      if(raw) {
+        const parsed = JSON.parse(raw);
+        session = parsed;
+      }
+    } catch(e2) {}
+  }
+  
   if(session?.user){
     await onUserLoggedIn(session.user);
   }else{
-    // Mostrar login
     showScreen('auth-login');
   }
 }
