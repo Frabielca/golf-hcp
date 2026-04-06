@@ -1382,23 +1382,24 @@ async function guardarEditCampo(){
     const firstB=barrasEdit[0]||{cr:70,slope:120};
     const uid=jugadorActivo?.id;
     if(!uid)throw new Error('Sin sesión activa. Recarga la app.');
-    // Verificar sesión antes de operar
-    const {data:{session:ses}}=await supabaseClient.auth.getSession();
-    if(!ses)throw new Error('Sesión expirada. Vuelve a iniciar sesión.');
-    const {data:upData,error:upC}=await supabaseClient.from('campos')
+    // Update campo — RLS garantiza que solo puede editar el propietario
+    const {error:upC}=await supabaseClient.from('campos')
       .update({nombre,cr:firstB.cr,slope:firstB.slope,par_total:parTotal})
-      .eq('id',id).eq('user_id',uid).select();
-    if(upC)throw upC;
-    if(!upData||upData.length===0)throw new Error('No se pudo actualizar: sin permisos o campo no encontrado.');
-    await supabaseClient.from('hoyos').delete().eq('campo_id',id).eq('user_id',uid);
+      .eq('id',id);
+    if(upC)throw new Error('Error actualizando campo: '+upC.message);
+    // Borrar y reinsertar hoyos
+    await supabaseClient.from('hoyos').delete().eq('campo_id',id);
     if(hoyos.length>0){
-      const {error:ih}=await supabaseClient.from('hoyos').insert(hoyos.map(h=>({campo_id:id,...h,user_id:uid})));
-      if(ih)throw ih;
+      const {error:ih}=await supabaseClient.from('hoyos')
+        .insert(hoyos.map(hh=>({campo_id:id,numero:hh.numero,par:hh.par,indice:hh.indice,user_id:uid})));
+      if(ih)throw new Error('Error guardando hoyos: '+ih.message);
     }
-    await supabaseClient.from('barras').delete().eq('campo_id',id).eq('user_id',uid);
+    // Borrar y reinsertar barras
+    await supabaseClient.from('barras').delete().eq('campo_id',id);
     if(barrasEdit.length>0){
-      const {error:ib}=await supabaseClient.from('barras').insert(barrasEdit.map(b=>({...b,user_id:uid})));
-      if(ib)throw ib;
+      const {error:ib}=await supabaseClient.from('barras')
+        .insert(barrasEdit.map(b=>({campo_id:id,color:b.color,cr:b.cr,slope:b.slope,user_id:uid})));
+      if(ib)throw new Error('Error guardando barras: '+ib.message);
     }
     await loadCampos();cerrarModal('modal-campo');toast('✓ Campo actualizado');
   }catch(e){const msg=e?.message||e?.details||JSON.stringify(e)||'Error desconocido';if(errDivE){errDivE.textContent='❌ '+msg;errDivE.style.display='block';}toast('❌ Error al guardar',true);console.error('guardarEditCampo:',e);}
