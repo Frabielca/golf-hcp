@@ -1350,60 +1350,71 @@ function abrirEditCampo(id){
 async function guardarEditCampo(){
   const id=parseInt($('edit-campo-id').value);
   const nombre=$('edit-nc-nombre').value.trim();
+  const uid=jugadorActivo?.id;
   const errDivE=$('edit-campo-error');
+  const showErrE=(msg)=>{
+    if(errDivE){errDivE.textContent=msg;errDivE.style.display='block';}
+    toast(msg,true);
+  };
   if(errDivE){errDivE.style.display='none';errDivE.textContent='';}
-  function showErrE(msg){if(errDivE){errDivE.textContent=msg;errDivE.style.display='block';}else toast(msg,true);}
-  if(!nombre){showErrE('Completa el nombre del campo.');return;}
-  // Recoger hoyos — solo los que estén rellenos válidos
+  if(!nombre){showErrE('Completa el nombre.');return;}
+  if(!uid){showErrE('Sin sesión. Vuelve a iniciar sesión.');return;}
+
+  // Recoger hoyos válidos
   const hoyos=[];let parTotal=0;
-  let anyHoyo=false;
   for(let i=1;i<=18;i++){
-    const par=parseInt($(`edit-nc-par-${i}`)?.value),indice=parseInt($(`edit-nc-idx-${i}`)?.value);
-    if(!isNaN(par)&&!isNaN(indice)&&par>=3&&par<=5&&indice>=1&&indice<=18){
-      parTotal+=par;hoyos.push({numero:i,par,indice});anyHoyo=true;
-    }
+    const pVal=$('edit-nc-par-'+i)?.value||'';
+    const iVal=$('edit-nc-idx-'+i)?.value||'';
+    if(pVal===''&&iVal==='')continue;
+    const par=parseInt(pVal),indice=parseInt(iVal);
+    if(isNaN(par)||par<3||par>5){showErrE('Hoyo '+i+': par debe ser 3-5.');return;}
+    if(isNaN(indice)||indice<1||indice>18){showErrE('Hoyo '+i+': índice 1-18.');return;}
+    parTotal+=par;hoyos.push({numero:i,par,indice});
   }
-  // Validar solo si hay algún hoyo parcialmente relleno con error
-  for(let i=1;i<=18;i++){
-    const par=parseInt($(`edit-nc-par-${i}`)?.value),indice=parseInt($(`edit-nc-idx-${i}`)?.value);
-    const parEmpty=isNaN(par)||$(`edit-nc-par-${i}`)?.value==='';
-    const idxEmpty=isNaN(indice)||$(`edit-nc-idx-${i}`)?.value==='';
-    if(!parEmpty&&(isNaN(par)||par<3||par>5)){showErrE('Hoyo '+i+': par debe ser 3-5.');return;}
-    if(!idxEmpty&&(isNaN(indice)||indice<1||indice>18)){showErrE('Hoyo '+i+': índice debe ser 1-18.');return;}
-  }
+
+  // Recoger barras válidas
   const barrasEdit=[];
   for(const color of BARRAS){
-    const cr=parseFloat(document.getElementById('edit-cr-'+color)?.value);
-    const slope=parseInt(document.getElementById('edit-slope-'+color)?.value);
-    if(!isNaN(cr)&&!isNaN(slope)&&cr>0&&slope>0)barrasEdit.push({campo_id:id,color,cr,slope});
+    const cr=parseFloat(document.getElementById('edit-cr-'+color)?.value||'');
+    const slope=parseInt(document.getElementById('edit-slope-'+color)?.value||'');
+    if(!isNaN(cr)&&!isNaN(slope)&&cr>0&&slope>0)
+      barrasEdit.push({campo_id:id,color,cr,slope,user_id:uid});
   }
-  const btn=$('btn-guardar-edit-campo');btn.textContent='Guardando…';btn.disabled=true;
+  const firstB=barrasEdit[0]||null;
+
+  const btn=$('btn-guardar-edit-campo');
+  btn.textContent='Guardando…';btn.disabled=true;
   try{
-    const firstB=barrasEdit[0]||{cr:70,slope:120};
-    const uid=jugadorActivo?.id;
-    if(!uid)throw new Error('Sin sesión activa. Recarga la app.');
-    // Update campo — RLS garantiza que solo puede editar el propietario
-    const {error:upC}=await supabaseClient.from('campos')
-      .update({nombre,cr:firstB.cr,slope:firstB.slope,par_total:parTotal})
-      .eq('id',id);
-    if(upC)throw new Error('Error actualizando campo: '+upC.message);
-    // Borrar y reinsertar hoyos
-    await supabaseClient.from('hoyos').delete().eq('campo_id',id);
+    const updateData={nombre,par_total:parTotal||null};
+    if(firstB){updateData.cr=firstB.cr;updateData.slope=firstB.slope;}
+    const {error:upC}=await supabaseClient.from('campos').update(updateData).eq('id',id);
+    if(upC)throw new Error(upC.message);
+
+    const {error:dh}=await supabaseClient.from('hoyos').delete().eq('campo_id',id);
+    if(dh)throw new Error('Error borrando hoyos: '+dh.message);
     if(hoyos.length>0){
       const {error:ih}=await supabaseClient.from('hoyos')
-        .insert(hoyos.map(hh=>({campo_id:id,numero:hh.numero,par:hh.par,indice:hh.indice,user_id:uid})));
-      if(ih)throw new Error('Error guardando hoyos: '+ih.message);
+        .insert(hoyos.map(hh=>({campo_id:id,...hh,user_id:uid})));
+      if(ih)throw new Error('Error insertando hoyos: '+ih.message);
     }
-    // Borrar y reinsertar barras
-    await supabaseClient.from('barras').delete().eq('campo_id',id);
+
+    const {error:db}=await supabaseClient.from('barras').delete().eq('campo_id',id);
+    if(db)throw new Error('Error borrando barras: '+db.message);
     if(barrasEdit.length>0){
-      const {error:ib}=await supabaseClient.from('barras')
-        .insert(barrasEdit.map(b=>({campo_id:id,color:b.color,cr:b.cr,slope:b.slope,user_id:uid})));
-      if(ib)throw new Error('Error guardando barras: '+ib.message);
+      const {error:ib}=await supabaseClient.from('barras').insert(barrasEdit);
+      if(ib)throw new Error('Error insertando barras: '+ib.message);
     }
-    await loadCampos();cerrarModal('modal-campo');toast('✓ Campo actualizado');
-  }catch(e){const msg=e?.message||e?.details||JSON.stringify(e)||'Error desconocido';if(errDivE){errDivE.textContent='❌ '+msg;errDivE.style.display='block';}toast('❌ Error al guardar',true);console.error('guardarEditCampo:',e);}
-  finally{btn.textContent='Guardar Cambios';btn.disabled=false;}
+
+    await loadCampos();
+    cerrarModal('modal-campo');
+    toast('✓ Campo actualizado');
+  }catch(e){
+    showErrE('❌ '+(e?.message||'Error desconocido'));
+    console.error('guardarEditCampo error:',e);
+  }finally{
+    btn.textContent='Guardar Cambios';
+    btn.disabled=false;
+  }
 }
 
 // ── EDITAR RONDA ─────────────────────────────────────────────────
