@@ -580,21 +580,40 @@ const supabaseClient=supabase.createClient(SB_URL,SB_KEY,{
   }
 });
 
-// API REST helper — usa el token de sesión activo
-async function sb(path,method='GET',body=null){
-  const {data:{session}}=await supabaseClient.auth.getSession();
-  const token=session?.access_token||SB_KEY;
-  const opts={method,headers:{
-    'apikey':SB_KEY,
-    'Authorization':'Bearer '+token,
-    'Content-Type':'application/json',
-    'Prefer':method==='POST'?'return=representation':(method==='PATCH'?'return=representation':'')
-  }};
-  if(body)opts.body=JSON.stringify(body);
-  const res=await fetch(SB_URL+path,opts);
-  if(!res.ok)throw new Error(await res.text());
-  const t=await res.text();
-  return t?JSON.parse(t):[];
+// Helper usando supabaseClient — gestiona JWT automáticamente
+async function sb(path, method='GET', body=null){
+  // Extraer tabla y filtros del path REST
+  // /rest/v1/tabla?filtros → supabaseClient.from('tabla')
+  const restPath = path.replace('/rest/v1/', '');
+  const [tableAndFilters] = restPath.split('?');
+  const table = tableAndFilters;
+  const queryStr = restPath.includes('?') ? restPath.split('?')[1] : '';
+
+  // Para operaciones simples usamos el cliente oficial
+  // que incluye el JWT automáticamente
+  const {data:{session}} = await supabaseClient.auth.getSession();
+  const token = session?.access_token || SB_KEY;
+
+  const opts = {
+    method,
+    headers: {
+      'apikey': SB_KEY,
+      'Authorization': 'Bearer ' + token,
+      'Content-Type': 'application/json',
+      'Prefer': method==='POST' ? 'return=representation' :
+                method==='PATCH' ? 'return=representation' : ''
+    }
+  };
+  if(body) opts.body = JSON.stringify(body);
+  const res = await fetch(SB_URL + path, opts);
+  if(!res.ok) throw new Error(await res.text());
+  const t = await res.text();
+  return t ? JSON.parse(t) : [];
+}
+
+// Helper de BD usando supabaseClient directamente (JWT automático)
+async function dbFrom(table){
+  return supabaseClient.from(table);
 }
 
 let rounds=[],campos=[],jugadorActivo=null; // jugadorActivo = {id, email, nombre}
@@ -1064,10 +1083,11 @@ async function guardarCampo(){
   try{
     // Usar CR/Slope de la primera barra como valores por defecto del campo
     const firstB=barrasData[0];
-    const campoData=await sb('/rest/v1/campos','POST',{nombre,cr:firstB.cr,slope:firstB.slope,par_total:parTotal,user_id:jugadorActivo?.id||null});
+    const {data:campoData,error:campErr}=await supabaseClient.from('campos').insert({nombre,cr:firstB.cr,slope:firstB.slope,par_total:parTotal,user_id:jugadorActivo?.id||null}).select();
+    if(campErr)throw campErr;
     const campoId=campoData[0].id;
-    if(hoyos.length===18)await sb('/rest/v1/hoyos','POST',hoyos.map(h=>({campo_id:campoId,numero:h.numero,par:h.par,indice:h.indice,user_id:jugadorActivo?.id||null})));
-    await sb('/rest/v1/barras','POST',barrasData.map(b=>({campo_id:campoId,...b,user_id:jugadorActivo?.id||null})));
+    if(hoyos.length===18){const {error:hErr}=await supabaseClient.from('hoyos').insert(hoyos.map(h=>({campo_id:campoId,numero:h.numero,par:h.par,indice:h.indice,user_id:jugadorActivo?.id||null})));if(hErr)throw hErr;}
+    const {error:bErr}=await supabaseClient.from('barras').insert(barrasData.map(b=>({campo_id:campoId,...b,user_id:jugadorActivo?.id||null})));if(bErr)throw bErr;
     await loadCampos();toggleNuevoCampo();toast('✓ Campo guardado');
   }catch(e){toast('❌ Error al guardar campo',true);console.error(e);}
   finally{btn.textContent='Guardar Campo';btn.disabled=false;}
@@ -1076,7 +1096,7 @@ async function guardarCampo(){
 async function delCampo(id){
   id=typeof id==='string'?parseInt(id):id;
   if(!confirm('¿Eliminar este campo?'))return;
-  try{await sb('/rest/v1/campos?id=eq.'+id,'DELETE');await loadCampos();toast('Campo eliminado');}
+  try{const {error:dc}=await supabaseClient.from('campos').delete().eq('id',id);if(dc)throw dc;await loadCampos();toast('Campo eliminado');}
   catch(e){toast('❌ Error al eliminar',true);}
 }
 
@@ -1133,7 +1153,7 @@ async function addRound(){
     const body={gross,cr:cr||campo?.cr,slope:slope||campo?.slope,nombre_campo:name,fecha:date,diferencial:diff,
       user_id:jugadorActivo?.id||null,jugador:jugadorActivo?.nombre||'',stableford,campo_id:campoId,
       hcp_idx:isNaN(hcpIdxVal)?null:hcpIdxVal,shots:shots?JSON.stringify(shots):null,barra_color:barraColor};
-    const data=await sb('/rest/v1/rondas','POST',body);
+    const {data,error:addErr}=await supabaseClient.from('rondas').insert(body).select();if(addErr)throw addErr;
     const newRound={id:data[0].id,gross,cr:cr||campo?.cr,slope:slope||campo?.slope,name,date,diff,stableford,campo_id:campoId,hcp_idx:isNaN(hcpIdxVal)?null:hcpIdxVal,shots,barra_color:barraColor};
     rounds.push(newRound);
     $('f-campo').value='';$('f-cr').value='';$('f-slope').value='';$('f-par-total').value='';$('f-gross').value='';$('f-hcp-idx').value='';
@@ -1147,13 +1167,13 @@ async function addRound(){
 
 async function delRound(id){
   id=typeof id==='string'?parseInt(id):id;
-  try{await sb('/rest/v1/rondas?id=eq.'+id,'DELETE');rounds=rounds.filter(r=>r.id!==id);renderAll();toast('Ronda eliminada');}
+  try{const {error:dr}=await supabaseClient.from('rondas').delete().eq('id',id);if(dr)throw dr;rounds=rounds.filter(r=>r.id!==id);renderAll();toast('Ronda eliminada');}
   catch(e){toast('❌ Error al eliminar',true);}
 }
 
 async function clearAll(){
   if(!confirm('¿Borrar todas las rondas?'))return;
-  try{await sb('/rest/v1/rondas','DELETE');rounds=[];renderAll();toast('Historial borrado');}
+  try{const {error:ca}=await supabaseClient.from('rondas').delete().neq('id',0);if(ca)throw ca;rounds=[];renderAll();toast('Historial borrado');}
   catch(e){toast('❌ Error al borrar',true);}
 }
 
@@ -1199,7 +1219,11 @@ function calcCHCP(){
 
 // ── CARGA ────────────────────────────────────────────────────────
 async function loadRounds(){
-  const data=await sb('/rest/v1/rondas?select=*&order=created_at.asc');
+  const {data,error}=await supabaseClient
+    .from('rondas')
+    .select('*')
+    .order('created_at',{ascending:true});
+  if(error)throw error;
   return data.map(r=>({id:r.id,gross:r.gross,cr:r.cr,slope:r.slope,name:r.nombre_campo,date:r.fecha,diff:r.diferencial,
     stableford:(r.stableford!==null&&r.stableford!==undefined)?Number(r.stableford):null,
     campo_id:r.campo_id?parseInt(r.campo_id):null,
@@ -1210,9 +1234,12 @@ async function loadRounds(){
 }
 
 async function loadCampos(){
-  const cs=await sb('/rest/v1/campos?select=*&order=nombre.asc');
-  const hs=await sb('/rest/v1/hoyos?select=*&order=numero.asc');
-  const bs=await sb('/rest/v1/barras?select=*&order=color.asc');
+  const [{data:cs,error:e1},{data:hs,error:e2},{data:bs,error:e3}] = await Promise.all([
+    supabaseClient.from('campos').select('*').order('nombre',{ascending:true}),
+    supabaseClient.from('hoyos').select('*').order('numero',{ascending:true}),
+    supabaseClient.from('barras').select('*').order('color',{ascending:true})
+  ]);
+  if(e1)throw e1; if(e2)throw e2; if(e3)throw e3;
   campos=cs.map(c=>({...c,
     hoyos:hs.filter(h=>h.campo_id===c.id).map(h=>({numero:h.numero,par:h.par,indice:h.indice})),
     barras:bs.filter(b=>b.campo_id===c.id).map(b=>({color:b.color,cr:b.cr,slope:b.slope}))
@@ -1335,11 +1362,11 @@ async function guardarEditCampo(){
   const btn=$('btn-guardar-edit-campo');btn.textContent='Guardando…';btn.disabled=true;
   try{
     const firstB=barrasEdit[0]||{cr:70,slope:120};
-    await sb('/rest/v1/campos?id=eq.'+id,'PATCH',{nombre,cr:firstB.cr,slope:firstB.slope,par_total:parTotal});
-    await sb('/rest/v1/hoyos?campo_id=eq.'+id,'DELETE');
-    if(hoyos.length===18)await sb('/rest/v1/hoyos','POST',hoyos.map(h=>({campo_id:id,...h,user_id:jugadorActivo?.id||null})));
-    await sb('/rest/v1/barras?campo_id=eq.'+id,'DELETE');
-    if(barrasEdit.length>0)await sb('/rest/v1/barras','POST',barrasEdit.map(b=>({...b,user_id:jugadorActivo?.id||null})));
+    const {error:upC}=await supabaseClient.from('campos').update({nombre,cr:firstB.cr,slope:firstB.slope,par_total:parTotal}).eq('id',id);if(upC)throw upC;
+    await supabaseClient.from('hoyos').delete().eq('campo_id',id);
+    if(hoyos.length===18){const {error:ih}=await supabaseClient.from('hoyos').insert(hoyos.map(h=>({campo_id:id,...h,user_id:jugadorActivo?.id||null})));if(ih)throw ih;}
+    await supabaseClient.from('barras').delete().eq('campo_id',id);
+    if(barrasEdit.length>0){const {error:ib}=await supabaseClient.from('barras').insert(barrasEdit.map(b=>({...b,user_id:jugadorActivo?.id||null})));if(ib)throw ib;}
     await loadCampos();cerrarModal('modal-campo');toast('✓ Campo actualizado');
   }catch(e){toast('❌ Error al guardar',true);console.error(e);}
   finally{btn.textContent='Guardar Cambios';btn.disabled=false;}
@@ -1422,7 +1449,7 @@ async function guardarEditRonda(){
   const btn=$('btn-guardar-edit-ronda');btn.textContent='Guardando…';btn.disabled=true;
   try{
     const shotsToSave=(shots&&shots.length===18)?JSON.stringify(shots):null;
-    await sb('/rest/v1/rondas?id=eq.'+id,'PATCH',{nombre_campo:nombre,fecha,gross,cr,slope,diferencial:diff,stableford,hcp_idx:isNaN(hcpIdx)?null:hcpIdx,shots:shotsToSave,barra_color:barraColor});
+    const {error:upR}=await supabaseClient.from('rondas').update({nombre_campo:nombre,fecha,gross,cr,slope,diferencial:diff,stableford,hcp_idx:isNaN(hcpIdx)?null:hcpIdx,shots:shotsToSave,barra_color:barraColor}).eq('id',id);if(upR)throw upR;
     const idx=rounds.findIndex(r=>r.id===id);
     if(idx!==-1)rounds[idx]={...rounds[idx],name:nombre,date:fecha,gross,cr,slope,diff,stableford,hcp_idx:isNaN(hcpIdx)?null:hcpIdx,shots:shots||rounds[idx].shots,barra_color:barraColor};
     renderAll();cerrarModal('modal-ronda');toast('✓ Ronda actualizada');
