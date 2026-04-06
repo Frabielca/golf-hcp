@@ -1,15 +1,30 @@
-// ── Golf HCP · Service Worker ─────────────────────────────────────
-const CACHE_VERSION = 'golf-hcp-v13';
-const ASSETS = [
+const CACHE_VERSION = 'golf-hcp-v15';
+
+const LOCAL_ASSETS = [
   './',
   './index.html',
-  './manifest.json',
-  './supabase.min.js'   // ← cacheado localmente, funciona sin red
+  './manifest.json'
 ];
 
+const CDN_ASSETS = [
+  'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js'
+];
+
+// Install: cachear todo incluido CDN
 self.addEventListener('install', event => {
+  self.skipWaiting();
   event.waitUntil(
-    caches.open(CACHE_VERSION).then(cache => cache.addAll(ASSETS))
+    caches.open(CACHE_VERSION).then(async cache => {
+      await cache.addAll(LOCAL_ASSETS);
+      // CDN con no-cors para poder cachear
+      await Promise.allSettled(
+        CDN_ASSETS.map(url =>
+          fetch(url, {mode:'cors',credentials:'omit'})
+            .then(r => { if(r.ok) cache.put(url, r); })
+            .catch(() => {})
+        )
+      );
+    })
   );
 });
 
@@ -23,29 +38,18 @@ self.addEventListener('activate', event => {
   );
 });
 
-// Cache First — la app abre siempre desde caché aunque no haya red
+// Cache first — funciona sin red
 self.addEventListener('fetch', event => {
-  const url = new URL(event.request.url);
-
-  // Ignorar requests externos (Supabase API, Google Fonts)
-  if (url.origin !== self.location.origin) return;
-
-  // Stale-While-Revalidate para archivos propios
   event.respondWith(
-    caches.open(CACHE_VERSION).then(async cache => {
-      const cached = await cache.match(event.request);
-
-      const networkFetch = fetch(event.request)
-        .then(response => {
-          if (response && response.status === 200) {
-            cache.put(event.request, response.clone());
-          }
-          return response;
-        })
-        .catch(() => null);
-
-      // Devolver caché inmediatamente si existe, red si no
-      return cached || networkFetch;
+    caches.match(event.request).then(cached => {
+      if (cached) return cached;
+      return fetch(event.request).then(response => {
+        if (response && response.status === 200) {
+          const clone = response.clone();
+          caches.open(CACHE_VERSION).then(c => c.put(event.request, clone)).catch(()=>{});
+        }
+        return response;
+      }).catch(() => cached || new Response('offline', {status:503}));
     })
   );
 });
