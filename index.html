@@ -730,11 +730,8 @@ async function onUserLoggedIn(user){
   $('active-player-bar').classList.remove('hidden');
   $('apb-name').textContent=nombre;
   $('p-name').value=nombre;
-  // Refrescar token para asegurar JWT válido antes de queries RLS
   try{
     $('r-hcp').textContent='…';
-    // Refrescar sesión para garantizar token válido
-    try { await supabaseClient.auth.refreshSession(); } catch(e) {}
     await loadCampos();
     rounds=await loadRounds();
     renderAll();
@@ -1091,7 +1088,7 @@ async function guardarCampo(){
     if(hoyos.length===18){const {error:hErr}=await supabaseClient.from('hoyos').insert(hoyos.map(h=>({campo_id:campoId,numero:h.numero,par:h.par,indice:h.indice,user_id:jugadorActivo?.id||null})));if(hErr)throw hErr;}
     const {error:bErr}=await supabaseClient.from('barras').insert(barrasData.map(b=>({campo_id:campoId,...b,user_id:jugadorActivo?.id||null})));if(bErr)throw bErr;
     await loadCampos();toggleNuevoCampo();toast('✓ Campo guardado');
-  }catch(e){toast('❌ Error al guardar campo',true);console.error(e);}
+  }catch(e){const msg=e?.message||e?.details||JSON.stringify(e)||'Error';const ed=$('nuevo-campo-error');if(ed){ed.textContent='❌ '+msg;ed.style.display='block';}toast('❌ Error al guardar campo',true);console.error('guardarCampo:',e);}
   finally{btn.textContent='Guardar Campo';btn.disabled=false;}
 }
 
@@ -1221,10 +1218,8 @@ function calcCHCP(){
 
 // ── CARGA ────────────────────────────────────────────────────────
 async function loadRounds(){
-  const {data:{session}} = await supabaseClient.auth.getSession();
-  if(!session) throw new Error('Sin sesión activa');
-  const uid2 = jugadorActivo?.id || session.user?.id;
-  if(!uid2) throw new Error('Sin usuario activo');
+  const uid2 = jugadorActivo?.id;
+  if(!uid2) return [];
   const {data,error}=await supabaseClient
     .from('rondas')
     .select('*')
@@ -1241,11 +1236,8 @@ async function loadRounds(){
 }
 
 async function loadCampos(){
-  // Asegurar sesión activa antes de queries con RLS
-  const {data:{session}} = await supabaseClient.auth.getSession();
-  if(!session) throw new Error('Sin sesión activa');
-  const uid = jugadorActivo?.id || session.user?.id;
-  if(!uid) throw new Error('Sin usuario activo');
+  const uid = jugadorActivo?.id;
+  if(!uid){ campos=[];renderCampos();renderSelectorCampos();return; }
   const [{data:cs,error:e1},{data:hs,error:e2},{data:bs,error:e3}] = await Promise.all([
     supabaseClient.from('campos').select('*').eq('user_id',uid).order('nombre',{ascending:true}),
     supabaseClient.from('hoyos').select('*').eq('user_id',uid).order('numero',{ascending:true}),
@@ -1358,13 +1350,23 @@ async function guardarEditCampo(){
   if(errDivE){errDivE.style.display='none';errDivE.textContent='';}
   function showErrE(msg){if(errDivE){errDivE.textContent=msg;errDivE.style.display='block';}else toast(msg,true);}
   if(!nombre){showErrE('Completa el nombre del campo.');return;}
-  const hoyos=[];let parTotal=0,valid=true,invalidHoyoE=0;
+  // Recoger hoyos — solo los que estén rellenos válidos
+  const hoyos=[];let parTotal=0;
+  let anyHoyo=false;
   for(let i=1;i<=18;i++){
     const par=parseInt($(`edit-nc-par-${i}`)?.value),indice=parseInt($(`edit-nc-idx-${i}`)?.value);
-    if(isNaN(par)||isNaN(indice)||par<3||par>5||indice<1||indice>18){valid=false;invalidHoyoE=i;break;}
-    parTotal+=par;hoyos.push({numero:i,par,indice});
+    if(!isNaN(par)&&!isNaN(indice)&&par>=3&&par<=5&&indice>=1&&indice<=18){
+      parTotal+=par;hoyos.push({numero:i,par,indice});anyHoyo=true;
+    }
   }
-  if(!valid){showErrE('Revisa el hoyo '+invalidHoyoE+': par debe ser 3-5 e índice 1-18.');return;}
+  // Validar solo si hay algún hoyo parcialmente relleno con error
+  for(let i=1;i<=18;i++){
+    const par=parseInt($(`edit-nc-par-${i}`)?.value),indice=parseInt($(`edit-nc-idx-${i}`)?.value);
+    const parEmpty=isNaN(par)||$(`edit-nc-par-${i}`)?.value==='';
+    const idxEmpty=isNaN(indice)||$(`edit-nc-idx-${i}`)?.value==='';
+    if(!parEmpty&&(isNaN(par)||par<3||par>5)){showErrE('Hoyo '+i+': par debe ser 3-5.');return;}
+    if(!idxEmpty&&(isNaN(indice)||indice<1||indice>18)){showErrE('Hoyo '+i+': índice debe ser 1-18.');return;}
+  }
   const barrasEdit=[];
   for(const color of BARRAS){
     const cr=parseFloat(document.getElementById('edit-cr-'+color)?.value);
@@ -1380,7 +1382,7 @@ async function guardarEditCampo(){
     await supabaseClient.from('barras').delete().eq('campo_id',id);
     if(barrasEdit.length>0){const {error:ib}=await supabaseClient.from('barras').insert(barrasEdit.map(b=>({...b,user_id:jugadorActivo?.id||null})));if(ib)throw ib;}
     await loadCampos();cerrarModal('modal-campo');toast('✓ Campo actualizado');
-  }catch(e){toast('❌ Error al guardar',true);console.error(e);}
+  }catch(e){const msg=e?.message||e?.details||JSON.stringify(e)||'Error desconocido';if(errDivE){errDivE.textContent='❌ '+msg;errDivE.style.display='block';}toast('❌ Error al guardar',true);console.error('guardarEditCampo:',e);}
   finally{btn.textContent='Guardar Cambios';btn.disabled=false;}
 }
 
