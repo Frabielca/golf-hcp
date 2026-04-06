@@ -644,10 +644,17 @@ async function doRegister(){
     if(data.user){
       try{await sb('/rest/v1/profiles','POST',{id:data.user.id,nombre});}catch(e){}
     }
-    if(data.session){
-      // onAuthStateChange disparará SIGNED_IN automáticamente
+    if(data.session && data.user){
+      // Sesión activa — entrar directamente
+      await onUserLoggedIn(data.user);
+    }else if(data.user && !data.session){
+      // Email confirmation requerido
+      showAuthOk('register-ok','✓ Cuenta creada. Revisa tu email para confirmar y luego inicia sesión.');
     }else{
-      showAuthOk('register-ok','✓ Cuenta creada. Revisa tu email para confirmar la cuenta y luego inicia sesión.');
+      // Fallback — intentar login directo
+      showAuthOk('register-ok','✓ Cuenta creada. Inicia sesión con tus datos.');
+      showScreen('auth-login');
+      if($('login-email'))$('login-email').value=email;
     }
   }catch(e){
     showAuthError('register-error',e.message||'Error al crear cuenta.');
