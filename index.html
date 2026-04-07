@@ -697,6 +697,7 @@ async function doReset(){
 let _loggingOut = false;
 async function doLogout(){
   if(_loggingOut) return;
+  if(!confirm('¿Cerrar sesión?')) return;
   _loggingOut = true;
   // Limpiar estado local inmediatamente
   jugadorActivo=null;rounds=[];campos=[];
