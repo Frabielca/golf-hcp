@@ -1091,7 +1091,11 @@ async function guardarCampo(){
     const campoId=campoData[0].id;
     if(hoyos.length===18){const {error:hErr}=await supabaseClient.from('hoyos').insert(hoyos.map(h=>({campo_id:campoId,numero:h.numero,par:h.par,indice:h.indice,user_id:jugadorActivo?.id||null})));if(hErr)throw hErr;}
     const {error:bErr}=await supabaseClient.from('barras').insert(barrasData.map(b=>({campo_id:campoId,...b,user_id:jugadorActivo?.id||null})));if(bErr)throw bErr;
-    await loadCampos();toggleNuevoCampo();toast('✓ Campo guardado');
+    await loadCampos();
+    renderCampos();
+    renderSelectorCampos();
+    toggleNuevoCampo();
+    toast('✓ Campo guardado');
   }catch(e){const msg=e?.message||e?.details||JSON.stringify(e)||'Error';const ed=$('nuevo-campo-error');if(ed){ed.textContent='❌ '+msg;ed.style.display='block';}toast('❌ Error al guardar campo',true);console.error('guardarCampo:',e);}
   finally{btn.textContent='Guardar Campo';btn.disabled=false;}
 }
@@ -1099,7 +1103,11 @@ async function guardarCampo(){
 async function delCampo(id){
   id=typeof id==='string'?parseInt(id):id;
   if(!confirm('¿Eliminar este campo?'))return;
-  try{const {error:dc}=await supabaseClient.from('campos').delete().eq('id',id);if(dc)throw dc;await loadCampos();toast('Campo eliminado');}
+  try{const {error:dc}=await supabaseClient.from('campos').delete().eq('id',id);if(dc)throw dc;
+    await loadCampos();
+    renderCampos();
+    renderSelectorCampos();
+    toast('Campo eliminado');}
   catch(e){toast('❌ Error al eliminar',true);}
 }
 
@@ -1385,30 +1393,46 @@ async function guardarEditCampo(){
   const btn=$('btn-guardar-edit-campo');
   btn.textContent='Guardando…';btn.disabled=true;
   try{
+    
     const updateData={nombre,par_total:parTotal||null};
     if(firstB){updateData.cr=firstB.cr;updateData.slope=firstB.slope;}
-    const {error:upC}=await supabaseClient.from('campos').update(updateData).eq('id',id);
-    if(upC)throw new Error(upC.message);
+    console.log('UPDATE campos id='+id, updateData, 'uid='+uid);
+    const {data:upData,error:upC}=await supabaseClient.from('campos')
+      .update(updateData).eq('id',id).select();
+    console.log('UPDATE result:', JSON.stringify(upData), JSON.stringify(upC));
+    if(upC)throw new Error('Update error: '+upC.message);
+    
 
     const {error:dh}=await supabaseClient.from('hoyos').delete().eq('campo_id',id);
     if(dh)throw new Error('Error borrando hoyos: '+dh.message);
     if(hoyos.length>0){
+      
       const {error:ih}=await supabaseClient.from('hoyos')
         .insert(hoyos.map(hh=>({campo_id:id,...hh,user_id:uid})));
-      if(ih)throw new Error('Error insertando hoyos: '+ih.message);
+      if(ih)throw new Error('Error hoyos: '+ih.message);
     }
 
     const {error:db}=await supabaseClient.from('barras').delete().eq('campo_id',id);
     if(db)throw new Error('Error borrando barras: '+db.message);
     if(barrasEdit.length>0){
+      
       const {error:ib}=await supabaseClient.from('barras').insert(barrasEdit);
-      if(ib)throw new Error('Error insertando barras: '+ib.message);
+      if(ib)throw new Error('Error barras: '+ib.message);
     }
 
+    // Recargar datos frescos de Supabase
     await loadCampos();
+    // Forzar re-render explícito
+    renderCampos();
+    renderSelectorCampos();
+    renderSelectorCamposInicio();
+    // Si hay campo seleccionado en Inicio, refrescar sus datos
+    const pCampoSel=$('p-campo')?.value;
+    if(pCampoSel){
+      onCampoAntes();
+    }
     cerrarModal('modal-campo');
     toast('✓ Campo actualizado');
-    console.log('guardarEditCampo OK - campo id:', id);
   }catch(e){
     const errMsg = e?.message || e?.code || e?.details || JSON.stringify(e) || 'Error desconocido';
     showErrE('❌ '+errMsg);
