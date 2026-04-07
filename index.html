@@ -1408,9 +1408,16 @@ async function guardarEditCampo(){
     await loadCampos();
     cerrarModal('modal-campo');
     toast('✓ Campo actualizado');
+    console.log('guardarEditCampo OK - campo id:', id);
   }catch(e){
-    showErrE('❌ '+(e?.message||'Error desconocido'));
-    console.error('guardarEditCampo error:',e);
+    const errMsg = e?.message || e?.code || e?.details || JSON.stringify(e) || 'Error desconocido';
+    showErrE('❌ '+errMsg);
+    console.error('guardarEditCampo error:', JSON.stringify(e), e);
+    // Asegurar que el div es visible aunque esté tapado
+    if(errDivE){
+      errDivE.style.display='block';
+      errDivE.scrollIntoView({behavior:'smooth',block:'center'});
+    }
   }finally{
     btn.textContent='Guardar Cambios';
     btn.disabled=false;
