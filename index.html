@@ -553,7 +553,7 @@ tr:last-child td{border-bottom:none}
       <div class="formula-row"><span class="fk">17–18 rondas</span><span class="fv">Promedio 6 mejores</span></div>
       <div class="formula-row"><span class="fk">19 rondas</span><span class="fv">Promedio 7 mejores</span></div>
       <div class="formula-row"><span class="fk">20 rondas</span><span class="fv">Promedio 8 mejores</span></div>
-      <div class="formula-row"><span class="fk">× 0.96</span><span class="fv">Factor de reducción final</span></div>
+      <div class="formula-row"><span class="fk">× 0.95</span><span class="fv">Factor de reducción final (WHS)</span></div>
     </div>
   </div>
   <div class="card">
@@ -918,7 +918,7 @@ function getHCP(rs){
   const sorted=rs.slice(-20).map(r=>r.diff).sort((a,b)=>a-b);
   const[nb,adj]=WHS[n-1];
   const avg=sorted.slice(0,nb).reduce((s,v)=>s+v,0)/nb;
-  return{hcp:Math.round(Math.min((avg+adj)*0.96,54)*10)/10,numBest:nb};
+  return{hcp:Math.round(Math.min((avg+adj)*0.95,54)*10)/10,numBest:nb};
 }
 function getCat(h){
   if(h<=4.4)return'Cat. 1 · Elite';if(h<=11.4)return'Cat. 2 · Avanzado';
