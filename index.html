@@ -1393,44 +1393,34 @@ async function guardarEditCampo(){
   const btn=$('btn-guardar-edit-campo');
   btn.textContent='Guardando…';btn.disabled=true;
   try{
-    
-    const updateData={nombre,par_total:parTotal||null};
+    // 1. Actualizar nombre y par del campo
+    const updateData={nombre};
+    if(parTotal>0)updateData.par_total=parTotal;
     if(firstB){updateData.cr=firstB.cr;updateData.slope=firstB.slope;}
-    console.log('UPDATE campos id='+id, updateData, 'uid='+uid);
-    const {data:upData,error:upC}=await supabaseClient.from('campos')
-      .update(updateData).eq('id',id).select();
-    console.log('UPDATE result:', JSON.stringify(upData), JSON.stringify(upC));
-    if(upC)throw new Error('Update error: '+upC.message);
-    
+    const {error:upC}=await supabaseClient.from('campos').update(updateData).eq('id',id);
+    if(upC)throw new Error('Error campo: '+upC.message);
 
-    const {error:dh}=await supabaseClient.from('hoyos').delete().eq('campo_id',id);
-    if(dh)throw new Error('Error borrando hoyos: '+dh.message);
+    // 2. Hoyos: borrar los existentes e insertar nuevos (solo si hay)
     if(hoyos.length>0){
-      
+      await supabaseClient.from('hoyos').delete().eq('campo_id',id);
       const {error:ih}=await supabaseClient.from('hoyos')
-        .insert(hoyos.map(hh=>({campo_id:id,...hh,user_id:uid})));
+        .insert(hoyos.map(hh=>({campo_id:id,numero:hh.numero,par:hh.par,indice:hh.indice,user_id:uid})));
       if(ih)throw new Error('Error hoyos: '+ih.message);
     }
 
-    const {error:db}=await supabaseClient.from('barras').delete().eq('campo_id',id);
-    if(db)throw new Error('Error borrando barras: '+db.message);
+    // 3. Barras: borrar las existentes e insertar nuevas (solo si hay)
     if(barrasEdit.length>0){
-      
+      await supabaseClient.from('barras').delete().eq('campo_id',id);
       const {error:ib}=await supabaseClient.from('barras').insert(barrasEdit);
       if(ib)throw new Error('Error barras: '+ib.message);
     }
 
-    // Recargar datos frescos de Supabase
+    // 4. Recargar y actualizar vista
     await loadCampos();
-    // Forzar re-render explícito
     renderCampos();
     renderSelectorCampos();
     renderSelectorCamposInicio();
-    // Si hay campo seleccionado en Inicio, refrescar sus datos
-    const pCampoSel=$('p-campo')?.value;
-    if(pCampoSel){
-      onCampoAntes();
-    }
+    if($('p-campo')?.value)onCampoAntes();
     cerrarModal('modal-campo');
     toast('✓ Campo actualizado');
   }catch(e){
