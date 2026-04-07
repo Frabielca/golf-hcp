@@ -132,7 +132,7 @@ tr:last-child td{border-bottom:none}
 .ps-new input:focus{border-color:var(--gold)}
 .ps-new input::placeholder{color:rgba(255,255,255,.25)}
 .ps-new button{background:var(--gold);color:#1a2f1a;border:none;border-radius:5px;font-family:'DM Mono',monospace;font-size:11px;font-weight:600;letter-spacing:1px;padding:11px 16px;cursor:pointer;white-space:nowrap}
-#active-player-bar{background:rgba(201,168,76,.1);border-bottom:1px solid rgba(201,168,76,.2);padding-top:calc(env(safe-area-inset-top,0px) + 7px);padding-bottom:7px;padding-left:14px;padding-right:14px;display:flex;align-items:center;justify-content:space-between;font-size:10px;position:sticky;top:0;z-index:50}
+#active-player-bar{background:#0f1a0f;border-bottom:1px solid rgba(201,168,76,.3);padding-top:calc(env(safe-area-inset-top,0px) + 7px);padding-bottom:7px;padding-left:14px;padding-right:14px;display:flex;align-items:center;justify-content:space-between;font-size:10px;position:sticky;top:0;z-index:50}
 #active-player-bar.hidden{display:none}
 .apb-name{color:var(--gold2);font-family:'Playfair Display',serif;font-size:13px;font-style:italic}
 .apb-change{background:none;border:1px solid rgba(201,168,76,.3);border-radius:4px;color:var(--gold);font-family:'DM Mono',monospace;font-size:8px;letter-spacing:1px;text-transform:uppercase;padding:4px 10px;cursor:pointer}
@@ -1239,6 +1239,7 @@ async function addRound(){
 
 async function delRound(id){
   id=typeof id==='string'?parseInt(id):id;
+  if(!confirm('¿Eliminar esta ronda?'))return;
   try{const {error:dr}=await supabaseClient.from('rondas').delete().eq('id',id);if(dr)throw dr;rounds=rounds.filter(r=>r.id!==id);renderAll();toast('Ronda eliminada');}catch(e){toast('❌ Error al eliminar',true);}
 }
 
@@ -1472,17 +1473,17 @@ async function guardarEditCampo(){
     const {error:upC}=await supabaseClient.from('campos').update(updateData).eq('id',id);
     if(upC)throw new Error('Error campo: '+upC.message);
 
-    // 2. Hoyos: borrar los existentes e insertar nuevos (solo si hay)
+    // 2. Hoyos: SIEMPRE borrar primero, luego insertar si hay
+    await supabaseClient.from('hoyos').delete().eq('campo_id',id);
     if(hoyos.length>0){
-      await supabaseClient.from('hoyos').delete().eq('campo_id',id);
       const {error:ih}=await supabaseClient.from('hoyos')
         .insert(hoyos.map(hh=>({campo_id:id,numero:hh.numero,par:hh.par,indice:hh.indice,user_id:uid})));
       if(ih)throw new Error('Error hoyos: '+ih.message);
     }
 
-    // 3. Barras: borrar las existentes e insertar nuevas (solo si hay)
+    // 3. Barras: SIEMPRE borrar primero, luego insertar si hay
+    await supabaseClient.from('barras').delete().eq('campo_id',id);
     if(barrasEdit.length>0){
-      await supabaseClient.from('barras').delete().eq('campo_id',id);
       const {error:ib}=await supabaseClient.from('barras').insert(barrasEdit);
       if(ib)throw new Error('Error barras: '+ib.message);
     }
