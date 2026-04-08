@@ -807,7 +807,14 @@ function doLogout() {
 
 // ── ONLOGIN: carga datos tras autenticación ───────────────────────────────
 async function onLogin(user) {
-  // Obtener nombre del perfil
+  // Diagnóstico temporal — borrar tras confirmar
+  toast('Cargando perfil…');
+  // Resetear estado de loading/botones por si acaso
+  state.loading = false;
+  const btnL = $('btn-login');
+  if (btnL) { btnL.textContent = 'Entrar'; btnL.disabled = false; }
+
+  // Obtener nombre del perfil (con timeout para evitar cuelgue)
   let nombre = user.user_metadata?.nombre || user.email.split('@')[0];
   try {
     const { data } = await sb.from('profiles').select('nombre').eq('id', user.id).single();
@@ -816,15 +823,16 @@ async function onLogin(user) {
 
   state.user = { id: user.id, email: user.email, nombre };
 
-  // Mostrar UI autenticada
+  // Ocultar auth, mostrar UI
   ['auth-login','auth-register','auth-reset'].forEach(s => {
     const el = $('auth-' + s); if (el) el.classList.add('hidden');
   });
-  $('player-bar').classList.remove('hidden');
-  $('main-nav').style.display = '';
-  $('pb-name').textContent = nombre;
-  $('p-name').value = nombre;
-  $('btn-login').textContent = 'Entrar'; $('btn-login').disabled = false;
+  const pb = $('player-bar');
+  const mn = $('main-nav');
+  if (pb) pb.classList.remove('hidden');
+  if (mn) mn.style.display = '';
+  if ($('pb-name')) $('pb-name').textContent = nombre;
+  if ($('p-name')) $('p-name').value = nombre;
 
   // Cargar datos
   try {
@@ -832,7 +840,8 @@ async function onLogin(user) {
     loadPre();
     autorellenarInicio();
   } catch(e) {
-    toast('❌ Error al cargar datos', true);
+    toast('❌ Error al cargar datos: ' + (e.message||''), true);
+    // Aunque falle la carga, la UI ya está visible
   }
 }
 
