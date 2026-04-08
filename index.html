@@ -14,8 +14,8 @@
 <style>
 :root{--bg:#1a2f1a;--bg2:rgba(255,255,255,0.04);--border:rgba(255,255,255,0.09);--gold:#c9a84c;--gold2:#e8c96a;--green:#7bc67a;--cream:#f5f0e8;--muted:rgba(255,255,255,0.35);--red:#e05555}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-html{height:100%;background:var(--bg)}
-body{height:100%;margin:0;display:flex;flex-direction:column;overflow:hidden;background:var(--bg);color:var(--cream);font-family:'DM Mono',monospace}
+html,body{height:100%;background:var(--bg);color:var(--cream);font-family:'DM Mono',monospace;overflow-x:hidden}
+body{overflow-y:auto;-webkit-overflow-scrolling:touch}
 
 /* ── SPLASH ── */
 #splash{position:fixed;inset:0;background:#1a2f1a;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;transition:opacity .5s}
@@ -52,14 +52,13 @@ body{height:100%;margin:0;display:flex;flex-direction:column;overflow:hidden;bac
 .pb-btn{background:none;border:1px solid rgba(201,168,76,.3);border-radius:4px;color:var(--gold);font-family:'DM Mono',monospace;font-size:7px;letter-spacing:1px;text-transform:uppercase;padding:4px 8px;cursor:pointer}
 
 /* ── NAV ── */
-nav{flex-shrink:0;background:#0f1a0f;border-top:1px solid var(--border);display:flex;z-index:100;padding-bottom:env(safe-area-inset-bottom,0px)}
+nav{position:fixed;bottom:0;left:0;right:0;background:#0f1a0f;border-top:1px solid var(--border);display:flex;z-index:100;padding-bottom:env(safe-area-inset-bottom,0px)}
 nav button{flex:1;background:none;border:none;color:var(--muted);padding:9px 2px 7px;font-size:8px;letter-spacing:1px;text-transform:uppercase;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;font-family:'DM Mono',monospace;min-height:52px}
 nav button svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
 nav button.active{color:var(--gold)}
 nav button.active svg{stroke:var(--gold)}
 
 /* ── PAGES ── */
-#scroll-wrap{flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;overscroll-behavior-y:contain}
 .page{display:none;padding:16px 14px calc(80px + env(safe-area-inset-bottom,0px));max-width:700px;margin:0 auto;width:100%}
 .page.active{display:block}
 
@@ -188,7 +187,7 @@ select option{background:#1a2f1a}
 <!-- AUTH: LOGIN -->
 <div class="auth-screen hidden" id="auth-login">
   <div class="auth-logo">Golf <em>HCP</em></div>
-  <div class="auth-sub">Calculadora · WHS 2020 · v20</div>
+  <div class="auth-sub">Calculadora · WHS 2020</div>
   <div class="auth-box">
     <div class="auth-title">Iniciar Sesión</div>
     <div class="auth-msg err" id="login-err"></div>
@@ -232,7 +231,6 @@ select option{background:#1a2f1a}
 </div>
 
 <!-- PLAYER BAR -->
-<div id="scroll-wrap">
 <div id="player-bar" class="hidden">
   <div>
     <div style="font-size:7px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:1px">Jugador</div>
@@ -320,7 +318,6 @@ select option{background:#1a2f1a}
 </div>
 
 <!-- NAV -->
-</div><!-- /scroll-wrap -->
 <nav id="main-nav" style="display:none">
   <button class="active" onclick="goTo('inicio',this)" id="nav-inicio">
     <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M2 12h3M19 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12"/></svg>Inicio
@@ -384,21 +381,6 @@ select option{background:#1a2f1a}
         <div class="chcp-num empty" id="chcp-num">—</div>
       </div>
       <div class="chcp-detail" id="chcp-detail">Selecciona un campo para calcular.</div>
-    </div>
-    <!-- Playing HCP por ajuste de juego -->
-    <div id="php-wrap" style="display:none;margin-top:12px;display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
-      <div style="background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:6px;padding:10px 4px;text-align:center">
-        <div style="font-size:7px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:4px">100%<br>Informal</div>
-        <div id="php-100" style="font-family:'Playfair Display',serif;font-size:20px;color:#fff">—</div>
-      </div>
-      <div style="background:rgba(201,168,76,.08);border:1px solid rgba(201,168,76,.2);border-radius:6px;padding:10px 4px;text-align:center">
-        <div style="font-size:7px;letter-spacing:1px;text-transform:uppercase;color:var(--gold);margin-bottom:4px">95%<br>Medal/Stblf</div>
-        <div id="php-95" style="font-family:'Playfair Display',serif;font-size:20px;color:var(--gold2)">—</div>
-      </div>
-      <div style="background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:6px;padding:10px 4px;text-align:center">
-        <div style="font-size:7px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:4px">85%<br>Four Ball</div>
-        <div id="php-85" style="font-family:'Playfair Display',serif;font-size:20px;color:#fff">—</div>
-      </div>
     </div>
   </div>
 </div>
@@ -509,9 +491,7 @@ select option{background:#1a2f1a}
       <div class="formula-row"><span class="fk">18 rondas</span><span class="fv">6 mejores · sin ajuste</span></div>
       <div class="formula-row"><span class="fk">19 rondas</span><span class="fv">7 mejores · sin ajuste</span></div>
       <div class="formula-row"><span class="fk">20 rondas</span><span class="fv">8 mejores · sin ajuste</span></div>
-      <div class="formula-row"><span class="fk">100% <span style="color:var(--muted);font-weight:normal">Informal</span></span><span class="fv">Playing HCP = Course HCP</span></div>
-      <div class="formula-row"><span class="fk">95% <span style="color:var(--muted);font-weight:normal">Medal / Stblf</span></span><span class="fv">Playing HCP = Course HCP × 0.95</span></div>
-      <div class="formula-row"><span class="fk">85% <span style="color:var(--muted);font-weight:normal">Four Ball</span></span><span class="fv">Playing HCP = Course HCP × 0.85</span></div>
+      <div class="formula-row"><span class="fk">× 0.95</span><span class="fv">Factor de reducción final (WHS)</span></div>
       <div class="formula-row"><span class="fk">Máximo</span><span class="fv">54.0</span></div>
     </div>
   </div>
@@ -662,17 +642,14 @@ function getCat(h) {
 
 function calcStableford(hcpIndex, campo, shots) {
   if (!campo?.hoyos || campo.hoyos.length < 18) return null;
-  // Ordenar hoyos por número para garantizar correspondencia con shots[]
-  const hoyos = [...campo.hoyos].sort((a, b) => a.numero - b.numero);
   const courseHCP = Math.round(hcpIndex * (campo.slope / 113) + (campo.cr - campo.par_total));
   let total = 0;
-  const byHole = [];
   for (let i = 0; i < 18; i++) {
-    const hoyo = hoyos[i];
+    const hoyo = campo.hoyos[i];
     const s = shots[i];
-    if (s == null || isNaN(s) || s < 1) { byHole.push(0); continue; }
+    if (!s || isNaN(s)) return null;
     const ex1 = courseHCP >= hoyo.indice ? 1 : 0;
-    const ex2 = courseHCP >= (hoyo.indice + 18) ? 1 : 0;
+    const ex2 = courseHCP >= hoyo.indice + 18 ? 1 : 0;
     const neto = s - hoyo.par - (ex1 + ex2);
     let pts = 0;
     if (neto <= -2) pts = 4;
@@ -680,9 +657,8 @@ function calcStableford(hcpIndex, campo, shots) {
     else if (neto === 0) pts = 2;
     else if (neto === 1) pts = 1;
     total += pts;
-    byHole.push(pts);
   }
-  return { total, courseHCP, byHole };
+  return { total, courseHCP };
 }
 
 // ── AUTH ──────────────────────────────────────────────────────────────────
@@ -715,13 +691,10 @@ async function doLogin() {
   try {
     const { data, error } = await sb.auth.signInWithPassword({ email, password: pass });
     if (error) throw error;
-    if (!data?.user) throw new Error('No se recibió usuario');
     await onLogin(data.user);
   } catch(e) {
-    const msg = e.message === 'Invalid login credentials'
-      ? 'Email o contraseña incorrectos.' : (e.message || 'Error al iniciar sesión');
-    authMsg('login-err', msg, 'err');
-    toast(msg, true);
+    authMsg('login-err', e.message === 'Invalid login credentials'
+      ? 'Email o contraseña incorrectos.' : e.message, 'err');
   } finally {
     btn.textContent = 'Entrar'; btn.disabled = false;
     state.loading = false;
@@ -813,45 +786,34 @@ function doLogout() {
 
 // ── ONLOGIN: carga datos tras autenticación ───────────────────────────────
 async function onLogin(user) {
-  state.loading = false;
-  const btnL = $('btn-login');
-  if (btnL) { btnL.textContent = 'Entrar'; btnL.disabled = false; }
-  
-  // Paso 1: nombre
+  // Obtener nombre del perfil
   let nombre = user.user_metadata?.nombre || user.email.split('@')[0];
   try {
     const { data } = await sb.from('profiles').select('nombre').eq('id', user.id).single();
     if (data?.nombre) nombre = data.nombre;
   } catch(e) {}
-  
-  // Paso 2: set state
+
   state.user = { id: user.id, email: user.email, nombre };
-  
-  // Paso 3: ocultar auth
-  // Ocultar TODAS las pantallas auth con display directo
-  document.querySelectorAll('.auth-screen').forEach(el => {
-    el.classList.add('hidden');
-    el.style.display = 'none';
+
+  // Mostrar UI autenticada
+  ['auth-login','auth-register','auth-reset'].forEach(s => {
+    const el = $('auth-' + s); if (el) el.classList.add('hidden');
   });
-  
-  // Paso 4: mostrar UI
-  const pb = $('player-bar');
-  const mn = $('main-nav');
-  if (pb) { pb.classList.remove('hidden'); pb.style.cssText = 'display:flex!important'; }
-  if (mn) { mn.style.cssText = 'display:flex!important'; }
-  if ($('pb-name')) $('pb-name').textContent = nombre;
-  if ($('p-name'))  $('p-name').value = nombre;
-  
-  // Paso 5: cargar datos
+  $('player-bar').classList.remove('hidden');
+  $('main-nav').style.display = '';
+  $('pb-name').textContent = nombre;
+  $('p-name').value = nombre;
+  $('btn-login').textContent = 'Entrar'; $('btn-login').disabled = false;
+
+  // Cargar datos
   try {
     await loadData();
     loadPre();
     autorellenarInicio();
   } catch(e) {
-    toast('Error datos: ' + (e.message||'?'), true);
+    toast('❌ Error al cargar datos', true);
   }
 }
-
 
 // ── LOAD DATA ────────────────────────────────────────────────────────────
 async function loadData() {
@@ -1077,21 +1039,11 @@ function calcCHCP() {
   det.innerHTML = `HCP ${hcp} × (${slope}/113) + (${cr}−${par}) = <strong style="color:var(--gold2)">${chcp >= 0 ? '+' + chcp : chcp} golpes</strong><div class="target-box">Puntuación objetivo: <strong>${Math.round(target)} golpes</strong></div>`;
   if (name) { pname.textContent = name; pname.style.display = 'block'; }
   else pname.style.display = 'none';
-  // Marcadores playing HCP
-  const phpW = $('php-wrap');
-  if (phpW) {
-    phpW.style.display = 'grid';
-    const fmt = v => (v >= 0 ? '+' : '') + v;
-    $('php-100').textContent = fmt(chcp);
-    $('php-95').textContent  = fmt(Math.round(chcp * 0.95));
-    $('php-85').textContent  = fmt(Math.round(chcp * 0.85));
-  }
 }
 
 function resetCHCP() {
   $('chcp-num').textContent = '—'; $('chcp-num').className = 'chcp-num empty';
   $('chcp-detail').textContent = 'Selecciona un campo para calcular.';
-  const phpWrapE = $('php-wrap'); if (phpWrapE) phpWrapE.style.display = 'none';
   $('chcp-name').style.display = 'none';
 }
 
@@ -1203,26 +1155,12 @@ function buildHoyoInputs(campo) {
     cell.innerHTML = `
       <div class="hoyo-num">${h.numero}<br>
         <span style="color:var(--gold2);font-size:7px">P${h.par}</span><br>
-        <span style="color:var(--muted);font-size:7px">${h.indice}</span>
+        <span style="color:var(--muted);font-size:7px">I${h.indice}</span>
       </div>
-      <div id="gh-dots-${h.numero}" style="height:8px;display:flex;gap:1px;align-items:center;justify-content:center"></div>
       <input class="hoyo-input" type="text" inputmode="numeric" id="gh-${h.numero}"
         maxlength="2" placeholder="—"
         oninput="this.value=this.value.replace(/[^0-9]/g,'');updateTotals();golfShot(this,'${nextId}')">`;
     grid.appendChild(cell);
-  }
-}
-
-function renderHoleDots(prefix, byHole) {
-  for (let i = 0; i < 18; i++) {
-    const pts = byHole ? (byHole[i] || 0) : 0;
-    const el = document.getElementById(prefix + 'dots-' + (i + 1));
-    if (!el) continue;
-    if (pts > 0) {
-      el.innerHTML = Array(pts).fill('<span style="width:4px;height:4px;border-radius:50%;background:var(--gold);display:inline-block"></span>').join('');
-    } else {
-      el.innerHTML = '';
-    }
   }
 }
 
@@ -1241,10 +1179,8 @@ function updateTotals() {
   if (complete && campo && !isNaN(hcp)) {
     const stbl = calcStableford(hcp, campo, shots);
     $('preview-stbl').textContent = stbl ? stbl.total + ' pts' : '—';
-    renderHoleDots('gh-', stbl?.byHole || null);
   } else {
     $('preview-stbl').textContent = '—';
-    renderHoleDots('gh-', null);
   }
 }
 
@@ -1373,9 +1309,8 @@ function buildEditHoyos(campo, existing) {
     cell.innerHTML = `
       <div class="hoyo-num">H${i}<br>
         <span style="color:var(--gold2);font-size:7px">P${h?.par||'?'}</span><br>
-        <span style="color:var(--muted);font-size:7px">${h?.indice||'?'}</span>
+        <span style="color:var(--muted);font-size:7px">I${h?.indice||'?'}</span>
       </div>
-      <div id="edit-dots-${i}" style="height:8px;display:flex;gap:1px;align-items:center;justify-content:center"></div>
       <input class="hoyo-input" type="text" inputmode="numeric" id="edit-gh-${i}"
         maxlength="2" value="${val}"
         oninput="this.value=this.value.replace(/[^0-9]/g,'');recalcEditStbl();golfShot(this,'${nextId}')">`;
@@ -1411,11 +1346,9 @@ function recalcEditStbl() {
   if (complete && !isNaN(hcp)) {
     const stbl = calcStableford(hcp, campo, shots);
     $('edit-stbl-prev').textContent = stbl ? stbl.total + ' pts' : '—';
-    renderHoleDots('edit-', stbl?.byHole || null);
     if (stbl) $('edit-r-stbl').value = stbl.total;
   } else {
     $('edit-stbl-prev').textContent = '—';
-    renderHoleDots('edit-', null);
   }
 }
 
@@ -1729,7 +1662,7 @@ function goTo(id, btn) {
   document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
   $('page-' + id).classList.add('active');
   if (btn) btn.classList.add('active');
-  const sw = document.getElementById('scroll-wrap'); if(sw) sw.scrollTop=0;
+  window.scrollTo(0, 0);
   if (id === 'nueva') {
     $('f-date').value = new Date().toISOString().split('T')[0];
     // Pre-rellenar HCP con el calculado
@@ -1761,25 +1694,18 @@ async function init() {
   // Auth state — única fuente de verdad para sesión persistida
   sb.auth.onAuthStateChange(async (event, session) => {
     if (event === 'INITIAL_SESSION') {
-      if (session?.user) await onLogin(session.user);
-      else showAuth('login');
-    } else if (event === 'SIGNED_IN') {
-      // Re-login tras expiración de sesión (app en segundo plano mucho tiempo)
-      if (!state.user && session?.user) {
+      if (session?.user) {
         await onLogin(session.user);
-      }
-    } else if (event === 'TOKEN_REFRESHED') {
-      // Token renovado — recargar si faltan datos
-      if (state.user && state.rounds.length === 0) {
-        try {
-          await loadCampos();
-          state.rounds = await loadRounds();
-          renderAll();
-        } catch(e) {}
+      } else {
+        showAuth('login');
       }
     } else if (event === 'PASSWORD_RECOVERY') {
       showAuth('reset');
       toast('Introduce tu nueva contraseña en el perfil.');
+        } else if (event === 'SIGNED_IN') {
+      if (!state.user && session?.user) {
+        await onLogin(session.user);
+      }
     } else if (event === 'SIGNED_OUT') {
       if (state.user !== null) {
         state.user = null; state.rounds = []; state.campos = [];
