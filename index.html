@@ -330,7 +330,7 @@ tr:last-child td{border-bottom:none}
       <div class="field"><label>Golpes brutos</label><input id="edit-r-gross" type="number" inputmode="numeric"></div>
       <div class="field"><label>Course Rating</label><input id="edit-r-cr" type="number" step="0.1" inputmode="decimal"></div>
       <div class="field"><label>Slope Rating</label><input id="edit-r-slope" type="number" inputmode="numeric"></div>
-      <div class="field"><label>Tu HCP Index</label><input id="edit-r-hcp" type="number" step="0.1" inputmode="decimal" placeholder="18.4"></div>
+      <div class="field"><label>Tu HCP Index</label><input id="edit-r-hcp" type="number" step="0.1" inputmode="decimal" placeholder="18.4" oninput="updateEditTotals(parseInt($('edit-ronda-campo-id').value))"></div>
       <div class="field"><label>Barra de salida</label>
         <select id="edit-r-barra" onchange="onEditRondaBarra()">
           <option value="">— Sin especificar —</option>
@@ -958,7 +958,8 @@ function renderResult(){
     $('r-count').textContent=rounds.length;
     $('r-used').textContent=res.numBest;
     $('r-best').textContent=fmtD(Math.min(...rounds.map(r=>r.diff)));
-    if(jugadorActivo&&$('p-name').value===jugadorActivo){$('p-hcp').value=res.hcp.toFixed(1);calcCHCP();}
+    // Actualizar solo el campo HCP del panel Inicio, no rondas antiguas
+    $('p-hcp').value=res.hcp.toFixed(1);calcCHCP();
   }
 }
 
@@ -1343,8 +1344,9 @@ function goTo(id,btn){
   document.getElementById('page-'+id).classList.add('active');
   btn.classList.add('active');window.scrollTo(0,0);
   if(id==='nueva'){
-    const hcpAntes=$('p-hcp').value;
-    if(hcpAntes&&!$('f-hcp-idx').value)$('f-hcp-idx').value=hcpAntes;
+    // Pre-rellenar HCP Index con el calculado actual (solo para rondas nuevas)
+    const hcpActual=getHCP(rounds);
+    if(hcpActual)$('f-hcp-idx').value=hcpActual.hcp.toFixed(1);
     if(rounds.length>0&&!$('f-campo').value){
       const lastRound=rounds[rounds.length-1];
       if(lastRound.campo_id){$('f-campo').value=lastRound.campo_id;onCampoChange();
