@@ -665,7 +665,14 @@ function calcStableford(hcpIndex, campo, shots) {
 function showAuth(screen) {
   ['login','register','reset'].forEach(s => {
     const el = $('auth-' + s);
-    if (el) el.classList.toggle('hidden', s !== screen);
+    if (!el) return;
+    if (s === screen) {
+      el.classList.remove('hidden');
+      el.style.removeProperty('display'); // Limpiar inline style puesto por onLogin
+    } else {
+      el.classList.add('hidden');
+      el.style.display = 'none';
+    }
   });
   // Limpiar mensajes
   document.querySelectorAll('.auth-msg').forEach(el => {
