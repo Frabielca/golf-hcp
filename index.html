@@ -1693,37 +1693,8 @@ async function init(){
 
 // ── SERVICE WORKER con detección de actualizaciones ──────────────
 if ('serviceWorker' in navigator) {
-  window.addEventListener('load', async () => {
-    try {
-      const reg = await navigator.serviceWorker.register('./sw.js');
-
-      // El SW nuevo llama skipWaiting() en install, así que
-      // cuando controllerchange se dispara, hay nueva versión activa
-      let reloading = false;
-      navigator.serviceWorker.addEventListener('controllerchange', () => {
-        if (reloading) return;
-        reloading = true;
-        // Recargar la página para cargar la nueva versión
-        window.location.reload();
-      });
-
-      // Detectar nueva versión en proceso de instalación
-      reg.addEventListener('updatefound', () => {
-        const newWorker = reg.installing;
-        newWorker.addEventListener('statechange', () => {
-          // Con skipWaiting() en install, el SW pasa de installed a activated
-          // y dispara controllerchange automáticamente
-        });
-      });
-
-      // Comprobar actualizaciones al arrancar y cada 5 minutos
-      const checkUpdate = async () => {
-        try { await reg.update(); } catch(e) {}
-      };
-      setTimeout(checkUpdate, 2000);
-      setInterval(checkUpdate, 5 * 60 * 1000);
-
-    } catch(e) {}
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js').catch(()=>{});
   });
 }
 
