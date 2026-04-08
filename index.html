@@ -711,6 +711,8 @@ async function doLogin() {
   state.loading = true;
   try {
     const { data, error } = await sb.auth.signInWithPassword({ email, password: pass });
+    if (error) throw error;
+    if (!data?.user) throw new Error('No se recibió usuario');
     await onLogin(data.user);
   } catch(e) {
     const msg = e.message === 'Invalid login credentials'
