@@ -696,9 +696,9 @@ function showAuth(screen) {
 
 function authMsg(id, text, type) {
   const el = $(id);
-  if (!el) return;
+  if (!el) { toast(text, type==='err'); return; }
   el.textContent = text;
-  el.className = 'auth-msg ' + type + ' show';
+  el.classList.add('show');
 }
 
 async function doLogin() {
@@ -714,8 +714,10 @@ async function doLogin() {
     if (error) throw error;
     await onLogin(data.user);
   } catch(e) {
-    authMsg('login-err', e.message === 'Invalid login credentials'
-      ? 'Email o contraseña incorrectos.' : e.message, 'err');
+    const msg = e.message === 'Invalid login credentials'
+      ? 'Email o contraseña incorrectos.' : (e.message || 'Error al iniciar sesión');
+    authMsg('login-err', msg, 'err');
+    toast(msg, true);
   } finally {
     btn.textContent = 'Entrar'; btn.disabled = false;
     state.loading = false;
@@ -808,7 +810,6 @@ function doLogout() {
 // ── ONLOGIN: carga datos tras autenticación ───────────────────────────────
 async function onLogin(user) {
   // Diagnóstico temporal — borrar tras confirmar
-  toast('Cargando perfil…');
   // Resetear estado de loading/botones por si acaso
   state.loading = false;
   const btnL = $('btn-login');
