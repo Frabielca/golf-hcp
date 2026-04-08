@@ -711,8 +711,6 @@ async function doLogin() {
   state.loading = true;
   try {
     const { data, error } = await sb.auth.signInWithPassword({ email, password: pass });
-    if (error) { alert('ERROR: ' + error.message); throw error; }
-    alert('LOGIN OK: ' + data.user.email);
     await onLogin(data.user);
   } catch(e) {
     const msg = e.message === 'Invalid login credentials'
@@ -810,7 +808,6 @@ function doLogout() {
 
 // ── ONLOGIN: carga datos tras autenticación ───────────────────────────────
 async function onLogin(user) {
-  alert('paso1:'+user.email);
   state.loading = false;
   const btnL = $('btn-login');
   if (btnL) { btnL.textContent = 'Entrar'; btnL.disabled = false; }
@@ -823,7 +820,6 @@ async function onLogin(user) {
   } catch(e) {}
 
   state.user = { id: user.id, email: user.email, nombre };
-  alert('paso2:pb='+!!$('player-bar')+' mn='+!!$('main-nav'));
   ['auth-login','auth-register','auth-reset'].forEach(s => {
     const el = $('auth-' + s); if (el) el.classList.add('hidden');
   });
@@ -833,17 +829,13 @@ async function onLogin(user) {
   if (mn) mn.style.display = '';
   if ($('pb-name')) $('pb-name').textContent = nombre;
   if ($('p-name')) $('p-name').value = nombre;
-  alert('paso3:UI ok');
   try {
     await loadData();
-    alert('paso4:datos ok');
     loadPre();
     autorellenarInicio();
   } catch(e) {
-    alert('paso4 ERROR:'+e.message);
     toast('❌ Error al cargar datos: ' + (e.message||''), true);
   }
-  alert('paso5:FIN');
 }
 
 // ── LOAD DATA ────────────────────────────────────────────────────────────
