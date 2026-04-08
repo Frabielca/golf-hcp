@@ -786,6 +786,7 @@ function doLogout() {
 
 // ── ONLOGIN: carga datos tras autenticación ───────────────────────────────
 async function onLogin(user) {
+  state.loading = false; // Resetear flag de login
   // Obtener nombre del perfil
   let nombre = user.user_metadata?.nombre || user.email.split('@')[0];
   try {
@@ -1707,7 +1708,8 @@ async function init() {
         await onLogin(session.user);
       }
     } else if (event === 'SIGNED_OUT') {
-      if (state.user !== null) {
+      // Solo limpiar si no hay un login en curso
+      if (state.user !== null && !state.loading) {
         state.user = null; state.rounds = []; state.campos = [];
         renderAll(); renderCampos();
         $('player-bar').classList.add('hidden');
