@@ -327,10 +327,10 @@ tr:last-child td{border-bottom:none}
     <div class="fields f2" style="margin-bottom:12px">
       <div class="field"><label>Campo / Nombre</label><input id="edit-r-nombre" placeholder="Club de Golf"></div>
       <div class="field"><label>Fecha</label><input id="edit-r-fecha" type="date"></div>
-      <div class="field"><label>Golpes brutos</label><input id="edit-r-gross" type="number" inputmode="numeric"></div>
-      <div class="field"><label>Course Rating</label><input id="edit-r-cr" type="number" step="0.1" inputmode="decimal"></div>
-      <div class="field"><label>Slope Rating</label><input id="edit-r-slope" type="number" inputmode="numeric"></div>
-      <div class="field"><label>Tu HCP Index</label><input id="edit-r-hcp" type="number" step="0.1" inputmode="decimal" placeholder="18.4" oninput="updateEditTotals(parseInt($('edit-ronda-campo-id').value))"></div>
+      <div class="field"><label>Golpes brutos</label><input id="edit-r-gross" type="number" inputmode="numeric" oninput="autoNextOnInput(this,'edit-r-cr',3)"></div>
+      <div class="field"><label>Course Rating</label><input id="edit-r-cr" type="number" step="0.1" inputmode="decimal" oninput="autoNextOnInput(this,'edit-r-slope',4)"></div>
+      <div class="field"><label>Slope Rating</label><input id="edit-r-slope" type="number" inputmode="numeric" oninput="autoNextOnInput(this,'edit-r-hcp',3)"></div>
+      <div class="field"><label>Tu HCP Index</label><input id="edit-r-hcp" type="number" step="0.1" inputmode="decimal" placeholder="18.4" oninput="updateEditTotals(parseInt($('edit-ronda-campo-id').value));autoNextOnInput(this,'edit-r-stbl',4)"></div>
       <div class="field"><label>Barra de salida</label>
         <select id="edit-r-barra" onchange="onEditRondaBarra()">
           <option value="">— Sin especificar —</option>
@@ -448,14 +448,14 @@ tr:last-child td{border-bottom:none}
     </div>
     <div id="manual-fields">
       <div class="fields f3">
-        <div class="field"><label id="lbl-cr">Course Rating</label><input id="f-cr" type="number" placeholder="71.5" step="0.1" inputmode="decimal"></div>
-        <div class="field"><label id="lbl-slope">Slope Rating</label><input id="f-slope" type="number" placeholder="125" inputmode="numeric"></div>
+        <div class="field"><label id="lbl-cr">Course Rating</label><input id="f-cr" type="number" placeholder="71.5" step="0.1" inputmode="decimal" oninput="autoNextOnInput(this,'f-slope',4)"></div>
+        <div class="field"><label id="lbl-slope">Slope Rating</label><input id="f-slope" type="number" placeholder="125" inputmode="numeric" oninput="autoNextOnInput(this,'f-hcp-idx',3)"></div>
         <div class="field"><label>Par total</label><input id="f-par-total" type="number" placeholder="72" inputmode="numeric"></div>
       </div>
     </div>
     <div class="fields f2" style="margin-top:12px">
       <div class="field"><label>Fecha</label><input id="f-date" type="date"></div>
-      <div class="field"><label id="lbl-hcp-idx">Tu HCP Index</label><input id="f-hcp-idx" type="number" placeholder="18.4" step="0.1" inputmode="decimal"></div>
+      <div class="field"><label id="lbl-hcp-idx">Tu HCP Index</label><input id="f-hcp-idx" type="number" placeholder="18.4" step="0.1" inputmode="decimal" oninput="autoNextOnInput(this,'f-gross',4)"></div>
     </div>
     <div id="hoyos-ronda-wrap" style="display:none;margin-top:18px">
       <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:12px">Golpes por hoyo</div>
@@ -672,10 +672,15 @@ async function doLogin(){
   try{
     const {data,error}=await supabaseClient.auth.signInWithPassword({email,password:pass});
     if(error)throw error;
-    // onAuthStateChange disparará SIGNED_IN y llamará onUserLoggedIn
+    if(data?.user){
+      // Llamar directamente — no esperar onAuthStateChange
+      await onUserLoggedIn(data.user);
+    }
   }catch(e){
     showAuthError('login-error',e.message==='Invalid login credentials'?'Email o contraseña incorrectos.':e.message);
-  }finally{btn.textContent='Entrar';btn.disabled=false;}
+    btn.textContent='Entrar';btn.disabled=false;
+  }
+  // No finally — onUserLoggedIn oculta la pantalla de login
 }
 
 async function doRegister(){
@@ -787,8 +792,10 @@ async function onUserLoggedIn(user){
     if(perfil&&perfil[0])nombre=perfil[0].nombre;
   }catch(e){}
   jugadorActivo={id:user.id,email:user.email,nombre};
+  // Resetear botón login por si quedó bloqueado
+  const bl=$('btn-login');if(bl){bl.textContent='Entrar';bl.disabled=false;}
   // Ocultar pantallas de auth
-  ['auth-login','auth-register','auth-reset'].forEach(s=>{
+  ['auth-login','auth-register','auth-reset','auth-new-password'].forEach(s=>{
     const el=document.getElementById(s);if(el)el.classList.add('hidden');
   });
   $('active-player-bar').classList.remove('hidden');
@@ -1069,8 +1076,9 @@ function buildHoyoInputs(campo){
   for(let i=0;i<18;i++){
     const h=campo.hoyos[i];const grid=i<9?go:gi;
     const cell=document.createElement('div');cell.className='hoyo-cell';
+    const nextGhId = h.numero < 18 ? 'gh-'+(h.numero+1) : 'btn-add';
     cell.innerHTML=`<div class="hoyo-num">${h.numero}<br><span style="color:var(--gold2);font-size:7px">P${h.par}</span><br><span style="color:var(--muted);font-size:7px">I${h.indice}</span></div>
-      <input class="hoyo-input" type="number" id="gh-${h.numero}" inputmode="numeric" min="1" max="15" placeholder="—" oninput="updateTotals()">`;
+      <input class="hoyo-input" type="text" inputmode="numeric" id="gh-${h.numero}" maxlength="2" placeholder="—" oninput="this.value=this.value.replace(/[^0-9]/g,'');updateTotals();golfShotInput(this,'${nextGhId}')">`;
     grid.appendChild(cell);
   }
 }
@@ -1251,6 +1259,25 @@ async function clearAll(){
 
 // ── COURSE HCP ───────────────────────────────────────────────────
 const KEY_PRE='golfhcp_pre_v6';
+
+// Auto-avance genérico: salta al siguiente campo cuando el valor está completo
+function autoNext(el, nextId){
+  const next = document.getElementById(nextId);
+  if(next){ next.focus(); next.select(); }
+}
+
+// Auto-avance por longitud máxima o valor completo
+function autoNextOnInput(el, nextId, maxLen){
+  if(el.value.replace('.','').length >= maxLen) autoNext(el, nextId);
+}
+
+// Golpes por hoyo (1-15): salta al siguiente tras 2 dígitos o valor 1-9
+function golfShotInput(el, nextId){
+  const v = parseInt(el.value);
+  if(el.value.length >= 2 || (el.value.length === 1 && v >= 1 && v <= 9)){
+    autoNext(el, nextId);
+  }
+}
 
 function hoyoParInput(i,prefix){
   const el=document.getElementById(prefix+'par-'+i);if(!el)return;
@@ -1540,7 +1567,7 @@ function buildEditHoyoInputs(campo,existingShots){
     for(let i=1+hi*9;i<=9+hi*9;i++){
       const h=campo.hoyos.find(h=>h.numero===i);const val=(existingShots&&existingShots[i-1]!=null)?existingShots[i-1]:'';
       html+=`<td style="padding:3px"><div style="text-align:center;font-size:7px;color:var(--gold2);margin-bottom:1px">H${i}</div><div style="text-align:center;font-size:6px;color:var(--muted)">P${h?h.par:'?'} I${h?h.indice:'?'}</div>
-        <input class="hoyo-input" style="width:38px" type="number" id="edit-gh-${i}" min="1" max="15" inputmode="numeric" value="${val}" oninput="updateEditTotals(${campo.id})"></td>`;
+        <input class="hoyo-input" style="width:38px" type="number" id="edit-gh-${i}" inputmode="numeric" maxlength="2" value="${val}" oninput="this.value=this.value.replace(/[^0-9]/g,'');updateEditTotals(${campo.id});golfShotInput(this,i<18?'edit-gh-'+(i+1):'btn-guardar-edit-ronda')"></td>`;
     }
     tr.innerHTML=html;tbody.appendChild(tr);
   });
@@ -1675,9 +1702,11 @@ async function init(){
         showScreen('auth-login');
       }
     }else if(event==='SIGNED_IN'){
-      // Si estamos en modo recovery, no hacer login normal
-      if(window._passwordRecoveryMode) return;
-      await onUserLoggedIn(session.user);
+      // doLogin llama onUserLoggedIn directamente.
+      // Aquí solo actuamos si NO hay jugadorActivo (ej: registro automático)
+      if(!jugadorActivo && session?.user){
+        await onUserLoggedIn(session.user);
+      }
     }else if(event==='SIGNED_OUT'||event==='USER_DELETED'){
       // Si jugadorActivo ya está null, el doLogout manual ya limpió
       if(jugadorActivo!==null){
