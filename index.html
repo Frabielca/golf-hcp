@@ -1557,10 +1557,10 @@ async function guardarEditRonda() {
   err.classList.remove('show');
 
   const showErr = msg => { err.textContent = msg; err.classList.add('show'); };
-  if (!nombre) { showErr('Completa el nombre del campo.'); return; }
+  // nombre ahora es un div read-only — leer textContent
+  const nombreFinal = ($('edit-r-nombre')?.textContent || nombre || '').trim().replace('—','').trim();
+  if (!nombreFinal) { showErr('Sin nombre de campo.'); return; }
   if (isNaN(gross)||gross<40||gross>220) { showErr('Golpes no válidos.'); return; }
-  if (isNaN(cr)||cr<55||cr>85) { showErr('CR no válido.'); return; }
-  if (isNaN(slope)||slope<55||slope>155) { showErr('Slope no válido.'); return; }
 
   // Shots desde los inputs de hoyos (si existen)
   let shots = null;
@@ -1582,7 +1582,7 @@ async function guardarEditRonda() {
   btn.textContent = 'Guardando…'; btn.disabled = true;
   try {
     const body = {
-      nombre_campo: nombre, fecha, gross, cr, slope, diferencial: diff,
+      nombre_campo: nombreFinal, fecha, gross, cr, slope, diferencial: diff,
       stableford: isNaN(stbl) ? null : stbl,
       hcp_idx: isNaN(hcpIdx) ? null : hcpIdx,
       shots: shots ? JSON.stringify(shots) : null,
