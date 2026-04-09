@@ -1359,7 +1359,9 @@ async function addRound() {
     }
     if (!allFilled) { toast('Introduce los golpes de todos los hoyos', true); return; }
     if (!isNaN(hcpIdx)) {
-      const stblR = calcStableford(hcpIdx, campo, shots, useCR, useSlope);
+      const fCR    = cr || campo?.cr;
+      const fSlope = slope || campo?.slope;
+      const stblR = calcStableford(hcpIdx, campo, shots, fCR, fSlope);
       if (stblR) stableford = stblR.total;
     }
   } else {
