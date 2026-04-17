@@ -1944,26 +1944,28 @@ function goTo(id, btn) {
 }
 
 // ── INIT ──────────────────────────────────────────────────────────────────
-// ── OCULTAR NAV EN SCROLL ────────────────────────────────────────────────
+// ── OCULTAR NAV EN SCROLL (touch) ────────────────────────────────────────
 (function() {
-  let lastY = 0, ticking = false;
-  window.addEventListener('scroll', function() {
-    if (!ticking) {
-      window.requestAnimationFrame(function() {
-        const nav = document.getElementById('main-nav');
-        if (!nav) { ticking = false; return; }
-        const y = window.scrollY || window.pageYOffset;
-        if (y < lastY || y <= 60) {
-          // Scroll hacia abajo o al inicio — mostrar nav
-          nav.classList.remove('nav-hidden');
-        } else {
-          // Scroll hacia arriba — ocultar nav
-          nav.classList.add('nav-hidden');
-        }
-        lastY = y;
-        ticking = false;
-      });
-      ticking = true;
+  let startY = 0;
+  const nav = () => document.getElementById('main-nav');
+  document.addEventListener('touchstart', function(e) {
+    startY = e.touches[0].clientY;
+  }, {passive: true});
+  document.addEventListener('touchmove', function(e) {
+    const n = nav(); if (!n) return;
+    const dy = e.touches[0].clientY - startY;
+    if (dy < -10) {
+      // Dedo sube → scroll hacia abajo → ocultar nav
+      n.classList.add('nav-hidden');
+    } else if (dy > 10) {
+      // Dedo baja → scroll hacia arriba → mostrar nav
+      n.classList.remove('nav-hidden');
+    }
+  }, {passive: true});
+  document.addEventListener('touchend', function() {
+    // Al soltar, si estamos cerca del inicio mostrar siempre
+    if ((window.scrollY || window.pageYOffset) <= 60) {
+      const n = nav(); if (n) n.classList.remove('nav-hidden');
     }
   }, {passive: true});
 })();
