@@ -1953,12 +1953,12 @@ function goTo(id, btn) {
         const nav = document.getElementById('main-nav');
         if (!nav) { ticking = false; return; }
         const y = window.scrollY || window.pageYOffset;
-        if (y > lastY && y > 60) {
-          // Scroll hacia abajo — ocultar nav
-          nav.classList.add('nav-hidden');
-        } else {
-          // Scroll hacia arriba o al inicio — mostrar nav
+        if (y < lastY || y <= 60) {
+          // Scroll hacia abajo o al inicio — mostrar nav
           nav.classList.remove('nav-hidden');
+        } else {
+          // Scroll hacia arriba — ocultar nav
+          nav.classList.add('nav-hidden');
         }
         lastY = y;
         ticking = false;
