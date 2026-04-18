@@ -192,13 +192,20 @@ body{padding-top:calc(44px + env(safe-area-inset-top,0px))}
 .score-val{font-family:'DM Mono',monospace;font-size:12px;font-weight:600;color:#fff;position:relative;z-index:1;line-height:1}
 /* Albatros: triángulo rojo */
 /* Estilos de score aplicados directamente al input */
-.score-albatros{background:#c0392b!important;border-color:#e05555!important;color:#fff!important;border-radius:0!important;clip-path:polygon(50% 0%,100% 100%,0% 100%)}
-.score-eagle{background:#e05555!important;border-color:#e05555!important;color:#fff!important;border-radius:50%!important}
-.score-birdie{background:rgba(224,85,85,.15)!important;border:2px solid #e05555!important;color:#fff!important;border-radius:50%!important}
-.score-par{background:rgba(59,130,246,.15)!important;border:2px solid #3b82f6!important;color:#fff!important;border-radius:50%!important}
-.score-bogey{background:rgba(255,255,255,.07)!important;border:2px solid var(--cream)!important;color:var(--cream)!important;border-radius:3px!important}
-.score-doble{background:rgba(255,255,255,.07)!important;border:2px solid var(--cream)!important;color:var(--cream)!important;border-radius:3px!important;outline:2px solid var(--cream)!important;outline-offset:2px!important}
-.score-peor{background:#111!important;border:1px solid rgba(255,255,255,.3)!important;color:rgba(255,255,255,.7)!important;border-radius:2px!important}
+/* Base: todos los inputs con recuadro blanco */
+.score-eagle,.score-birdie,.score-par,.score-bogey,.score-doble,.score-peor{border:2px solid #fff!important;border-radius:3px!important;color:#fff!important}
+/* Eagle: círculo amarillo relleno dentro del recuadro */
+.score-eagle{box-shadow:inset 0 0 0 6px #c9a84c!important;background:rgba(201,168,76,.2)!important}
+/* Birdie: círculo rojo relleno dentro del recuadro */
+.score-birdie{box-shadow:inset 0 0 0 6px #e05555!important;background:rgba(224,85,85,.2)!important}
+/* Par: círculo azul borde dentro del recuadro */
+.score-par{box-shadow:inset 0 0 0 2px #3b82f6!important;background:rgba(59,130,246,.1)!important;border-color:#fff!important}
+/* Bogey: recuadro blanco fondo gris */
+.score-bogey{background:rgba(180,180,180,.2)!important}
+/* Doble bogey: doble recuadro fondo gris */
+.score-doble{background:rgba(180,180,180,.2)!important;outline:2px solid #fff!important;outline-offset:2px!important}
+/* Peor: recuadro blanco fondo negro */
+.score-peor{background:#111!important;border-color:rgba(255,255,255,.6)!important}
 </style>
 </head>
 <body>
@@ -1331,8 +1338,7 @@ function buildHoyoInputs(campo) {
 function getScoreClass(shots, par) {
   if (!shots || isNaN(shots) || !par) return '';
   const diff = shots - par;
-  if (diff <= -3) return 'score-albatros';
-  if (diff === -2) return 'score-eagle';
+  if (diff <= -2) return 'score-eagle';
   if (diff === -1) return 'score-birdie';
   if (diff === 0)  return 'score-par';
   if (diff === 1)  return 'score-bogey';
@@ -1350,7 +1356,7 @@ function renderScoreSymbols(prefix, hoyos, shots) {
     const el = document.getElementById(inputId); if (!el) continue;
     const cls = getScoreClass(s, hoyo.par);
     // Resetear clases de score
-    el.classList.remove('score-albatros','score-eagle','score-birdie','score-par','score-bogey','score-doble','score-peor');
+    el.classList.remove('score-eagle','score-birdie','score-par','score-bogey','score-doble','score-peor');
     if (cls) el.classList.add(cls);
   }
 }
