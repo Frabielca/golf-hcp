@@ -1392,13 +1392,14 @@ function updateTotals() {
   }
   $('total-golpes').textContent = complete ? total : '—';
   const hcp = parseFloat($('f-hcp-idx').value);
+  // Aplicar símbolos en tiempo real (parcial o completo)
+  if (campo) renderScoreSymbols('gh-', campo.hoyos, shots);
   if (complete && campo && !isNaN(hcp)) {
     const fCR = parseFloat($('f-cr').value);
     const fSlope = parseFloat($('f-slope').value);
     const stbl = calcStableford(hcp, campo, shots, fCR, fSlope);
     $('preview-stbl').textContent = stbl ? stbl.total + ' pts' : '—';
     renderHoleDots('gh-', stbl?.byHole || null);
-    renderScoreSymbols('gh-', campo.hoyos, shots);
   } else {
     $('preview-stbl').textContent = '—';
     renderHoleDots('gh-', null);
@@ -1624,6 +1625,8 @@ function recalcEditStbl() {
     if (isNaN(v) || v < 1) { complete = false; shots.push(null); }
     else { total += v; shots.push(v); }
   }
+  // Símbolos en tiempo real
+  if (campo) renderScoreSymbols('edit-', campo.hoyos, shots);
   $('edit-total').textContent = complete ? total : '—';
   if (complete) {
     $('edit-r-gross').value = total;
