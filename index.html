@@ -199,6 +199,16 @@ body{padding-top:calc(44px + env(safe-area-inset-top,0px))}
 .s-bogey{border-radius:50%!important;background:#2d5a27!important;border:2px solid #4a8c3f!important;color:#fff!important}
 .s-doble{border-radius:50%!important;background:rgba(150,150,150,.4)!important;border:2px solid rgba(200,200,200,.8)!important;color:#fff!important;outline:2px solid rgba(200,200,200,.8)!important;outline-offset:3px!important}
 .s-peor{border-radius:3px!important;background:#000!important;border:2px solid rgba(255,255,255,.5)!important;color:#fff!important}
+
+#nav-menu-wrap{position:relative;flex:1}
+#nav-menu-btn{width:100%;background:none;border:none;color:var(--muted);padding:9px 2px 7px;font-size:8px;letter-spacing:1px;text-transform:uppercase;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;font-family:'DM Mono',monospace;min-height:52px}
+#nav-menu-btn svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+#nav-dropdown{display:none;position:absolute;bottom:100%;right:0;background:#0f1a0f;border:1px solid rgba(201,168,76,.3);border-radius:8px;min-width:150px;overflow:hidden;z-index:200;box-shadow:0 -4px 20px rgba(0,0,0,.5)}
+#nav-dropdown.open{display:block}
+#nav-dropdown button{display:block;width:100%;background:none;border:none;border-bottom:1px solid var(--border);color:var(--cream);font-family:'DM Mono',monospace;font-size:11px;letter-spacing:1px;padding:14px 16px;text-align:left;cursor:pointer}
+#nav-dropdown button:last-child{border-bottom:none}
+#nav-dropdown button:active{background:rgba(255,255,255,.05)}
+#nav-dropdown .dd-danger{color:var(--red)}
 </style>
 </head>
 <body>
@@ -261,16 +271,7 @@ body{padding-top:calc(44px + env(safe-area-inset-top,0px))}
 
 <!-- PLAYER BAR -->
 <div id="player-bar" class="hidden">
-  <div>
-    <div style="display:flex;align-items:baseline;gap:6px">
-      <span style="font-size:12px;letter-spacing:2px;text-transform:uppercase;color:var(--muted)">Golfista:</span>
-      <div class="pb-name" id="pb-name">—</div>
-    </div>
-  </div>
-  <div style="display:flex;gap:6px">
-    <button class="pb-btn" id="btn-clave">🔑 Clave</button>
-    <button class="pb-btn" id="btn-salir">Salir</button>
-  </div>
+  <div class="pb-name" id="pb-name">—</div>
 </div>
 
 <!-- MODAL: CAMBIAR CONTRASEÑA -->
@@ -632,6 +633,16 @@ body{padding-top:calc(44px + env(safe-area-inset-top,0px))}
   <button onclick="goTo('formula',this)" id="nav-formula">
     <svg viewBox="0 0 24 24"><path d="M9 3H5a2 2 0 0 0-2 2v4m6-6h10a2 2 0 0 1 2 2v4M9 3v18m0 0h10a2 2 0 0 0 2-2V9M9 21H5a2 2 0 0 1-2-2V9m0 0h18"/></svg>Info
   </button>
+  <div id="nav-menu-wrap">
+    <button id="nav-menu-btn" onclick="toggleNavMenu()">
+      <svg viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="19" cy="12" r="1.5" fill="currentColor" stroke="none"/></svg>
+      ···
+    </button>
+    <div id="nav-dropdown">
+      <button id="dd-clave" onclick="openClave()">🔑 Cambiar clave</button>
+      <button id="dd-salir" class="dd-danger" onclick="doLogoutFromMenu()">⏏ Salir</button>
+    </div>
+  </div>
 </nav>
 
 <script>
@@ -2039,6 +2050,32 @@ function goTo(id, btn) {
   }, {passive: true});
 })();
 
+function toggleNavMenu() {
+  const dd = $('nav-dropdown');
+  if (!dd) return;
+  dd.classList.toggle('open');
+  // Cerrar al tocar fuera
+  if (dd.classList.contains('open')) {
+    setTimeout(() => {
+      document.addEventListener('touchstart', closeNavMenu, {once:true, passive:true});
+      document.addEventListener('click', closeNavMenu, {once:true});
+    }, 50);
+  }
+}
+function closeNavMenu() {
+  $('nav-dropdown')?.classList.remove('open');
+}
+function openClave() {
+  closeNavMenu();
+  $('clave-1').value = ''; $('clave-2').value = '';
+  $('clave-err').classList.remove('show'); $('clave-ok').classList.remove('show');
+  $('modal-clave').classList.remove('hidden');
+}
+function doLogoutFromMenu() {
+  closeNavMenu();
+  doLogout();
+}
+
 async function init() {
   $('f-date').value = new Date().toISOString().split('T')[0];
 
@@ -2056,20 +2093,8 @@ async function init() {
     b.addEventListener('touchstart', function() { this._touchMoved = false; }, {passive:true});
     b.addEventListener('touchmove', function() { this._touchMoved = true; }, {passive:true});
   })();
-  $('btn-salir').addEventListener('click', e => { e.preventDefault(); doLogout(); });
-  $('btn-salir').addEventListener('touchend', e => { e.preventDefault(); doLogout(); }, {passive:false});
-  $('btn-clave').addEventListener('click', e => {
-    e.preventDefault();
-    $('clave-1').value = ''; $('clave-2').value = '';
-    $('clave-err').classList.remove('show'); $('clave-ok').classList.remove('show');
-    $('modal-clave').classList.remove('hidden');
-  });
-  $('btn-clave').addEventListener('touchend', e => {
-    e.preventDefault();
-    $('clave-1').value = ''; $('clave-2').value = '';
-    $('clave-err').classList.remove('show'); $('clave-ok').classList.remove('show');
-    $('modal-clave').classList.remove('hidden');
-  }, {passive:false});
+  // btn-salir movido al menú ··· del nav
+  // btn-clave movido al menú ··· del nav
 
   // Auth state — solo INITIAL_SESSION para recuperar sesión al arrancar
   // doLogin y doLogout gestionan el resto manualmente
