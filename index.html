@@ -608,7 +608,7 @@ body{padding-top:calc(44px + env(safe-area-inset-top,0px))}
     <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M2 12h3M19 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12"/></svg>Inicio
   </button>
   <button onclick="goTo('nueva',this)" id="nav-nueva">
-    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>Nueva
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>Ronda
   </button>
   <button onclick="goTo('historial',this)" id="nav-historial">
     <svg viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>Historial
@@ -1026,8 +1026,12 @@ function renderHistory() {
     sorted.slice(0, res.numBest).forEach(r => usedSet.add(r.id));
   }
   const totalRounds = state.rounds.length;
-  const rows = [...state.rounds].reverse().map((r, idx) => {
-    const rowNum = totalRounds - idx;
+  const sortedRounds = [...state.rounds].sort((a, b) => {
+    const da = a.date || '', db = b.date || '';
+    return db.localeCompare(da); // decreciente por fecha
+  });
+  const rows = sortedRounds.map((r, idx) => {
+    const rowNum = idx + 1;
     const used = usedSet.has(r.id);
     const barraDot = r.barra_color
       ? `<span class="barra-dot" style="background:${BARRA_COLORS[r.barra_color]}"></span>`
