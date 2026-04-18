@@ -1907,6 +1907,17 @@ async function guardarEditCampo() {
       if (be) throw be;
     }
 
+    // Actualizar nombre en rondas del estado local y en BD
+    const nombreAnterior = state.campos.find(c => c.id === id)?.nombre;
+    if (nombreAnterior && nombreAnterior !== nombre) {
+      // Actualizar en BD todas las rondas que tenían el nombre anterior
+      await sb.from('rondas')
+        .update({ nombre_campo: nombre })
+        .eq('campo_id', id)
+        .eq('user_id', uid);
+      // Actualizar en estado local
+      state.rounds.forEach(r => { if (r.campo_id === id) r.name = nombre; });
+    }
     cerrarModal('modal-campo');
     await loadData();
     toast('✓ Campo actualizado');
