@@ -1665,7 +1665,10 @@ async function guardarEditRonda() {
 }
 
 async function delRound(id) {
-  if (!confirm('¿Eliminar esta ronda?')) return;
+  const r = state.rounds.find(r => r.id === id);
+  const nombre = r?.name || 'Campo desconocido';
+  const fecha = r?.date ? (d => d[2]+'/'+d[1]+'/'+d[0])(r.date.split('-')) : '—';
+  if (!confirm(`¿Eliminar ronda\n${nombre} · ${fecha}?`)) return;
   try {
     const { error } = await sb.from('rondas').delete().eq('id', id);
     if (error) throw error;
