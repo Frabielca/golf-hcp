@@ -685,6 +685,7 @@ let state = {
 
 // ── HELPERS ──────────────────────────────────────────────────────────────
 const $ = id => document.getElementById(id);
+function setVal(id, v) { const el = $(id); if (el) el.value = (v == null ? '' : v); }
 let _toastTimer = null;
 function toast(msg, err=false) {
   const el = $('toast');
