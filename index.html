@@ -192,20 +192,14 @@ body{padding-top:calc(44px + env(safe-area-inset-top,0px))}
 .score-val{font-family:'DM Mono',monospace;font-size:12px;font-weight:600;color:#fff;position:relative;z-index:1;line-height:1}
 /* Albatros: triángulo rojo */
 /* Estilos de score aplicados directamente al input */
-/* Base: todos los inputs con recuadro blanco */
-.score-eagle,.score-birdie,.score-par,.score-bogey,.score-doble,.score-peor{border:2px solid #fff!important;border-radius:3px!important;color:#fff!important}
-/* Eagle: círculo amarillo relleno dentro del recuadro */
-.score-eagle{box-shadow:inset 0 0 0 6px #c9a84c!important;background:rgba(201,168,76,.2)!important}
-/* Birdie: círculo rojo relleno dentro del recuadro */
-.score-birdie{box-shadow:inset 0 0 0 6px #e05555!important;background:rgba(224,85,85,.2)!important}
-/* Par: círculo azul borde dentro del recuadro */
-.score-par{box-shadow:inset 0 0 0 2px #3b82f6!important;background:rgba(59,130,246,.1)!important;border-color:#fff!important}
-/* Bogey: recuadro blanco fondo gris */
-.score-bogey{background:rgba(180,180,180,.2)!important}
-/* Doble bogey: doble recuadro fondo gris */
-.score-doble{background:rgba(180,180,180,.2)!important;outline:2px solid #fff!important;outline-offset:2px!important}
-/* Peor: recuadro blanco fondo negro */
-.score-peor{background:#111!important;border-color:rgba(255,255,255,.6)!important}
+.score-sym{display:flex;align-items:center;justify-content:center;width:28px;height:28px;margin:0 auto 2px;font-family:'DM Mono',monospace;font-size:11px;font-weight:600;color:#fff;position:relative;border:2px solid #fff;border-radius:3px;background:rgba(255,255,255,.06)}
+.score-sym.s-eagle{border-radius:50%;background:#c9a84c;border-color:#c9a84c}
+.score-sym.s-birdie{border-radius:50%;background:#e05555;border-color:#e05555}
+.score-sym.s-par{border-radius:50%;background:transparent;border-color:#3b82f6}
+.score-sym.s-bogey{border-radius:3px;background:rgba(180,180,180,.25);border-color:#fff}
+.score-sym.s-doble{border-radius:3px;background:rgba(180,180,180,.25);border-color:#fff;outline:2px solid #fff;outline-offset:2px}
+.score-sym.s-peor{border-radius:3px;background:#000;border-color:rgba(255,255,255,.5)}
+.score-sym.s-empty{border:1px dashed rgba(255,255,255,.2);background:transparent}
 </style>
 </head>
 <body>
@@ -1325,8 +1319,9 @@ function buildHoyoInputs(campo) {
         <span style="color:var(--gold2);font-size:7px">P${h.par}</span><br>
         <span style="color:var(--muted);font-size:7px">${h.indice}</span>
       </div>
-      <div id="gh-rdots-${h.numero}" style="height:6px;display:flex;gap:1px;align-items:center;justify-content:center"></div>
-      <div id="gh-dots-${h.numero}" style="height:6px;display:flex;gap:1px;align-items:center;justify-content:center"></div>
+      <div id="gh-rdots-${h.numero}" style="height:5px;display:flex;gap:1px;align-items:center;justify-content:center"></div>
+      <div id="gh-score-sym-${h.numero}" class="score-sym s-empty"></div>
+      <div id="gh-dots-${h.numero}" style="height:5px;display:flex;gap:1px;align-items:center;justify-content:center"></div>
       <input class="hoyo-input" type="text" inputmode="numeric" id="gh-${h.numero}"
         maxlength="2" placeholder="—"
         oninput="this.value=this.value.replace(/[^0-9]/g,'');updateTotals();golfShot(this,'${nextId}')">`;
@@ -1346,18 +1341,18 @@ function getScoreClass(shots, par) {
   return 'score-peor';
 }
 
+const SCORE_CLS = {'score-eagle':'s-eagle','score-birdie':'s-birdie','score-par':'s-par','score-bogey':'s-bogey','score-doble':'s-doble','score-peor':'s-peor'};
 function renderScoreSymbols(prefix, hoyos, shots) {
   const sorted = [...hoyos].sort((a,b) => a.numero - b.numero);
   for (let i = 0; i < 18; i++) {
     const hoyo = sorted[i]; if (!hoyo) continue;
     const s = shots[i];
     const num = hoyo.numero;
-    const inputId = prefix === 'edit-' ? 'edit-gh-' + num : 'gh-' + num;
-    const el = document.getElementById(inputId); if (!el) continue;
+    const symId = prefix === 'edit-' ? 'edit-score-sym-' + num : 'gh-score-sym-' + num;
+    const el = document.getElementById(symId); if (!el) continue;
     const cls = getScoreClass(s, hoyo.par);
-    // Resetear clases de score
-    el.classList.remove('score-eagle','score-birdie','score-par','score-bogey','score-doble','score-peor');
-    if (cls) el.classList.add(cls);
+    el.className = 'score-sym ' + (s && cls ? SCORE_CLS[cls] : 's-empty');
+    el.textContent = s || '';
   }
 }
 
@@ -1582,8 +1577,9 @@ function buildEditHoyos(campo, existing) {
         <span style="color:var(--gold2);font-size:7px">P${h?.par||'?'}</span><br>
         <span style="color:var(--muted);font-size:7px">${h?.indice||'?'}</span>
       </div>
-      <div id="edit-rdots-${i}" style="height:6px;display:flex;gap:1px;align-items:center;justify-content:center"></div>
-      <div id="edit-dots-${i}" style="height:6px;display:flex;gap:1px;align-items:center;justify-content:center"></div>
+      <div id="edit-rdots-${i}" style="height:5px;display:flex;gap:1px;align-items:center;justify-content:center"></div>
+      <div id="edit-score-sym-${i}" class="score-sym s-empty"></div>
+      <div id="edit-dots-${i}" style="height:5px;display:flex;gap:1px;align-items:center;justify-content:center"></div>
       <input class="hoyo-input" type="text" inputmode="numeric" id="edit-gh-${i}"
         maxlength="2" value="${val}"
         oninput="this.value=this.value.replace(/[^0-9]/g,'');recalcEditStbl();golfShot(this,'${nextId}')">`;
