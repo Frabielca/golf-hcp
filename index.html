@@ -1180,7 +1180,7 @@ function calcCHCP() {
   const cr    = parseFloat($('p-cr').value);
   const slope = parseFloat($('p-slope').value);
   const par   = parseFloat($('p-par').value);
-  const name  = $('p-name').value.trim();
+  const name  = state.user?.nombre || '';
   const num   = $('chcp-num');
   const det   = $('chcp-detail');
   const pname = $('chcp-name');
@@ -1212,7 +1212,7 @@ function resetCHCP() {
 }
 
 function limpiarInicio() {
-  $('p-name').value = ''; $('p-hcp').value = '';
+  $('p-hcp').value = '';
   $('p-par').value = ''; $('p-cr').value = ''; $('p-slope').value = '';
   if ($('p-campo')) $('p-campo').value = '';
   if ($('p-barra')) { $('p-barra').value = ''; $('p-barra').style.display = ''; }
@@ -1243,7 +1243,7 @@ function savePre() {
   const key = PRE_KEY + '_' + (state.user?.id || 'anon');
   try {
     localStorage.setItem(key, JSON.stringify({
-      name: $('p-name').value, hcp: $('p-hcp').value,
+      name: state.user?.nombre || '', hcp: $('p-hcp').value,
       par: $('p-par').value, cr: $('p-cr').value, slope: $('p-slope').value,
       campoId: $('p-campo')?.value || '', barra: $('p-barra')?.value || ''
     }));
@@ -1255,7 +1255,7 @@ function loadPre() {
   try {
     const p = JSON.parse(localStorage.getItem(key));
     if (!p) return;
-    if (p.name) $('p-name').value = p.name;
+    // p.name ya no se usa (campo eliminado)
     if (p.campoId && $('p-campo')) {
       $('p-campo').value = p.campoId;
       onCampoAntes();
