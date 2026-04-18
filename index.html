@@ -1147,6 +1147,7 @@ function onCampoAntes() {
   const aviso = $('p-barra-aviso');
   if (campo) {
     $('p-par').value = campo.par_total || '';
+    const parDisp = $('p-par-disp'); if (parDisp) parDisp.textContent = campo.par_total || '—';
     wrap.style.display = 'block';
     if (campo.barras?.length > 0) {
       aviso.style.display = 'none';
