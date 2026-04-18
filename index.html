@@ -1139,12 +1139,6 @@ function renderSelectorCampos() {
 
 // ── INICIO / COURSE HCP ───────────────────────────────────────────────────
 function onCampoAntes() {
-  if (!state.campos.length) {
-    if (confirm('No tienes campos creados.\n\n¿Ir a Campos para crear uno?')) {
-      goTo('campos', $('nav-campos'));
-    }
-    return;
-  }
   const id = parseInt($('p-campo').value);
   const campo = state.campos.find(c => c.id === id);
   const wrap = $('p-barra-wrap');
@@ -2023,6 +2017,16 @@ function goTo(id, btn) {
   $('page-' + id).classList.add('active');
   if (btn) btn.classList.add('active');
   window.scrollTo(0,0);
+  if (id === 'inicio') {
+    // Avisar si no hay campos creados
+    if (state.user && !state.campos.length) {
+      setTimeout(() => {
+        if (confirm('No tienes campos creados.\n\n¿Ir a Campos para crear uno?')) {
+          goTo('campos', $('nav-campos'));
+        }
+      }, 300);
+    }
+  }
   if (id === 'nueva') {
     $('f-date').value = new Date().toISOString().split('T')[0];
     // Importar HCP Index desde Inicio (p-hcp) — tiene prioridad sobre el calculado
