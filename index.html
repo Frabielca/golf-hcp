@@ -639,8 +639,8 @@ body{padding-top:calc(44px + env(safe-area-inset-top,0px))}
       ···
     </button>
     <div id="nav-dropdown">
-      <button id="dd-clave" onclick="openClave()">🔑 Cambiar clave</button>
-      <button id="dd-salir" class="dd-danger" onclick="doLogoutFromMenu()">⏏ Salir</button>
+      <button id="dd-clave" type="button">🔑 Cambiar clave</button>
+      <button id="dd-salir" class="dd-danger" type="button">⏏ Salir</button>
     </div>
   </div>
 </nav>
@@ -2080,6 +2080,18 @@ async function init() {
   $('f-date').value = new Date().toISOString().split('T')[0];
 
   // Botones de la barra de usuario
+  // Menú ··· dropdown
+  (function() {
+    const addTap = (id, fn) => {
+      const el = $(id); if (!el) return;
+      el.addEventListener('touchend', e => { e.preventDefault(); e.stopPropagation(); fn(); }, {passive:false});
+      el.addEventListener('click', e => { e.stopPropagation(); fn(); });
+    };
+    addTap('nav-menu-btn', toggleNavMenu);
+    addTap('dd-clave', openClave);
+    addTap('dd-salir', doLogoutFromMenu);
+  })();
+
   // btn-add: múltiples handlers para máxima compatibilidad iOS
   (function() {
     const b = $('btn-add');
