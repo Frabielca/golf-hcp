@@ -1917,15 +1917,7 @@ async function guardarEditRonda() {
       shots.push(v);
     }
     if (!allFilled) {
-      for (let i = saveStartI; i <= saveEndI; i++) {
-        const el = $('edit-gh-' + i);
-        if (el && (!el.value || isNaN(parseInt(el.value)) || parseInt(el.value) < 1)) {
-          el.classList.add('err');
-          setTimeout(() => el.classList.remove('err'), 3000);
-        }
-      }
-      const errEl = $('edit-r-err');
-      if (errEl) { errEl.textContent = '⚠️ Completa los golpes de todos los hoyos'; errEl.classList.add('show'); }
+      toast('⚠️ Completa los golpes de todos los hoyos', true);
       return;
     }
   }
