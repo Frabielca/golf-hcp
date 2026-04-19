@@ -217,11 +217,78 @@ nav.nav-hidden{transform:translateY(100%)}
 
 
 .hist-table .col-fecha,.hist-table .col-campo,.hist-table .col-campo-hdr{background:#233723!important}
+
+#guide-screen{position:fixed;inset:0;background:#1a2f1a;z-index:8400;display:flex;flex-direction:column;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:env(safe-area-inset-top,0px) 0 0}
+#guide-screen.hidden{display:none}
+.guide-hero{text-align:center;padding:32px 24px 24px}
+.guide-logo{font-family:'Playfair Display',serif;font-size:36px;font-weight:900;color:#fff;line-height:1}
+.guide-logo em{color:#c9a84c;font-style:italic}
+.guide-sub{font-size:8px;letter-spacing:3px;text-transform:uppercase;color:#7bc67a;margin-top:6px;opacity:.8}
+.guide-tagline{font-size:12px;color:rgba(255,255,255,.5);margin-top:10px;letter-spacing:.5px}
+.guide-sections{padding:0 20px 24px;display:flex;flex-direction:column;gap:12px}
+.guide-card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:14px 16px}
+.guide-card-title{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:#c9a84c;margin-bottom:8px}
+.guide-card-body{font-size:11px;color:rgba(255,255,255,.65);line-height:1.7}
+.guide-card-body li{margin-bottom:4px;padding-left:10px;position:relative}
+.guide-card-body li::before{content:'⛳';position:absolute;left:-4px;font-size:9px}
+.guide-footer{padding:16px 20px calc(env(safe-area-inset-bottom,0px) + 20px);text-align:center}
+.guide-btn{width:100%;background:linear-gradient(135deg,#c9a84c,#e8c96a);color:#1a2f1a;font-family:'DM Mono',monospace;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;border:none;border-radius:8px;padding:16px;cursor:pointer}
+.guide-skip{font-size:9px;color:rgba(255,255,255,.3);letter-spacing:1px;text-transform:uppercase;margin-top:12px;display:block;background:none;border:none;cursor:pointer;width:100%}
+
 </style>
 </head>
 <body>
 
 <!-- SPLASH -->
+
+<!-- GUÍA INICIAL -->
+<div id="guide-screen" class="hidden">
+  <div class="guide-hero">
+    <div class="guide-logo">Golf <em>HCP</em></div>
+    <div class="guide-sub">Calculadora WHS 2020</div>
+    <div class="guide-tagline">Tu handicap siempre actualizado</div>
+  </div>
+  <div class="guide-sections">
+    <div class="guide-card">
+      <div class="guide-card-title">⛳ Cómo empezar</div>
+      <ul class="guide-card-body">
+        <li>Ve a <strong style="color:#e8c96a">Campos</strong> y crea tu campo de golf con los 18 hoyos, par e índice de cada hoyo y las barras de salida con su CR y Slope.</li>
+        <li>En <strong style="color:#e8c96a">Inicio</strong> selecciona campo y barra para ver tu HCP de Campo y golpes objetivo.</li>
+        <li>En <strong style="color:#e8c96a">Ronda</strong> registra tus golpes hoyo a hoyo. La app calcula automáticamente tu diferencial y Stableford.</li>
+      </ul>
+    </div>
+    <div class="guide-card">
+      <div class="guide-card-title">📊 Handicap Index</div>
+      <ul class="guide-card-body">
+        <li>Se calcula con las <strong style="color:#e8c96a">últimas 20 rondas</strong> según el sistema WHS 2020.</li>
+        <li>Cuantas más rondas registres, más preciso será tu handicap.</li>
+        <li>Las rondas de <strong style="color:#e8c96a">9 hoyos</strong> se combinan en parejas antes de entrar en el cálculo.</li>
+      </ul>
+    </div>
+    <div class="guide-card">
+      <div class="guide-card-title">🏌️ Formatos de juego</div>
+      <ul class="guide-card-body">
+        <li><strong style="color:#e8c96a">100%</strong> — Juego informal entre amigos.</li>
+        <li><strong style="color:#e8c96a">95%</strong> — Medal play o Stableford oficial.</li>
+        <li><strong style="color:#e8c96a">85%</strong> — Four Ball (juego en parejas).</li>
+      </ul>
+    </div>
+    <div class="guide-card">
+      <div class="guide-card-title">💡 Símbolos en cada hoyo</div>
+      <ul class="guide-card-body">
+        <li><span class="s-eagle" style="display:inline-block;width:14px;height:14px;border-radius:50%;background:#c9a84c;vertical-align:middle;margin-right:4px"></span> Círculo amarillo = Eagle o mejor</li>
+        <li><span class="s-birdie" style="display:inline-block;width:14px;height:14px;border-radius:50%;background:#e05555;vertical-align:middle;margin-right:4px"></span> Círculo rojo = Birdie</li>
+        <li><span class="s-par" style="display:inline-block;width:14px;height:14px;border-radius:50%;background:#3b82f6;vertical-align:middle;margin-right:4px"></span> Círculo azul = Par</li>
+        <li><span class="s-bogey" style="display:inline-block;width:14px;height:14px;border-radius:50%;background:#2d5a27;vertical-align:middle;margin-right:4px"></span> Círculo verde = Bogey</li>
+      </ul>
+    </div>
+  </div>
+  <div class="guide-footer">
+    <button class="guide-btn" onclick="closeGuide()">¡ Empezar a jugar !</button>
+    <button class="guide-skip" onclick="closeGuide()">no mostrar de nuevo</button>
+  </div>
+</div>
+
 <div id="splash">
   <svg width="80" height="80" viewBox="0 0 512 512"><rect width="512" height="512" rx="112" fill="#1a2f1a"/><circle cx="256" cy="300" r="72" fill="#2d5a27" stroke="#4a8c3f" stroke-width="6"/><circle cx="256" cy="300" r="18" fill="#7bc67a"/><rect x="250" y="140" width="12" height="148" fill="#c9a84c" rx="3"/><path d="M262 148 L320 175 L262 202 Z" fill="#e8c96a"/></svg>
   <div id="splash-t">Golf <em>HCP</em></div>
@@ -461,7 +528,7 @@ nav.nav-hidden{transform:translateY(100%)}
       </div>
     </div>
   </div>
-  <div style="text-align:center;padding:12px 0 4px;font-size:9px;letter-spacing:2px;color:rgba(255,255,255,.2);font-family:'DM Mono',monospace">v1.23.08</div>
+  <div style="text-align:center;padding:12px 0 4px;font-size:9px;letter-spacing:2px;color:rgba(255,255,255,.2);font-family:'DM Mono',monospace">v1.23.09</div>
 </div>
 
 <!-- PAGE: NUEVA RONDA -->
@@ -2321,6 +2388,17 @@ function closeNavMenu() {
   doLogout();
 }
 
+
+function closeGuide() {
+  localStorage.setItem('golf_guide_seen', '1');
+  $('guide-screen').classList.add('hidden');
+}
+function maybeShowGuide() {
+  if (!localStorage.getItem('golf_guide_seen')) {
+    $('guide-screen').classList.remove('hidden');
+  }
+}
+
 async function init() {
   $('f-date').value = new Date().toISOString().split('T')[0];
 
@@ -2363,7 +2441,7 @@ async function init() {
   // Ocultar splash
   setTimeout(() => {
     const s = $('splash');
-    if (s) { s.classList.add('hide'); setTimeout(() => s.remove(), 500); }
+    if (s) { s.classList.add('hide'); setTimeout(() => { s.remove(); maybeShowGuide(); }, 500); }
   }, 600);
 }
 
