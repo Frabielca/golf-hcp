@@ -466,7 +466,7 @@ nav.nav-hidden{transform:translateY(100%)}
       </div>
     </div>
   </div>
-  <div style="text-align:center;padding:12px 0 4px;font-size:9px;letter-spacing:2px;color:rgba(255,255,255,.2);font-family:'DM Mono',monospace">v1.23.03</div>
+  <div style="text-align:center;padding:12px 0 4px;font-size:9px;letter-spacing:2px;color:rgba(255,255,255,.2);font-family:'DM Mono',monospace">v1.23.04</div>
 </div>
 
 <!-- PAGE: NUEVA RONDA -->
@@ -799,10 +799,37 @@ function calcDiff(gross, cr, slope) {
 
 
 
+function combineNineHoleRounds(rounds) {
+  // Separar rondas de 9 y 18 hoyos, ordenar por fecha
+  const r18 = rounds.filter(r => (r.num_hoyos || 18) === 18);
+  const r9  = [...rounds.filter(r => r.num_hoyos === 9)]
+                .sort((a, b) => (a.date||'').localeCompare(b.date||''));
+  const combined = [...r18];
+  // Emparejar rondas de 9 hoyos consecutivas
+  const pending9 = [];
+  for (let i = 0; i < r9.length; i++) {
+    if (i + 1 < r9.length) {
+      // Combinar dos rondas de 9H en un diferencial de 18H
+      const combinedDiff = Math.round((r9[i].diff + r9[i+1].diff) * 10) / 10;
+      combined.push({
+        ...r9[i],
+        diff: combinedDiff,
+        _combined9: [r9[i].id, r9[i+1].id],
+        _is9combined: true
+      });
+      i++; // saltar la siguiente (ya usada)
+    } else {
+      pending9.push(r9[i]); // queda sola, pendiente
+    }
+  }
+  return { combined, pending9Ids: pending9.map(r => r.id) };
+}
+
 function getHCP(rounds) {
-  const n = Math.min(rounds.length, 20);
+  const { combined } = combineNineHoleRounds(rounds);
+  const n = Math.min(combined.length, 20);
   if (!n) return null;
-  const sorted = rounds.slice(-20).map(r => r.diff).sort((a, b) => a - b);
+  const sorted = combined.slice(-20).map(r => r.diff).sort((a, b) => a - b);
   const [nb, adj] = WHS[n - 1];
   const avg = sorted.slice(0, nb).reduce((s, v) => s + v, 0) / nb;
   return { hcp: Math.round(Math.min((avg + adj) * 0.95, 54) * 10) / 10, numBest: nb };
@@ -1075,12 +1102,13 @@ function fmtDate(d) {
 function fmtD(d) { return (d >= 0 ? '+' : '') + d.toFixed(1).replace('.',','); }
 
 function renderResult() {
+  const { combined } = combineNineHoleRounds(state.rounds);
   const res = getHCP(state.rounds);
   $('r-hcp').textContent = res ? res.hcp.toFixed(1).replace('.',',') : '—';
   $('r-cat').textContent = res ? getCat(res.hcp) : 'Añade rondas para calcular';
   $('r-stats').style.display = res ? 'grid' : 'none';
   if (res) {
-    $('r-count').textContent = state.rounds.length;
+    $('r-count').textContent = combined.length; // rondas efectivas (9H combinadas)
     $('r-used').textContent  = res.numBest;
     $('r-best').textContent  = fmtD(Math.min(...state.rounds.map(r => r.diff)));
     $('p-hcp').value = res.hcp.toFixed(1);
@@ -1096,11 +1124,16 @@ function renderHistory() {
     return;
   }
   btn.style.display = '';
+  const { combined, pending9Ids } = combineNineHoleRounds(state.rounds);
+  const pending9Set = new Set(pending9Ids);
   const res = getHCP(state.rounds);
   const usedSet = new Set();
   if (res) {
-    const sorted = [...state.rounds].sort((a, b) => a.diff - b.diff);
-    sorted.slice(0, res.numBest).forEach(r => usedSet.add(r.id));
+    const sortedC = [...combined].sort((a, b) => a.diff - b.diff);
+    sortedC.slice(0, res.numBest).forEach(r => {
+      if (r._combined9) r._combined9.forEach(id => usedSet.add(id));
+      else usedSet.add(r.id);
+    });
   }
   const totalRounds = state.rounds.length;
   const sortedRounds = [...state.rounds].sort((a, b) => {
@@ -1111,7 +1144,10 @@ function renderHistory() {
     const rowNum = idx + 1;
     const used = usedSet.has(r.id);
     const vLabel = r.num_hoyos === 9 ? (r.vuelta === 2 ? ' 10-18' : ' 1-9') : '';
-    const nineTag = r.num_hoyos === 9 ? `<span style="background:rgba(59,130,246,.2);border:1px solid #3b82f6;color:#3b82f6;font-size:7px;padding:1px 4px;border-radius:8px;margin-left:4px">9H${vLabel}</span>` : '';
+    const isPending9 = pending9Set.has(r.id);
+    const nineTag = r.num_hoyos === 9
+      ? `<span style="background:${isPending9?'rgba(224,85,85,.15)':'rgba(59,130,246,.2)'};border:1px solid ${isPending9?'#e05555':'#3b82f6'};color:${isPending9?'#e05555':'#3b82f6'};font-size:7px;padding:1px 4px;border-radius:8px;margin-left:4px">9H${vLabel}${isPending9?' ⏳':''}</span>`
+      : '';
     const barraDot = r.barra_color
       ? `<span class="barra-dot" style="background:${BARRA_COLORS[r.barra_color]}"></span>`
       : '—';
