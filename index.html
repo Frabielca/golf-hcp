@@ -1924,8 +1924,8 @@ async function guardarEditRonda() {
 
   const diff = calcDiff(gross, cr, slope, saveNumHoyos);
   const btn = $('btn-guardar-ronda');
-  btn.textContent = 'Guardando…'; btn.disabled = true;
   try {
+    btn.textContent = 'Guardando…'; btn.disabled = true;
     const body = {
       nombre_campo: nombreFinal, fecha, gross, cr, slope, diferencial: diff,
       stableford: isNaN(stbl) ? null : stbl,
