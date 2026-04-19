@@ -1891,7 +1891,9 @@ async function guardarEditRonda() {
   if (campo?.hoyos?.length >= 9) {
     shots = [];
     let allFilled = true;
-    for (let i = 1; i <= saveNumHoyos; i++) {
+    const saveStartI = (saveNumHoyos === 9 && saveVuelta === 2) ? 10 : 1;
+    const saveEndI   = (saveNumHoyos === 9 && saveVuelta === 2) ? 18 : (saveNumHoyos === 9 ? 9 : 18);
+    for (let i = saveStartI; i <= saveEndI; i++) {
       const v = parseInt($('edit-gh-' + i)?.value);
       if (isNaN(v) || v < 1) { allFilled = false; break; }
       shots.push(v);
