@@ -1046,14 +1046,7 @@ async function loadData() {
     name: r.nombre_campo, date: r.fecha, diff: r.diferencial,
     stableford: r.stableford, campo_id: r.campo_id,
     hcp_idx: r.hcp_idx != null ? Number(r.hcp_idx) : null,
-    shots: (() => {
-      if (!r.shots) return null;
-      if (r.num_hoyos === 9) console.log('[loadData 9H] shots raw:', r.shots, typeof r.shots);
-      if (typeof r.shots === 'string') { try { return JSON.parse(r.shots); } catch(e) { return null; } }
-      if (Array.isArray(r.shots)) return r.shots;
-      if (typeof r.shots === 'object') return Object.values(r.shots);
-      return null;
-    })(),
+    shots: Array.isArray(r.shots) ? r.shots : (r.shots ? Object.values(r.shots) : null),
     barra_color: r.barra_color || null,
     juego_fmt: r.juego_fmt || 100,
     num_hoyos: r.num_hoyos || 18,
@@ -1650,7 +1643,7 @@ async function addRound() {
       diferencial: diff, user_id: uid, jugador: state.user.nombre,
       stableford, campo_id: campoId,
       hcp_idx: isNaN(hcpIdx) ? null : hcpIdx,
-      shots: shots ? JSON.stringify(shots) : null,
+      shots: shots && shots.length ? shots : null,
       barra_color: barraColor,
       juego_fmt: parseInt($('nueva-fmt')?.value || '100'),
       num_hoyos: numHoyos,
@@ -1914,7 +1907,7 @@ async function guardarEditRonda() {
       nombre_campo: nombreFinal, fecha, gross, cr, slope, diferencial: diff,
       stableford: isNaN(stbl) ? null : stbl,
       hcp_idx: isNaN(hcpIdx) ? null : hcpIdx,
-      shots: shots ? JSON.stringify(shots) : null,
+      shots: shots && shots.length ? shots : null,
       barra_color: barra,
       num_hoyos: saveNumHoyos,
       vuelta: saveNumHoyos === 9 ? saveVuelta : null
