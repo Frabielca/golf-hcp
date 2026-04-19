@@ -782,6 +782,8 @@ function calcDiff(gross, cr, slope) {
   return ((gross - cr) * 113) / slope;
 }
 
+
+
 function getHCP(rounds) {
   const n = Math.min(rounds.length, 20);
   if (!n) return null;
@@ -1057,7 +1059,6 @@ function renderResult() {
     $('r-count').textContent = state.rounds.length;
     $('r-used').textContent  = res.numBest;
     $('r-best').textContent  = fmtD(Math.min(...state.rounds.map(r => r.diff)));
-    // Actualizar HCP en pantalla Inicio
     $('p-hcp').value = res.hcp.toFixed(1);
     calcCHCP();
   }
