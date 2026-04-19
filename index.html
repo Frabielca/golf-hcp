@@ -793,8 +793,13 @@ function calcParTotal(prefix) {
 }
 
 // ── WHS / STABLEFORD ─────────────────────────────────────────────────────
-function calcDiff(gross, cr, slope) {
-  return ((gross - cr) * 113) / slope;
+function calcDiff(gross, cr, slope, numHoyos) {
+  if (numHoyos === 9) {
+    // Diferencial 9 hoyos: usar CR_9 = CR_18/2, NO doblar el resultado
+    // La combinación de dos diferenciales de 9H dará el equivalente de 18H
+    return Math.round(((gross - cr / 2) * 113 / slope) * 10) / 10;
+  }
+  return Math.round(((gross - cr) * 113 / slope) * 10) / 10;
 }
 
 
