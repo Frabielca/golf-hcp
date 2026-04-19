@@ -1743,6 +1743,8 @@ function abrirEditRonda(id) {
   const campo = r.campo_id ? state.campos.find(c => c.id === r.campo_id) : null;
   const editNumHoyos = r.num_hoyos || 18;
   const editVuelta   = r.vuelta || 1;
+  // DEBUG temporal
+  toast(`9H:${editNumHoyos} V:${editVuelta} shots:${JSON.stringify(r.shots?.slice?.(0,3))}`, false);
   // Mostrar Hoyos y Vuelta en modal
   const nHDisp = $('edit-r-num-hoyos-disp');
   if (nHDisp) nHDisp.textContent = editNumHoyos === 9
