@@ -93,7 +93,7 @@ select option{background:#1a2f1a}
 .toast.err{border-color:rgba(224,85,85,.4);color:var(--red)}
 
 /* ── MODAL ── */
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:500;display:flex;align-items:flex-end;justify-content:center}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:500;display:flex;align-items:flex-end;justify-content:center;touch-action:manipulation}
 .modal-overlay.hidden{display:none}
 .modal{background:#1a2f1a;border-top:1px solid var(--border);border-radius:12px 12px 0 0;padding:24px 18px calc(env(safe-area-inset-bottom,0px) + 24px);width:100%;max-width:600px;max-height:90vh;overflow-y:auto}
 .modal-title{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:18px}
@@ -141,7 +141,7 @@ select option{background:#1a2f1a}
 .hoyo-grid{display:grid;grid-template-columns:repeat(9,1fr);gap:6px;margin-bottom:10px}
 .hoyo-cell{display:flex;flex-direction:column;gap:4px;align-items:center}
 .hoyo-num{font-size:8px;color:var(--muted);letter-spacing:1px;text-align:center}
-.hoyo-input{background:rgba(255,255,255,.07);border:1px solid var(--border);border-radius:4px;color:#fff;font-family:'DM Mono',monospace;font-size:13px;padding:6px 3px;text-align:center;width:100%;-webkit-appearance:none;outline:none}
+.hoyo-input{background:rgba(255,255,255,.07);border:1px solid var(--border);border-radius:4px;color:#fff;font-family:'DM Mono',monospace;font-size:13px;padding:6px 3px;text-align:center;width:100%;-webkit-appearance:none;outline:none;touch-action:manipulation}
 .hoyo-input:focus{border-color:var(--gold)}
 .hoyo-label{font-size:7px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);text-align:center;margin-bottom:2px}
 .hoyo-section{margin-bottom:8px}
@@ -1917,7 +1917,7 @@ async function guardarEditRonda() {
       shots.push(v);
     }
     if (!allFilled) {
-      setTimeout(() => toast('⚠️ Completa los golpes de todos los hoyos', true), 100);
+      toast('⚠️ Completa los golpes de todos los hoyos', true);
       return;
     }
   }
