@@ -466,7 +466,7 @@ nav.nav-hidden{transform:translateY(100%)}
       </div>
     </div>
   </div>
-  <div style="text-align:center;padding:12px 0 4px;font-size:9px;letter-spacing:2px;color:rgba(255,255,255,.2);font-family:'DM Mono',monospace">v1.23.04</div>
+  <div style="text-align:center;padding:12px 0 4px;font-size:9px;letter-spacing:2px;color:rgba(255,255,255,.2);font-family:'DM Mono',monospace">v1.23.05</div>
 </div>
 
 <!-- PAGE: NUEVA RONDA -->
@@ -1146,7 +1146,7 @@ function renderHistory() {
     const vLabel = r.num_hoyos === 9 ? (r.vuelta === 2 ? ' 10-18' : ' 1-9') : '';
     const isPending9 = pending9Set.has(r.id);
     const nineTag = r.num_hoyos === 9
-      ? `<span style="background:${isPending9?'rgba(224,85,85,.15)':'rgba(59,130,246,.2)'};border:1px solid ${isPending9?'#e05555':'#3b82f6'};color:${isPending9?'#e05555':'#3b82f6'};font-size:7px;padding:1px 4px;border-radius:8px;margin-left:4px">9H${vLabel}${isPending9?' ⏳':''}</span>`
+      ? `<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${isPending9?'#e05555':'#3b82f6'};margin-left:5px;vertical-align:middle;flex-shrink:0" title="9 hoyos${vLabel}${isPending9?' — pendiente de combinar':''}"></span>`
       : '';
     const barraDot = r.barra_color
       ? `<span class="barra-dot" style="background:${BARRA_COLORS[r.barra_color]}"></span>`
@@ -1179,7 +1179,11 @@ function renderHistory() {
     </tr></thead>
     <tbody>${rows}</tbody>
   </table></div>
-  <div style="margin-top:8px;font-size:9px;color:var(--muted);text-align:center"><span class="used-badge" style="margin-right:6px;vertical-align:middle">✓</span>HCP✓ = diferencial usado en el cálculo</div>`;
+  <div style="margin-top:8px;font-size:9px;color:var(--muted);display:flex;flex-direction:column;gap:4px;align-items:center;text-align:center">
+    <div><span class="used-badge" style="margin-right:6px;vertical-align:middle">✓</span>HCP✓ = diferencial usado en el cálculo</div>
+    <div><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#3b82f6;margin-right:6px;vertical-align:middle"></span>Ronda de 9 hoyos combinada</div>
+    <div><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#e05555;margin-right:6px;vertical-align:middle"></span>Ronda de 9 hoyos pendiente de combinar</div>
+  </div>`;
 }
 
 function renderCampos() {
