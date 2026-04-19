@@ -1770,7 +1770,7 @@ function abrirEditRonda(id) {
         existingShots = Object.values(r.shots);
       }
     }
-    console.log('[editRonda] shots:', existingShots, 'numH:', editNumHoyos, 'vuelta:', editVuelta);
+
     buildEditHoyos(campo, existingShots, editNumHoyos, editVuelta);
     // Aplicar símbolos y dots a los inputs ya rellenos
     setTimeout(() => {
