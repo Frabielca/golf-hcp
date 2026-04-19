@@ -471,30 +471,44 @@ nav.nav-hidden{transform:translateY(100%)}
 <div class="page" id="page-nueva">
   <div class="card">
     <div class="card-title" style="margin-bottom:10px">Nueva Ronda</div>
-    <div class="field" style="margin-bottom:12px">
-      <label>Campo</label>
-      <select id="f-campo" onchange="onCampoChange()">
-        <option value="">— Selecciona un campo —</option>
-      </select>
+    <input type="hidden" id="f-par-total">
+    <div class="fields f2" style="margin-bottom:6px;gap:6px">
+      <div class="field" style="gap:3px">
+        <label>Campo</label>
+        <select id="f-campo" onchange="onCampoChange()" style="padding:5px 8px;font-size:13px;border-radius:4px">
+          <option value="">— Selecciona campo —</option>
+        </select>
+      </div>
+      <div class="field" style="gap:3px">
+        <label>Fecha</label>
+        <input id="f-date" type="date" style="padding:5px 8px;font-size:13px;border-radius:4px">
+      </div>
     </div>
-    <div id="barra-selector" style="display:none;margin-bottom:12px">
+    <div id="barra-selector" style="display:none;margin-bottom:6px">
       <div class="field" style="gap:3px">
         <label>Barra de salida</label>
-        <select id="f-barra" onchange="onBarraChange()">
+        <select id="f-barra" onchange="onBarraChange()" style="padding:5px 8px;font-size:13px;border-radius:4px">
           <option value="">— Selecciona barra —</option>
         </select>
       </div>
     </div>
     <div id="manual-fields">
       <div class="fields f2" style="margin-bottom:6px;gap:6px">
-        <div class="field" style="gap:3px"><label>Course Rating</label><input id="f-cr" type="number" placeholder="71.5" step="0.1" inputmode="decimal" oninput="autoNext(this,'f-slope',4)"></div>
-        <div class="field" style="gap:3px"><label>Slope Rating</label><input id="f-slope" type="number" placeholder="125" inputmode="numeric" oninput="autoNext(this,'f-hcp-idx',3)"></div>
+        <div class="field" style="gap:3px"><label>Course Rating</label>
+          <div id="f-cr-disp" style="background:rgba(201,168,76,.07);border:1px solid rgba(201,168,76,.2);border-radius:4px;padding:5px 8px;font-size:13px;color:var(--gold2);font-family:'DM Mono',monospace">—</div>
+          <input type="hidden" id="f-cr">
+        </div>
+        <div class="field" style="gap:3px"><label>Slope Rating</label>
+          <div id="f-slope-disp" style="background:rgba(201,168,76,.07);border:1px solid rgba(201,168,76,.2);border-radius:4px;padding:5px 8px;font-size:13px;color:var(--gold2);font-family:'DM Mono',monospace">—</div>
+          <input type="hidden" id="f-slope">
+        </div>
       </div>
     </div>
-    <input type="hidden" id="f-par-total">
-    <div class="fields f2" style="margin-bottom:6px;gap:6px">
-      <div class="field" style="gap:3px"><label>Fecha</label><input id="f-date" type="date"></div>
-      <div class="field" style="gap:3px"><label>HCP Index</label><input id="f-hcp-idx" type="number" placeholder="18.4" step="0.1" inputmode="decimal" style="background:rgba(255,255,255,.07);border:1px solid var(--border);border-radius:4px;color:#fff;font-family:'DM Mono',monospace;font-size:13px;padding:5px 8px;width:100%;-webkit-appearance:none;outline:none" oninput="autoNext(this,'f-gross',4);calcNuevaChcp()"></div>
+    <div class="field" style="gap:3px;margin-bottom:6px">
+      <label>HCP Jugador</label>
+      <input id="f-hcp-idx" type="number" placeholder="18.4" step="0.1" inputmode="decimal"
+        style="background:rgba(255,255,255,.07);border:1px solid var(--border);border-radius:4px;color:#fff;font-family:'DM Mono',monospace;font-size:13px;padding:5px 8px;width:100%;-webkit-appearance:none;outline:none"
+        oninput="calcNuevaChcp()">
     </div>
     <div id="nueva-chcp-wrap" style="display:none;margin-bottom:12px">
       <div class="fields f2" style="margin-bottom:6px;gap:6px">
@@ -1464,6 +1478,8 @@ function cancelarNueva() {
   $('f-par-total').value = ''; $('f-gross').value = ''; $('f-hcp-idx').value = '';
   if ($('f-barra')) $('f-barra').value = '';
   $('barra-selector').style.display = 'none';
+  const crD=$('f-cr-disp'), slD=$('f-slope-disp');
+  if(crD) crD.textContent='—'; if(slD) slD.textContent='—';
   $('hoyos-wrap').style.display = 'none'; $('gross-wrap').style.display = 'block';
   $('manual-fields').style.display = 'block';
   if ($('nueva-chcp-wrap')) $('nueva-chcp-wrap').style.display = 'none';
