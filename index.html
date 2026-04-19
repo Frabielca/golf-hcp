@@ -1123,7 +1123,8 @@ function renderResult() {
   if (res) {
     $('r-count').textContent = combined.length; // rondas efectivas (9H combinadas)
     $('r-used').textContent  = res.numBest;
-    $('r-best').textContent  = fmtD(Math.min(...state.rounds.map(r => r.diff)));
+    const rounds18 = state.rounds.filter(r => (r.num_hoyos || 18) === 18);
+    $('r-best').textContent = rounds18.length ? fmtD(Math.min(...rounds18.map(r => r.diff))) : '—';
     $('p-hcp').value = res.hcp.toFixed(1);
     calcCHCP();
   }
@@ -1757,8 +1758,21 @@ function abrirEditRonda(id) {
   const hW = $('edit-hoyos-wrap');
   if (campo?.hoyos?.length >= 9) {
     hW.style.display = 'block';
-    buildEditHoyos(campo, Array.isArray(r.shots) ? r.shots : [], editNumHoyos, editVuelta);
-    recalcEditStbl();
+    const existingShots = Array.isArray(r.shots) ? r.shots : [];
+    buildEditHoyos(campo, existingShots, editNumHoyos, editVuelta);
+    // Aplicar símbolos y dots a los inputs ya rellenos
+    setTimeout(() => {
+      const startHoyo = (editNumHoyos === 9 && editVuelta === 2) ? 10 : 1;
+      if (existingShots.length > 0) {
+        renderScoreSymbols('edit-', campo.hoyos, existingShots, startHoyo);
+        const hcp2 = r.hcp_idx;
+        if (hcp2 != null) {
+          const stbl = calcStableford(hcp2, campo, existingShots, r.cr, r.slope, editVuelta);
+          renderHoleDots('edit-', stbl?.byHole || null, startHoyo);
+        }
+      }
+      recalcEditStbl();
+    }, 50);
   } else {
     hW.style.display = 'none';
   }
