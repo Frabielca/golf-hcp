@@ -466,7 +466,7 @@ nav.nav-hidden{transform:translateY(100%)}
       </div>
     </div>
   </div>
-  <div style="text-align:center;padding:12px 0 4px;font-size:9px;letter-spacing:2px;color:rgba(255,255,255,.2);font-family:'DM Mono',monospace">v1.23.01</div>
+  <div style="text-align:center;padding:12px 0 4px;font-size:9px;letter-spacing:2px;color:rgba(255,255,255,.2);font-family:'DM Mono',monospace">v1.23.02</div>
 </div>
 
 <!-- PAGE: NUEVA RONDA -->
@@ -816,15 +816,22 @@ function getCat(h) {
   return 'Cat. 6 · Principiante';
 }
 
-function calcStableford(hcpIndex, campo, shots, crOverride, slopeOverride) {
-  if (!campo?.hoyos || campo.hoyos.length < 18) return null;
-  const hoyos = [...campo.hoyos].sort((a, b) => a.numero - b.numero);
+function calcStableford(hcpIndex, campo, shots, crOverride, slopeOverride, vuelta) {
+  if (!campo?.hoyos || campo.hoyos.length < 9) return null;
+  const allHoyos = [...campo.hoyos].sort((a, b) => a.numero - b.numero);
+  const numHoyos = shots.filter(s => s != null && !isNaN(s) && s > 0).length > 0 &&
+                   allHoyos.length === 18 && shots.length <= 9 ? 9 : 18;
+  // Determinar qué hoyos del campo corresponden a esta ronda
+  const startIdx = (shots.length <= 9 && vuelta === 2) ? 9 : 0;
+  const hoyos = allHoyos.slice(startIdx, startIdx + shots.length);
   const useCR    = (crOverride    != null && !isNaN(crOverride))    ? crOverride    : campo.cr;
   const useSlope = (slopeOverride != null && !isNaN(slopeOverride)) ? slopeOverride : campo.slope;
-  const courseHCP = Math.round(hcpIndex * (useSlope / 113) + (useCR - campo.par_total));
+  // Course HCP ajustado para 9 hoyos (mitad)
+  const courseHCP18 = Math.round(hcpIndex * (useSlope / 113) + (useCR - campo.par_total));
+  const courseHCP = shots.length <= 9 ? Math.round(courseHCP18 / 2) : courseHCP18;
   let total = 0;
   const byHole = [];
-  for (let i = 0; i < 18; i++) {
+  for (let i = 0; i < hoyos.length; i++) {
     const hoyo = hoyos[i];
     const s = shots[i];
     if (s == null || isNaN(s) || s < 1) { byHole.push(0); continue; }
@@ -1435,15 +1442,16 @@ function getScoreClass(shots, par) {
 }
 
 const SCORE_MAP = {'score-eagle':'s-eagle','score-birdie':'s-birdie','score-par':'s-par','score-bogey':'s-bogey','score-doble':'s-doble','score-peor':'s-peor'};
-function renderScoreSymbols(prefix, hoyos, shots) {
+function renderScoreSymbols(prefix, hoyos, shots, startHoyo) {
+  startHoyo = startHoyo || 1;
   const sorted = [...hoyos].sort((a,b) => a.numero - b.numero);
-  for (let i = 0; i < 18; i++) {
-    const hoyo = sorted[i]; if (!hoyo) continue;
+  // Filtrar solo los hoyos del rango que corresponde
+  const hoyosRango = sorted.filter(h => h.numero >= startHoyo && h.numero < startHoyo + shots.length);
+  for (let i = 0; i < hoyosRango.length; i++) {
+    const hoyo = hoyosRango[i]; if (!hoyo) continue;
     const s = shots[i];
-    const num = hoyo.numero;
-    const inputId = prefix === 'edit-' ? 'edit-gh-' + num : 'gh-' + num;
+    const inputId = prefix === 'edit-' ? 'edit-gh-' + hoyo.numero : 'gh-' + hoyo.numero;
     const el = document.getElementById(inputId); if (!el) continue;
-    // Quitar clases anteriores
     el.classList.remove('s-eagle','s-birdie','s-par','s-bogey','s-doble','s-peor');
     if (s && s > 0) {
       const cls = getScoreClass(s, hoyo.par);
@@ -1494,7 +1502,8 @@ function updateTotals() {
   $('total-golpes').textContent = complete ? total : '—';
   const hcp = parseFloat($('f-hcp-idx').value);
   // Aplicar símbolos en tiempo real (parcial o completo)
-  if (campo) renderScoreSymbols('gh-', campo.hoyos, shots);
+  const startHoyoS = (numH === 9 && vultaU === 2) ? 10 : 1;
+  if (campo) renderScoreSymbols('gh-', campo.hoyos, shots, startHoyoS);
   const startHoyoU = (numH === 9 && vultaU === 2) ? 10 : 1;
   if (campo && !isNaN(hcp)) {
     const fCR = parseFloat($('f-cr').value);
