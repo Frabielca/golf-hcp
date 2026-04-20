@@ -2320,18 +2320,29 @@ async function guardarEditCampo() {
   if (!nombre) { showErr('Completa el nombre.'); return; }
   if (!uid)    { showErr('Sin sesión.'); return; }
 
-  const { hoyos, parTotal, error: hErr } = getHoyosFromEditor('edit-c-');
-  if (hErr) { showErr(hErr); return; }
+  // Validar barras primero
   const barras = getBarrasFromEditor('edit-b-');
-  const hasBlancaE   = barras.some(b => b.color === 'blanca');
-  const hasAmarillaE = barras.some(b => b.color === 'amarilla');
-  if (!hasBlancaE && !hasAmarillaE) {
+  const hasBlancaV   = barras.some(b => b.color === 'blanca');
+  const hasAmarillaV = barras.some(b => b.color === 'amarilla');
+  if (!hasBlancaV && !hasAmarillaV) {
     showErr('⚠️ Introduce CR y Slope de la barra Blanca o Amarilla como mínimo.');
     ['blanca','amarilla'].forEach(color => {
       const crEl = $('edit-b-cr-'+color), slEl = $('edit-b-slope-'+color);
       if (crEl && (!crEl.value || isNaN(parseFloat(crEl.value)))) { crEl.classList.add('err'); setTimeout(() => crEl.classList.remove('err'),3000); }
       if (slEl && (!slEl.value || isNaN(parseInt(slEl.value))))   { slEl.classList.add('err'); setTimeout(() => slEl.classList.remove('err'),3000); }
     });
+    return;
+  }
+  // Validar hoyos
+  const { hoyos, parTotal, error: hErr } = getHoyosFromEditor('edit-c-');
+  if (hErr) { showErr(hErr); return; }
+  if (hoyos.length < 18) {
+    showErr('⚠️ Completa los 18 hoyos con par e índice antes de guardar.');
+    for (let i = 1; i <= 18; i++) {
+      const pEl = $('edit-c-par-'+i), iEl = $('edit-c-idx-'+i);
+      if (pEl && (!pEl.value || isNaN(parseInt(pEl.value)))) { pEl.classList.add('err'); setTimeout(() => pEl.classList.remove('err'),3000); }
+      if (iEl && (!iEl.value || isNaN(parseInt(iEl.value)))) { iEl.classList.add('err'); setTimeout(() => iEl.classList.remove('err'),3000); }
+    }
     return;
   }
 
