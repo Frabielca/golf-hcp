@@ -530,7 +530,7 @@ nav.nav-hidden{transform:translateY(100%)}
       </div>
     </div>
   </div>
-  <div style="text-align:center;padding:12px 0 4px;font-size:9px;letter-spacing:2px;color:rgba(255,255,255,.2);font-family:'DM Mono',monospace">v1.23.09</div>
+  <div style="text-align:center;padding:12px 0 4px;font-size:9px;letter-spacing:2px;color:rgba(255,255,255,.2);font-family:'DM Mono',monospace">v1.26.00</div>
 </div>
 
 <!-- PAGE: NUEVA RONDA -->
@@ -642,27 +642,39 @@ nav.nav-hidden{transform:translateY(100%)}
 
 <!-- PAGE: CAMPOS -->
 <div class="page" id="page-campos">
-  <div class="card">
-    <div class="card-row">
-      <div class="card-title" style="margin-bottom:0">Mis Campos</div>
-      <button class="btn-sm" onclick="toggleNuevoCampo()">+ Nuevo</button>
-    </div>
-    <div id="campos-list"><div class="empty">Cargando…</div></div>
-  </div>
+  <!-- Formulario Nuevo Campo — aparece primero cuando está abierto -->
   <div id="nuevo-campo-wrap" style="display:none">
     <div class="card">
-      <div class="card-title">Nuevo Campo</div>
-      <div class="field" style="margin-bottom:14px"><label>Nombre del campo <span style="color:var(--muted);font-weight:normal;text-transform:none;letter-spacing:0">(máx. 15 caracteres)</span></label><input id="nc-nombre" placeholder="CLUB DE GOLF" maxlength="15" style="text-transform:uppercase" oninput="this.value=this.value.toUpperCase()"></div>
+      <div class="card-row" style="margin-bottom:10px">
+        <div class="card-title" style="margin-bottom:0">Nuevo Campo</div>
+      </div>
+      <div class="field" style="gap:3px;margin-bottom:8px">
+        <label>Nombre del campo <span style="color:var(--muted);font-weight:normal;text-transform:none;letter-spacing:0">(máx. 15 caracteres)</span></label>
+        <input id="nc-nombre" placeholder="CLUB DE GOLF" maxlength="15"
+          style="background:rgba(255,255,255,.07);border:1px solid var(--border);border-radius:4px;color:#fff;font-family:'DM Mono',monospace;font-size:13px;padding:5px 8px;width:100%;-webkit-appearance:none;outline:none;text-transform:uppercase" oninput="this.value=this.value.toUpperCase()">
+      </div>
       <div class="section-title">Barras de Salida</div>
       <div id="nc-barras-wrap"></div>
       <div class="section-title">Par e Índice por Hoyo</div>
-      <div id="nc-par-total" style="display:none;text-align:center;padding:8px;background:rgba(201,168,76,.08);border:1px solid rgba(201,168,76,.2);border-radius:5px;font-size:12px;color:var(--cream);margin-bottom:10px">
+      <div id="nc-par-total" style="display:none;text-align:center;padding:6px 8px;background:rgba(201,168,76,.08);border:1px solid rgba(201,168,76,.2);border-radius:5px;font-size:12px;color:var(--cream);margin-bottom:8px">
         Par total: <strong id="nc-par-num" style="color:var(--gold2);font-size:15px">—</strong>
       </div>
       <div id="nc-hoyos-wrap"></div>
-      <div class="modal-err" id="nc-err" style="margin-top:12px"></div>
-      <button class="btn" id="btn-guardar-nc" onclick="guardarNuevoCampo()">Guardar Campo</button>
-      <button class="btn-danger" onclick="if(confirm('¿Cancelar nuevo campo? Los datos introducidos se perderán.'))toggleNuevoCampo()">Cancelar</button>
+      <div class="modal-err" id="nc-err" style="margin-top:10px"></div>
+      <div style="display:flex;gap:10px;margin-top:12px">
+        <button class="btn" id="btn-guardar-nc" onclick="guardarNuevoCampo()" style="flex:1">Guardar Campo</button>
+        <button class="btn-danger" onclick="cancelarNuevoCampo()" style="flex:1">Cancelar</button>
+      </div>
+    </div>
+  </div>
+  <!-- Lista de campos — se oculta cuando el formulario está abierto -->
+  <div id="campos-lista-wrap">
+    <div class="card">
+      <div class="card-row">
+        <div class="card-title" style="margin-bottom:0">Mis Campos</div>
+        <button class="btn-sm" onclick="abrirNuevoCampo()">+ Nuevo</button>
+      </div>
+      <div id="campos-list"><div class="empty">Cargando…</div></div>
     </div>
   </div>
 </div>
@@ -2111,16 +2123,32 @@ function buildBarrasEditor(containerId, prefix, existingBarras = []) {
   }).join('');
 }
 
-function toggleNuevoCampo() {
-  const wrap = $('nuevo-campo-wrap');
-  const showing = wrap.style.display !== 'none';
-  wrap.style.display = showing ? 'none' : 'block';
-  if (!showing) {
-    $('nc-nombre').value = '';
-    $('nc-err').classList.remove('show');
-    buildBarrasEditor('nc-barras-wrap', 'nc-', []);
-    buildHoyosEditor('nc-hoyos-wrap', 'nc-', []);
+function abrirNuevoCampo() {
+  $('nuevo-campo-wrap').style.display = 'block';
+  $('campos-lista-wrap').style.display = 'none';
+  $('nc-nombre').value = '';
+  $('nc-err').classList.remove('show');
+  buildBarrasEditor('nc-barras-wrap', 'nc-', []);
+  buildHoyosEditor('nc-hoyos-wrap', 'nc-', []);
+  window.scrollTo(0, 0);
+}
+
+function cerrarNuevoCampo() {
+  $('nuevo-campo-wrap').style.display = 'none';
+  $('campos-lista-wrap').style.display = '';
+  window.scrollTo(0, 0);
+}
+
+function cancelarNuevoCampo() {
+  if (confirm('¿Cancelar nuevo campo? Los datos introducidos se perderán.')) {
+    cerrarNuevoCampo();
   }
+}
+
+function toggleNuevoCampo() {
+  // Compatibilidad con código existente
+  const showing = $('nuevo-campo-wrap').style.display !== 'none';
+  if (showing) cerrarNuevoCampo(); else abrirNuevoCampo();
 }
 
 function getHoyosFromEditor(prefix) {
@@ -2205,7 +2233,7 @@ async function guardarNuevoCampo() {
     if (be) throw be;
     // Recargar datos
     await loadData();
-    toggleNuevoCampo();
+    cerrarNuevoCampo();
     toast('✓ Campo guardado');
   } catch(e) {
     showErr('❌ ' + (e.message || 'Error al guardar.'));
