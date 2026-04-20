@@ -535,7 +535,7 @@ nav.nav-hidden{transform:translateY(100%)}
       </div>
     </div>
   </div>
-  <div style="text-align:center;padding:12px 0 4px;font-size:9px;letter-spacing:2px;color:rgba(255,255,255,.2);font-family:'DM Mono',monospace">v1.26.04</div>
+  <div style="text-align:center;padding:12px 0 4px;font-size:9px;letter-spacing:2px;color:rgba(255,255,255,.2);font-family:'DM Mono',monospace">v1.26.05</div>
 </div>
 
 <!-- PAGE: NUEVA RONDA -->
@@ -563,7 +563,7 @@ nav.nav-hidden{transform:translateY(100%)}
       </div>
       <div id="f-vuelta-wrap" class="field" style="gap:3px;display:none">
         <label>Vuelta</label>
-        <select id="f-vuelta" onchange="onNumHoyosChange()" style="padding:5px 8px;font-size:13px;border-radius:4px">
+        <select id="f-vuelta" onchange="onVueltaChange()" onchange="onNumHoyosChange()" style="padding:5px 8px;font-size:13px;border-radius:4px">
           <option value="1">1ª (1–9)</option>
           <option value="2">2ª (10–18)</option>
         </select>
@@ -866,10 +866,10 @@ function calcParTotal(prefix) {
 }
 
 // ── WHS / STABLEFORD ─────────────────────────────────────────────────────
-function calcDiff(gross, cr, slope, numHoyos) {
-  if (numHoyos === 9) {
-    // Diferencial 9 hoyos: usar CR_9 = CR_18/2, NO doblar el resultado
-    // La combinación de dos diferenciales de 9H dará el equivalente de 18H
+function calcDiff(gross, cr, slope, numHoyos, crIs9H) {
+  // crIs9H = true si cr ya es el valor específico de 9H (no el de 18H)
+  if (numHoyos === 9 && !crIs9H) {
+    // Fallback: cr es el de 18H, dividir entre 2
     return Math.round(((gross - cr / 2) * 113 / slope) * 10) / 10;
   }
   return Math.round(((gross - cr) * 113 / slope) * 10) / 10;
@@ -1478,11 +1478,39 @@ function onCampoChange() {
   }
 }
 
+
+function getCRSlopeForVuelta(barra, numHoyos, vuelta) {
+  // Devuelve {cr, slope} según hoyos y vuelta jugada
+  if (numHoyos === 9) {
+    if (vuelta === 1 && barra.cr_out && barra.slope_out) {
+      return { cr: barra.cr_out, slope: barra.slope_out, par: barra.par_out };
+    }
+    if (vuelta === 2 && barra.cr_in && barra.slope_in) {
+      return { cr: barra.cr_in, slope: barra.slope_in, par: barra.par_in };
+    }
+    // Fallback: usar cr/2 si no hay datos específicos de 9H
+    return { cr: barra.cr / 2, slope: barra.slope, par: null };
+  }
+  return { cr: barra.cr, slope: barra.slope, par: null };
+}
+
 function onBarraChange() {
   const id = parseInt($('f-campo').value);
   const campo = state.campos.find(c => c.id === id);
   const barra = campo?.barras?.find(b => b.color === $('f-barra').value);
-  if (barra) { $('f-cr').value = barra.cr; $('f-slope').value = barra.slope; calcNuevaChcp(); }
+  if (barra) {
+    const numH = parseInt($('f-num-hoyos')?.value) || 18;
+    const vlt  = parseInt($('f-vuelta')?.value) || 1;
+    const {cr, slope} = getCRSlopeForVuelta(barra, numH, vlt);
+    $('f-cr').value = cr; $('f-slope').value = slope;
+    const crD=$('f-cr-disp'), slD=$('f-slope-disp');
+    if(crD) crD.textContent=cr+' CR'; if(slD) slD.textContent=slope+' Slope';
+    calcNuevaChcp();
+  }
+}
+
+function onVueltaChange() {
+  onNumHoyosChange();
 }
 
 function onNumHoyosChange() {
@@ -1493,6 +1521,15 @@ function onNumHoyosChange() {
   const vW = $('f-vuelta-wrap');
   if (vW) vW.style.display = n === 9 ? '' : 'none';
   const vuelta = parseInt($('f-vuelta')?.value) || 1;
+  // Actualizar CR/Slope según vuelta
+  const barra = campo?.barras?.find(b => b.color === $('f-barra')?.value);
+  if (barra) {
+    const {cr, slope} = getCRSlopeForVuelta(barra, n, vuelta);
+    $('f-cr').value = cr; $('f-slope').value = slope;
+    const crD=$('f-cr-disp'), slD=$('f-slope-disp');
+    if(crD) crD.textContent = cr + ' CR';
+    if(slD) slD.textContent = slope + ' Slope';
+  }
   buildHoyoInputs(campo, n, vuelta);
   calcNuevaChcp();
 }
@@ -1732,7 +1769,12 @@ async function addRound() {
 
   const usedCR    = cr || campo?.cr;
   const usedSlope = slope || campo?.slope;
-  const diff = calcDiff(gross, usedCR, usedSlope, numHoyos);
+  // Detectar si CR es específico de 9H (viene de cr_out o cr_in)
+  const barra9H = campo?.barras?.find(b => b.color === barraColor);
+  const has9HCR = numHoyos === 9 && barra9H && (
+    (vuelta === 1 && barra9H.cr_out) || (vuelta === 2 && barra9H.cr_in)
+  );
+  const diff = calcDiff(gross, usedCR, usedSlope, numHoyos, has9HCR);
 
   const btn = $('btn-add');
   btn.textContent = 'Guardando…'; btn.disabled = true;
