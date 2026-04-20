@@ -2003,9 +2003,18 @@ function recalcEditStbl() {
       if (par9 > 0) parEdit = par9;
     }
     const chcp = Math.round(hcpForChcp * (slForChcp / 113) + (crForChcp - parEdit));
-    const totalGolpes = parEdit + chcp;
-    echcpEl.textContent = (chcp >= 0 ? '+' : '') + chcp;
     if (campo) renderRedDots('edit-', chcp, campo.hoyos);
+    // Para mostrar: contar solo los puntos rojos de los hoyos jugados
+    if (editNH === 9 && campo?.hoyos) {
+      const sorted = [...campo.hoyos].sort((a,b) => a.numero - b.numero);
+      const hoyosVuelta = sorted.slice(startI - 1, startI - 1 + 9);
+      const strokesVuelta = hoyosVuelta.reduce((s, h) => {
+        return s + (chcp >= h.indice ? 1 : 0) + (chcp >= h.indice + 18 ? 1 : 0);
+      }, 0);
+      echcpEl.textContent = '+' + strokesVuelta;
+    } else {
+      echcpEl.textContent = (chcp >= 0 ? '+' : '') + chcp;
+    }
   }
 
   // Recoger shots del rango correcto
