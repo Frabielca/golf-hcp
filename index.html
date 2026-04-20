@@ -563,7 +563,7 @@ nav.nav-hidden{transform:translateY(100%)}
       </div>
       <div id="f-vuelta-wrap" class="field" style="gap:3px;display:none">
         <label>Vuelta</label>
-        <select id="f-vuelta" onchange="onVueltaChange()" onchange="onNumHoyosChange()" style="padding:5px 8px;font-size:13px;border-radius:4px">
+        <select id="f-vuelta" onchange="onVueltaChange()" style="padding:5px 8px;font-size:13px;border-radius:4px">
           <option value="1">1ª (1–9)</option>
           <option value="2">2ª (10–18)</option>
         </select>
@@ -1521,17 +1521,18 @@ function onNumHoyosChange() {
   const vW = $('f-vuelta-wrap');
   if (vW) vW.style.display = n === 9 ? '' : 'none';
   const vuelta = parseInt($('f-vuelta')?.value) || 1;
-  // Actualizar CR/Slope según vuelta
-  const barra = campo?.barras?.find(b => b.color === $('f-barra')?.value);
+  // Actualizar CR/Slope según barra y vuelta seleccionadas
+  const barraColor = $('f-barra')?.value;
+  const barra = campo?.barras?.find(b => b.color === barraColor);
   if (barra) {
     const {cr, slope} = getCRSlopeForVuelta(barra, n, vuelta);
     $('f-cr').value = cr; $('f-slope').value = slope;
     const crD=$('f-cr-disp'), slD=$('f-slope-disp');
     if(crD) crD.textContent = cr + ' CR';
     if(slD) slD.textContent = slope + ' Slope';
+    calcNuevaChcp();
   }
   buildHoyoInputs(campo, n, vuelta);
-  calcNuevaChcp();
 }
 
 function buildHoyoInputs(campo, numHoyos, vuelta) {
