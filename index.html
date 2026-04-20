@@ -235,6 +235,11 @@ nav.nav-hidden{transform:translateY(100%)}
 .guide-btn{width:100%;background:linear-gradient(135deg,#c9a84c,#e8c96a);color:#1a2f1a;font-family:'DM Mono',monospace;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;border:none;border-radius:8px;padding:16px;cursor:pointer}
 .guide-skip{font-size:9px;color:rgba(255,255,255,.3);letter-spacing:1px;text-transform:uppercase;margin-top:12px;display:block;background:none;border:none;cursor:pointer;width:100%}
 
+
+.barra-9h{margin-top:6px;padding:6px 8px;background:rgba(59,130,246,.06);border:1px solid rgba(59,130,246,.15);border-radius:5px}
+.barra-9h-title{font-size:7px;letter-spacing:1.5px;text-transform:uppercase;color:#3b82f6;margin-bottom:6px}
+.barra-9h-row{display:grid;grid-template-columns:auto 1fr 1fr 1fr;gap:6px;align-items:center;margin-bottom:4px}
+.barra-9h-row label{font-size:7px;color:var(--muted);letter-spacing:1px;text-transform:uppercase}
 </style>
 </head>
 <body>
@@ -1146,7 +1151,11 @@ async function loadData() {
   state.campos = (cc.data || []).map(c => ({
     ...c,
     hoyos:  hoyosData.filter(h => h.campo_id === c.id).map(h => ({numero: h.numero, par: h.par, indice: h.indice})),
-    barras: barrasData.filter(b => b.campo_id === c.id).map(b => ({color: b.color, cr: b.cr, slope: b.slope}))
+    barras: barrasData.filter(b => b.campo_id === c.id).map(b => ({
+        color: b.color, cr: b.cr, slope: b.slope,
+        cr_out: b.cr_out||null, slope_out: b.slope_out||null, par_out: b.par_out||null,
+        cr_in:  b.cr_in||null,  slope_in:  b.slope_in||null,  par_in:  b.par_in||null
+      }))
   }));
 
   renderAll();
@@ -2106,18 +2115,41 @@ function buildHoyosEditor(containerId, prefix, existingHoyos = []) {
 function buildBarrasEditor(containerId, prefix, existingBarras = []) {
   const wrap = $(containerId);
   if (!wrap) return;
+  const nextColor = (color) => BARRAS[(BARRAS.indexOf(color)+1)%BARRAS.length];
   wrap.innerHTML = BARRAS.map(color => {
     const b = existingBarras.find(b => b.color === color);
+    const iS = `background:rgba(255,255,255,.07);border:1px solid var(--border);border-radius:4px;color:#fff;font-family:'DM Mono',monospace;font-size:11px;padding:4px 6px;width:100%;-webkit-appearance:none;outline:none`;
     return `<div class="barra-row">
       <div class="barra-dot-lg" style="background:${BARRA_COLORS[color]}"></div>
       <div style="font-size:9px;color:var(--cream);min-width:55px">${BARRA_LABELS[color]}</div>
       <div class="barra-fields">
-        <div><label>CR</label><input type="number" step="0.1" inputmode="decimal"
-          id="${prefix}cr-${color}" value="${b?.cr||''}" placeholder="71.5"
+        <div><label>CR 18H</label><input type="number" step="0.1" inputmode="decimal"
+          style="${iS}" id="${prefix}cr-${color}" value="${b?.cr||''}" placeholder="71.5"
           oninput="autoNext(this,'${prefix}slope-${color}',4)"></div>
+        <div><label>Slope 18H</label><input type="number" inputmode="numeric"
+          style="${iS}" id="${prefix}slope-${color}" value="${b?.slope||''}" placeholder="125"
+          oninput="autoNext(this,'${prefix}cr-${nextColor(color)}',3)"></div>
+      </div>
+    </div>
+    <div class="barra-9h">
+      <div class="barra-9h-title">Opcional — 9 hoyos</div>
+      <div class="barra-9h-row">
+        <span style="font-size:8px;color:var(--muted);min-width:32px">1ª V.</span>
+        <div><label>CR</label><input type="number" step="0.1" inputmode="decimal"
+          style="${iS}" id="${prefix}cr_out-${color}" value="${b?.cr_out||''}" placeholder="35.5"></div>
         <div><label>Slope</label><input type="number" inputmode="numeric"
-          id="${prefix}slope-${color}" value="${b?.slope||''}" placeholder="125"
-          oninput="autoNext(this,'${prefix}cr-${BARRAS[(BARRAS.indexOf(color)+1)%BARRAS.length]}',3)"></div>
+          style="${iS}" id="${prefix}slope_out-${color}" value="${b?.slope_out||''}" placeholder="125"></div>
+        <div><label>Par</label><input type="number" inputmode="numeric"
+          style="${iS}" id="${prefix}par_out-${color}" value="${b?.par_out||''}" placeholder="36"></div>
+      </div>
+      <div class="barra-9h-row">
+        <span style="font-size:8px;color:var(--muted);min-width:32px">2ª V.</span>
+        <div><label>CR</label><input type="number" step="0.1" inputmode="decimal"
+          style="${iS}" id="${prefix}cr_in-${color}" value="${b?.cr_in||''}" placeholder="36.0"></div>
+        <div><label>Slope</label><input type="number" inputmode="numeric"
+          style="${iS}" id="${prefix}slope_in-${color}" value="${b?.slope_in||''}" placeholder="125"></div>
+        <div><label>Par</label><input type="number" inputmode="numeric"
+          style="${iS}" id="${prefix}par_in-${color}" value="${b?.par_in||''}" placeholder="36"></div>
       </div>
     </div>`;
   }).join('');
@@ -2171,8 +2203,15 @@ function getBarrasFromEditor(prefix) {
   for (const color of BARRAS) {
     const cr    = parseFloat($(prefix + 'cr-' + color)?.value || '');
     const slope = parseInt($(prefix + 'slope-' + color)?.value || '');
-    if (!isNaN(cr) && !isNaN(slope) && cr > 0 && slope > 0)
-      barras.push({ color, cr, slope });
+    if (!isNaN(cr) && !isNaN(slope) && cr > 0 && slope > 0) {
+      const cr_out    = parseFloat($(prefix + 'cr_out-' + color)?.value || '') || null;
+      const slope_out = parseInt($(prefix + 'slope_out-' + color)?.value || '') || null;
+      const par_out   = parseInt($(prefix + 'par_out-' + color)?.value || '') || null;
+      const cr_in     = parseFloat($(prefix + 'cr_in-' + color)?.value || '') || null;
+      const slope_in  = parseInt($(prefix + 'slope_in-' + color)?.value || '') || null;
+      const par_in    = parseInt($(prefix + 'par_in-' + color)?.value || '') || null;
+      barras.push({ color, cr, slope, cr_out, slope_out, par_out, cr_in, slope_in, par_in });
+    }
   }
   return barras;
 }
