@@ -1361,9 +1361,10 @@ function buildBarraSelect(selId, campo, current) {
   const sel = $(selId);
   if (!sel) return;
   sel.innerHTML = '<option value="">— Selecciona barra —</option>' +
-    campo.barras.map(b =>
-      `<option value="${b.color}">${BARRA_LABELS[b.color]} — CR ${b.cr} / Slope ${b.slope}</option>`
-    ).join('');
+    campo.barras.map(b => {
+      const has9H = (b.cr_out && b.slope_out) || (b.cr_in && b.slope_in);
+      return `<option value="${b.color}">${BARRA_LABELS_PL[b.color]}${has9H ? ' ✓9H' : ''}</option>`;
+    }).join('');
   if (current) sel.value = current;
 }
 
@@ -1474,8 +1475,7 @@ function onCampoChange() {
     if (campo.barras?.length > 0) {
       bs.style.display = 'block';
       buildBarraSelect('f-barra', campo, '');
-      $('f-barra').value = campo.barras[0].color;
-      // Reset num-hoyos and clear CR/Slope — user must choose hoyos
+      // Reset num-hoyos and clear CR/Slope — user must choose barra and hoyos
       if ($('f-num-hoyos')) $('f-num-hoyos').value = '';
       if ($('f-vuelta-wrap')) $('f-vuelta-wrap').style.display = 'none';
       $('f-cr').value = ''; $('f-slope').value = '';
