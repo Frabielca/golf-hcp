@@ -1553,6 +1553,8 @@ function onNumHoyosChange() {
   }
   $('hoyos-wrap').style.display = 'block';
   buildHoyoInputs(campo, n, vuelta);
+  // Renderizar puntos rojos si ya hay HCP
+  calcNuevaChcp();
 }
 
 function buildHoyoInputs(campo, numHoyos, vuelta) {
@@ -1690,10 +1692,21 @@ function calcNuevaChcp() {
   const hcp = parseFloat($('f-hcp-idx').value);
   const cr  = parseFloat($('f-cr').value);
   const sl  = parseFloat($('f-slope').value);
-  const par = parseFloat($('f-par-total').value);
   const wrap = $('nueva-chcp-wrap');
   if (!wrap) return;
   if (isNaN(hcp) || isNaN(cr) || isNaN(sl)) { wrap.style.display = 'none'; return; }
+  // Para 9H: calcular par parcial de los hoyos jugados
+  const numH = parseInt($('f-num-hoyos')?.value) || 18;
+  const vuelta = parseInt($('f-vuelta')?.value) || 1;
+  const campoIdChcp = parseInt($('f-campo').value);
+  const campoChcp = state.campos.find(c => c.id === campoIdChcp);
+  let par = parseFloat($('f-par-total').value);
+  if (numH === 9 && campoChcp?.hoyos?.length >= 18) {
+    const startIdx = vuelta === 2 ? 9 : 0;
+    const hoyos9 = [...campoChcp.hoyos].sort((a,b) => a.numero - b.numero).slice(startIdx, startIdx+9);
+    const par9 = hoyos9.reduce((s, h) => s + (h.par||0), 0);
+    if (par9 > 0) par = par9;
+  }
   const chcp = Math.round(hcp * (sl / 113) + (isNaN(par) ? 0 : cr - par));
   const fmt = parseInt($('nueva-fmt')?.value || '100');
   const playing = Math.round(chcp * fmt / 100);
