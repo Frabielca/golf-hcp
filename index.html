@@ -837,15 +837,15 @@ function fmtCR(el, nextId) {
   // Saltar cuando hay formato completo xx.x (ej. "71.5")
   if (parts.length === 2 && parts[0].length >= 2 && parts[1].length >= 1) {
     const next = $(nextId);
-    if (next) setTimeout(() => { next.focus(); next.select(); }, 80);
+    if (next) { setTimeout(() => { next.focus(); if(next.select) next.select(); }, 150); }
   }
 }
 
 function fmtSlope(el, nextId) {
   el.value = el.value.replace(/[^0-9]/g, '').slice(0, 3);
-  if (el.value.length >= 3) {
+  if (el.value.length === 3) {
     const next = $(nextId);
-    if (next) setTimeout(() => { next.focus(); next.select(); }, 80);
+    if (next) { setTimeout(() => { next.focus(); if(next.select) next.select(); }, 150); }
   }
 }
 
