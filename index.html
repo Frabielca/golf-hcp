@@ -2144,7 +2144,7 @@ function buildBarrasEditor(containerId, prefix, existingBarras = []) {
       </div>
     </div>` : '';
     return `<div class="barra-row" style="margin-bottom:4px">
-      <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;min-width:72px;height:100%">
+      <div style="display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:4px;min-width:72px;padding-bottom:3px">
         <div class="barra-dot-lg" style="background:${BARRA_COLORS[color]}"></div>
         <div style="font-size:9px;color:var(--cream)">${BARRA_LABELS_PL[color]}</div>
       </div>
