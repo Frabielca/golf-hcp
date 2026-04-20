@@ -535,7 +535,7 @@ nav.nav-hidden{transform:translateY(100%)}
       </div>
     </div>
   </div>
-  <div style="text-align:center;padding:12px 0 4px;font-size:9px;letter-spacing:2px;color:rgba(255,255,255,.2);font-family:'DM Mono',monospace">v1.26.05</div>
+  <div style="text-align:center;padding:12px 0 4px;font-size:9px;letter-spacing:2px;color:rgba(255,255,255,.2);font-family:'DM Mono',monospace">v1.26.06</div>
 </div>
 
 <!-- PAGE: NUEVA RONDA -->
@@ -1279,7 +1279,7 @@ function renderCampos() {
       const has9H = (b.cr_out && b.slope_out) || (b.cr_in && b.slope_in);
       return `<span style="display:inline-flex;align-items:center;gap:2px;margin-right:4px">
         <span class="barra-dot" style="background:${BARRA_COLORS[b.color]}" title="${BARRA_LABELS_PL[b.color]}"></span>
-        ${has9H ? '<span style="font-size:7px;color:#3b82f6">9H</span>' : ''}
+        ${has9H ? '<span style="font-size:7px;color:var(--gold2)">9H</span>' : ''}
       </span>`;
     }).join('');
     return `<div class="campo-item">
