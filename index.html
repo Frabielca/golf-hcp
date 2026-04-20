@@ -88,14 +88,14 @@ select option{background:#1a2f1a}
 .del{background:rgba(224,85,85,.1);border:1px solid rgba(224,85,85,.25);border-radius:4px;color:var(--red);cursor:pointer;font-size:16px;padding:3px 8px;line-height:1}
 
 /* ── TOAST ── */
-.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(16px);background:rgba(26,47,26,.97);border:1px solid rgba(123,198,122,.3);color:#fff;font-size:11px;letter-spacing:1px;padding:10px 16px;border-radius:16px;opacity:0;transition:all .3s;pointer-events:none;white-space:normal;word-break:break-word;z-index:600;max-width:88vw;text-align:center}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(16px);background:rgba(26,47,26,.97);border:1px solid rgba(123,198,122,.3);color:#fff;font-size:11px;letter-spacing:1px;padding:10px 16px;border-radius:16px;opacity:0;transition:all .3s;pointer-events:none;white-space:normal;word-break:break-word;z-index:1000;max-width:88vw;text-align:center}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 .toast.err{border-color:rgba(224,85,85,.4);color:var(--red)}
 
 /* ── MODAL ── */
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:500;display:flex;align-items:flex-end;justify-content:center;touch-action:manipulation}
 .modal-overlay.hidden{display:none}
-.modal{background:#1a2f1a;border-top:1px solid var(--border);border-radius:12px 12px 0 0;padding:24px 18px calc(env(safe-area-inset-bottom,0px) + 24px);width:100%;max-width:600px;max-height:90vh;overflow-y:auto}
+.modal{background:#1a2f1a;border-top:1px solid var(--border);border-radius:12px 12px 0 0;padding:24px 18px calc(env(safe-area-inset-bottom,0px) + 24px);width:100%;max-width:600px;max-height:90vh;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
 .modal-title{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:18px}
 .modal-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}
 .modal-err{display:none;padding:10px 13px;background:rgba(224,85,85,.12);border:1px solid rgba(224,85,85,.3);border-radius:5px;font-size:11px;color:var(--red);margin-bottom:12px;line-height:1.5}
@@ -2342,9 +2342,13 @@ async function guardarEditCampo() {
       }
     }
     if (firstErrEl) {
-      const modal = document.querySelector('#modal-campo .modal');
-      if (modal) modal.scrollTop = firstErrEl.offsetTop - 100;
-      else firstErrEl.scrollIntoView({behavior:'smooth', block:'center'});
+      const modal = $('modal-campo')?.querySelector('.modal');
+      if (modal) {
+        // Calcular posición relativa al modal
+        const rect = firstErrEl.getBoundingClientRect();
+        const modalRect = modal.getBoundingClientRect();
+        modal.scrollTop += (rect.top - modalRect.top) - 100;
+      }
     }
     return;
   }
