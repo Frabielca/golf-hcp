@@ -453,7 +453,7 @@ nav.nav-hidden{transform:translateY(100%)}
     </div>
     <div id="edit-hoyos-campo"></div>
     <div class="modal-actions">
-      <button class="btn" style="margin-top:0" id="btn-guardar-campo" onclick="guardarEditCampo()">Guardar</button>
+      <button class="btn" style="margin-top:0" id="btn-guardar-campo">Guardar</button>
       <button class="btn-danger" style="margin-top:0" onclick="if(confirm('¿Cancelar edición del campo? Los cambios no se guardarán.'))cerrarModal('modal-campo')">Cancelar</button>
     </div>
   </div>
@@ -667,7 +667,7 @@ nav.nav-hidden{transform:translateY(100%)}
       <div id="nc-hoyos-wrap"></div>
       <div class="modal-err" id="nc-err" style="margin-top:10px"></div>
       <div style="display:flex;gap:10px;margin-top:12px">
-        <button class="btn" id="btn-guardar-nc" onclick="guardarNuevoCampo()" style="flex:1">Guardar Campo</button>
+        <button class="btn" id="btn-guardar-nc" style="flex:1">Guardar Campo</button>
         <button class="btn-danger" onclick="cancelarNuevoCampo()" style="flex:1">Cancelar</button>
       </div>
     </div>
@@ -2517,6 +2517,9 @@ async function init() {
       el.addEventListener('click', () => fn());
     };
     addTap('btn-salir-nav', doLogout);
+    addTap('btn-guardar-nc', guardarNuevoCampo);
+    addTap('btn-guardar-campo', guardarEditCampo);
+    addTap('btn-guardar-ronda', guardarEditRonda);
   })();
 
   // btn-add: múltiples handlers para máxima compatibilidad iOS
