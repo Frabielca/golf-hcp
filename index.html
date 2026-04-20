@@ -839,28 +839,12 @@ function golfShot(el, nextId) {
 
 function hoyoPar(el, i, prefix) {
   el.value = el.value.replace(/[^345]/g, '');
-  const v = el.value;
   calcParTotal(prefix);
-  if (v === '3' || v === '4' || v === '5') {
-    requestAnimationFrame(() => {
-      const next = $(prefix + 'idx-' + i);
-      if (next) next.focus();
-    });
-  }
 }
 
 function hoyoIdx(el, i, prefix, total) {
   el.value = el.value.replace(/[^0-9]/g, '');
-  const v = parseInt(el.value);
   calcParTotal(prefix);
-  if (!isNaN(v) && v >= 1 && v <= 18 && (el.value.length >= 2 || (v >= 2 && v <= 9))) {
-    if (i < total) {
-      requestAnimationFrame(() => {
-        const next = $(prefix + 'par-' + (i + 1));
-        if (next) next.focus();
-      });
-    }
-  }
 }
 
 function calcParTotal(prefix) {
@@ -2341,12 +2325,15 @@ async function guardarEditCampo() {
   const { hoyos, parTotal, error: hErr } = getHoyosFromEditor('edit-c-');
   if (hErr) { showErr(hErr); return; }
   if (hoyos.length < 18) {
-    showErr('⚠️ Completa los 18 hoyos con par e índice antes de guardar.');
+    toast('⚠️ Completa los 18 hoyos con par e índice', true);
     for (let i = 1; i <= 18; i++) {
       const pEl = $('edit-c-par-'+i), iEl = $('edit-c-idx-'+i);
       if (pEl && (!pEl.value || isNaN(parseInt(pEl.value)))) { pEl.classList.add('err'); setTimeout(() => pEl.classList.remove('err'),3000); }
       if (iEl && (!iEl.value || isNaN(parseInt(iEl.value)))) { iEl.classList.add('err'); setTimeout(() => iEl.classList.remove('err'),3000); }
     }
+    // Scroll al primer hoyo con error
+    const firstErr = document.querySelector('#edit-hoyos-campo input.err');
+    if (firstErr) firstErr.scrollIntoView({behavior:'smooth', block:'center'});
     return;
   }
 
@@ -2390,6 +2377,7 @@ async function guardarEditCampo() {
     }
     cerrarModal('modal-campo');
     await loadData();
+    window.scrollTo(0, 0);
     toast('✓ Campo actualizado');
   } catch(e) {
     showErr('❌ ' + (e.message || 'Error desconocido'));
