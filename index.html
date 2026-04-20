@@ -2004,7 +2004,7 @@ function recalcEditStbl() {
     }
     const chcp = Math.round(hcpForChcp * (slForChcp / 113) + (crForChcp - parEdit));
     const totalGolpes = parEdit + chcp;
-    echcpEl.textContent = 'HCP ' + (chcp >= 0 ? '+' : '') + chcp + ' · ' + totalGolpes + ' golpes';
+    echcpEl.textContent = (chcp >= 0 ? '+' : '') + chcp;
     if (campo) renderRedDots('edit-', chcp, campo.hoyos);
   }
 
