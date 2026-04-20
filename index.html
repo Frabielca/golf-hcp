@@ -2261,7 +2261,7 @@ function buildBarrasEditor(containerId, prefix, existingBarras = []) {
           oninput="fmtCR(this,'${prefix}slope-${color}')"></div>
         <div><label>Slope 18H</label><input type="text" inputmode="numeric"
           style="${iS}" id="${prefix}slope-${color}" value="${b?.slope||''}" placeholder="125"
-          oninput="fmtSlope(this, color === 'roja' ? '${prefix}par-1' : '${prefix}cr-${nextColor(color)}')"></div>
+          oninput="fmtSlope(this,'${color === 'roja' ? prefix+'par-1' : prefix+'cr-'+nextColor(color)}')"></div>
       </div>
     </div>${nineBlock}`;
   }).join('');
