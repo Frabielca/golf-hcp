@@ -840,11 +840,13 @@ function golfShot(el, nextId) {
 function hoyoPar(el, i, prefix) {
   el.value = el.value.replace(/[^345]/g, '');
   const v = el.value;
-  if (v === '3' || v === '4' || v === '5') {
-    const next = $(prefix + 'idx-' + i);
-    if (next) { next.focus(); next.select(); }
-  }
   calcParTotal(prefix);
+  if (v === '3' || v === '4' || v === '5') {
+    requestAnimationFrame(() => {
+      const next = $(prefix + 'idx-' + i);
+      if (next) next.focus();
+    });
+  }
 }
 
 function hoyoIdx(el, i, prefix, total) {
@@ -853,8 +855,10 @@ function hoyoIdx(el, i, prefix, total) {
   calcParTotal(prefix);
   if (!isNaN(v) && v >= 1 && v <= 18 && (el.value.length >= 2 || (v >= 2 && v <= 9))) {
     if (i < total) {
-      const next = $(prefix + 'par-' + (i + 1));
-      if (next) { next.focus(); next.select(); }
+      requestAnimationFrame(() => {
+        const next = $(prefix + 'par-' + (i + 1));
+        if (next) next.focus();
+      });
     }
   }
 }
