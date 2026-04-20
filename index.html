@@ -535,7 +535,7 @@ nav.nav-hidden{transform:translateY(100%)}
       </div>
     </div>
   </div>
-  <div style="text-align:center;padding:12px 0 4px;font-size:9px;letter-spacing:2px;color:rgba(255,255,255,.2);font-family:'DM Mono',monospace">v1.26.03</div>
+  <div style="text-align:center;padding:12px 0 4px;font-size:9px;letter-spacing:2px;color:rgba(255,255,255,.2);font-family:'DM Mono',monospace">v1.26.04</div>
 </div>
 
 <!-- PAGE: NUEVA RONDA -->
@@ -2324,6 +2324,17 @@ async function guardarEditCampo() {
   const { hoyos, parTotal, error: hErr } = getHoyosFromEditor('edit-c-');
   if (hErr) { showErr(hErr); return; }
   const barras = getBarrasFromEditor('edit-b-');
+  const hasBlancaE   = barras.some(b => b.color === 'blanca');
+  const hasAmarillaE = barras.some(b => b.color === 'amarilla');
+  if (!hasBlancaE && !hasAmarillaE) {
+    showErr('⚠️ Introduce CR y Slope de la barra Blanca o Amarilla como mínimo.');
+    ['blanca','amarilla'].forEach(color => {
+      const crEl = $('edit-b-cr-'+color), slEl = $('edit-b-slope-'+color);
+      if (crEl && (!crEl.value || isNaN(parseFloat(crEl.value)))) { crEl.classList.add('err'); setTimeout(() => crEl.classList.remove('err'),3000); }
+      if (slEl && (!slEl.value || isNaN(parseInt(slEl.value))))   { slEl.classList.add('err'); setTimeout(() => slEl.classList.remove('err'),3000); }
+    });
+    return;
+  }
 
   const btn = $('btn-guardar-campo');
   btn.textContent = 'Guardando…'; btn.disabled = true;
