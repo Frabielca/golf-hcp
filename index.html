@@ -535,7 +535,7 @@ nav.nav-hidden{transform:translateY(100%)}
       </div>
     </div>
   </div>
-  <div style="text-align:center;padding:12px 0 4px;font-size:9px;letter-spacing:2px;color:rgba(255,255,255,.2);font-family:'DM Mono',monospace">v1.26.07</div>
+  <div style="text-align:center;padding:12px 0 4px;font-size:9px;letter-spacing:2px;color:rgba(255,255,255,.2);font-family:'DM Mono',monospace">v1.26.08</div>
 </div>
 
 <!-- PAGE: NUEVA RONDA -->
@@ -1994,8 +1994,17 @@ function recalcEditStbl() {
   const slForChcp  = parseFloat($('edit-r-slope').value);
   const echcpEl = $('edit-chcp-val');
   if (echcpEl && !isNaN(hcpForChcp) && !isNaN(crForChcp) && !isNaN(slForChcp)) {
-    const chcp = Math.round(hcpForChcp * (slForChcp / 113) + (crForChcp - (campo?.par_total || 72)));
-    echcpEl.textContent = (chcp >= 0 ? '+' : '') + chcp;
+    // Para 9H: usar el par real de los hoyos jugados
+    let parEdit = campo?.par_total || 72;
+    if (editNH === 9 && campo?.hoyos?.length >= 18) {
+      const sorted9 = [...campo.hoyos].sort((a,b) => a.numero - b.numero);
+      const slice9  = sorted9.slice(startI - 1, startI - 1 + 9);
+      const par9    = slice9.reduce((s, h) => s + (h.par||0), 0);
+      if (par9 > 0) parEdit = par9;
+    }
+    const chcp = Math.round(hcpForChcp * (slForChcp / 113) + (crForChcp - parEdit));
+    const totalGolpes = parEdit + chcp;
+    echcpEl.textContent = 'HCP ' + (chcp >= 0 ? '+' : '') + chcp + ' · ' + totalGolpes + ' golpes';
     if (campo) renderRedDots('edit-', chcp, campo.hoyos);
   }
 
