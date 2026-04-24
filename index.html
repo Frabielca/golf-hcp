@@ -1657,7 +1657,7 @@ function renderScoreSymbols(prefix, hoyos, shots, startHoyo) {
 }
 
 function renderRedDots(prefix, courseHCP, hoyos) {
-  if (prefix === 'gh-') toast('HCP: ' + courseHCP, false);
+
   if (!hoyos || courseHCP == null || isNaN(courseHCP)) return;
   const sorted = [...hoyos].sort((a, b) => a.numero - b.numero);
   for (let i = 0; i < 18; i++) {
@@ -1745,7 +1745,10 @@ function calcNuevaChcp() {
   // Aplicar PLAYING HCP (con ajuste de formato) a los puntos rojos por hoyo
   const campoId = parseInt($('f-campo').value);
   const campo = state.campos.find(c => c.id === campoId);
-  if (campo) renderRedDots('gh-', playing, campo.hoyos);
+  if (campo) {
+    toast('CR:' + cr + ' Par:' + par + ' HCP:' + hcp + ' → chcp:' + chcp + ' playing:' + playing, false);
+    renderRedDots('gh-', playing, campo.hoyos);
+  }
 }
 
 function cancelarNueva() {
