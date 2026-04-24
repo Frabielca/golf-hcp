@@ -970,8 +970,11 @@ function calcStableford(hcpIndex, campo, shots, crOverride, slopeOverride, vuelt
   // Para 9H: Course HCP = round(HCP × Slope/113 + (CR_9H − Par_9H))
   // Para 18H: Course HCP = round(HCP × Slope/113 + (CR_18H − Par_18H))
   const parParcial = hoyos.reduce((s, h) => s + (h.par || 0), 0);
-  const parRef = is9 ? parParcial : (campo.par_total || parParcial);
-  const courseHCP = Math.round(hcpIndex * (useSlope / 113) + (useCR - parRef));
+  // WHS: Course HCP para distribución de golpes siempre en base 18H
+  const parRef = campo.par_total || (parParcial * (is9 ? 2 : 1));
+  const cr18H  = crOverride && !is9 ? crOverride : (campo.barras?.[0]?.cr || crOverride);
+  const sl18H  = slopeOverride && !is9 ? slopeOverride : (campo.barras?.[0]?.slope || slopeOverride);
+  const courseHCP = Math.round(hcpIndex * ((is9 ? sl18H : useSlope) / 113) + ((is9 ? cr18H : useCR) - parRef));
   let total = 0;
   const byHole = [];
   for (let i = 0; i < hoyos.length; i++) {
@@ -1724,19 +1727,18 @@ function calcNuevaChcp() {
   const wrap = $('nueva-chcp-wrap');
   if (!wrap) return;
   if (isNaN(hcp) || isNaN(cr) || isNaN(sl)) { wrap.style.display = 'none'; return; }
-  // Para 9H: calcular par parcial de los hoyos jugados
   const numH = parseInt($('f-num-hoyos')?.value) || 18;
   const vuelta = parseInt($('f-vuelta')?.value) || 1;
   const campoIdChcp = parseInt($('f-campo').value);
   const campoChcp = state.campos.find(c => c.id === campoIdChcp);
-  let par = parseFloat($('f-par-total').value);
-  if (numH === 9 && campoChcp?.hoyos?.length >= 18) {
-    const startIdx = vuelta === 2 ? 9 : 0;
-    const hoyos9 = [...campoChcp.hoyos].sort((a,b) => a.numero - b.numero).slice(startIdx, startIdx+9);
-    const par9 = hoyos9.reduce((s, h) => s + (h.par||0), 0);
-    if (par9 > 0) par = par9;
+  // Para golpes de ventaja: siempre usar CR/Slope de 18H (norma WHS)
+  let cr18 = cr, sl18 = sl;
+  if (numH === 9) {
+    const barra18 = campoChcp?.barras?.find(b => b.color === $('f-barra')?.value);
+    if (barra18) { cr18 = barra18.cr; sl18 = barra18.slope; }
   }
-  const chcp = Math.round(hcp * (sl / 113) + (isNaN(par) ? 0 : cr - par));
+  const par18 = parseFloat($('f-par-total').value);
+  const chcp = Math.round(hcp * (sl18 / 113) + (isNaN(par18) ? 0 : cr18 - par18));
   const fmt = parseInt($('nueva-fmt')?.value || '100');
   const playing = Math.round(chcp * fmt / 100);
   // Mostrar solo formato % y el playing HCP resultante
@@ -1745,10 +1747,7 @@ function calcNuevaChcp() {
   // Aplicar PLAYING HCP (con ajuste de formato) a los puntos rojos por hoyo
   const campoId = parseInt($('f-campo').value);
   const campo = state.campos.find(c => c.id === campoId);
-  if (campo) {
-    toast('CR:' + cr + ' Par:' + par + ' HCP:' + hcp + ' → chcp:' + chcp + ' playing:' + playing, false);
-    renderRedDots('gh-', playing, campo.hoyos);
-  }
+  if (campo) renderRedDots('gh-', playing, campo.hoyos);
 }
 
 function cancelarNueva() {
