@@ -978,8 +978,9 @@ function calcStableford(hcpIndex, campo, shots, crOverride, slopeOverride, vuelt
     const hoyo = hoyos[i];
     const s = shots[i];
     if (s == null || isNaN(s) || s < 1) { byHole.push(0); continue; }
-    const ex1 = courseHCP >= hoyo.indice ? 1 : 0;
-    const ex2 = courseHCP >= (hoyo.indice + 18) ? 1 : 0;
+    const hIdx = parseInt(hoyo.indice) || 0;
+    const ex1 = (hIdx > 0 && courseHCP >= hIdx) ? 1 : 0;
+    const ex2 = (hIdx > 0 && courseHCP >= hIdx + 18) ? 1 : 0;
     const neto = s - hoyo.par - (ex1 + ex2);
     let pts = 0;
     if (neto <= -2) pts = 4;
@@ -1664,7 +1665,9 @@ function renderRedDots(prefix, courseHCP, hoyos) {
     const id = prefix === 'gh-' ? 'gh-rdots-' + hoyo.numero : 'edit-rdots-' + hoyo.numero;
     const el = document.getElementById(id);
     if (!el) continue;
-    const strokes = (courseHCP >= hoyo.indice ? 1 : 0) + (courseHCP >= hoyo.indice + 18 ? 1 : 0);
+    const idx = parseInt(hoyo.indice);
+    if (!idx || idx < 1 || idx > 18) { if (el) el.innerHTML = ''; continue; }
+    const strokes = (courseHCP >= idx ? 1 : 0) + (courseHCP >= idx + 18 ? 1 : 0);
     el.innerHTML = strokes > 0 ? Array(strokes).fill('<span class="red-dot"></span>').join('') : '';
   }
 }
