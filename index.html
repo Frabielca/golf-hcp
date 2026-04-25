@@ -240,6 +240,16 @@ nav.nav-hidden{transform:translateY(100%)}
 .barra-9h-title{font-size:7px;letter-spacing:1.5px;text-transform:uppercase;color:#3b82f6;margin-bottom:4px}
 .barra-9h-row{display:grid;grid-template-columns:auto 1fr 1fr 1fr;gap:4px;align-items:center;margin-bottom:3px}
 .barra-9h-row label{font-size:7px;color:var(--muted);letter-spacing:1px;text-transform:uppercase}
+
+.nav-dropdown{position:relative;display:inline-block}
+.nav-dropdown-menu{position:fixed;bottom:70px;right:8px;background:#1e3d1e;border:1px solid rgba(255,255,255,.12);border-radius:10px;min-width:160px;z-index:400;box-shadow:0 -4px 20px rgba(0,0,0,.4);display:none;flex-direction:column;overflow:hidden}
+.nav-dropdown-menu.open{display:flex}
+.nav-dd-item{display:flex;align-items:center;gap:10px;padding:12px 16px;font-size:12px;letter-spacing:.5px;color:rgba(255,255,255,.8);cursor:pointer;border:none;background:none;width:100%;text-align:left;touch-action:manipulation;border-bottom:1px solid rgba(255,255,255,.06)}
+.nav-dd-item:last-child{border-bottom:none}
+.nav-dd-item:active{background:rgba(255,255,255,.06)}
+.nav-dd-item.danger{color:#e05555}
+.nav-dd-item svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;flex-shrink:0}
+
 </style>
 </head>
 <body>
@@ -360,7 +370,7 @@ nav.nav-hidden{transform:translateY(100%)}
     <button class="auth-btn" id="btn-login" onclick="doLogin()">Entrar</button>
     <div class="auth-link">¿Sin cuenta? <span onclick="showAuth('register')">Regístrate</span></div>
     <div class="auth-link" style="margin-top:16px;font-size:10px;opacity:.6"><a href="privacy.html" target="_blank" style="color:var(--muted);text-decoration:none">Política de Privacidad</a></div>
-    <div style="text-align:center;margin-top:8px;font-size:9px;color:rgba(255,255,255,.2);letter-spacing:1px">v1.27.05</div>
+    <div style="text-align:center;margin-top:8px;font-size:9px;color:rgba(255,255,255,.2);letter-spacing:1px">v1.28.00</div>
   </div>
 </div>
 
@@ -579,7 +589,7 @@ nav.nav-hidden{transform:translateY(100%)}
       </div>
     </div>
   </div>
-  <div style="text-align:center;padding:12px 0 4px;font-size:9px;letter-spacing:2px;color:rgba(255,255,255,.2);font-family:'DM Mono',monospace">v1.27.05</div>
+  <div style="text-align:center;padding:12px 0 4px;font-size:9px;letter-spacing:2px;color:rgba(255,255,255,.2);font-family:'DM Mono',monospace">v1.28.00</div>
 </div>
 
 <!-- PAGE: NUEVA RONDA -->
@@ -807,15 +817,29 @@ nav.nav-hidden{transform:translateY(100%)}
   <button onclick="goTo('campos',this)" id="nav-campos">
     <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Campos
   </button>
-  <button onclick="goTo('formula',this)" id="nav-formula">
-    <svg viewBox="0 0 24 24"><path d="M9 3H5a2 2 0 0 0-2 2v4m6-6h10a2 2 0 0 1 2 2v4M9 3v18m0 0h10a2 2 0 0 0 2-2V9M9 21H5a2 2 0 0 1-2-2V9m0 0h18"/></svg>Info
-  </button>
-  <button id="btn-cambiar-pwd" type="button" style="font-size:9px;letter-spacing:.5px" onclick="$('modal-pwd').classList.remove('hidden');$('pwd-new').value='';$('pwd-confirm').value='';$('pwd-err').classList.remove('show')">
-    <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Clave
-  </button>
-  <button id="btn-salir-nav" type="button">
-    <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Salir
-  </button>
+  <div class="nav-dropdown">
+    <button id="nav-formula" onclick="toggleNavMenu(this)" style="position:relative">
+      <svg viewBox="0 0 24 24"><path d="M9 3H5a2 2 0 0 0-2 2v4m6-6h10a2 2 0 0 1 2 2v4M9 3v18m0 0h10a2 2 0 0 0 2-2V9M9 21H5a2 2 0 0 1-2-2V9m0 0h18"/></svg>Info
+    </button>
+    <div class="nav-dropdown-menu" id="nav-dd-menu">
+      <button class="nav-dd-item" onclick="closeNavMenu();goTo('formula',$('nav-formula'))">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        Información
+      </button>
+      <button class="nav-dd-item" onclick="closeNavMenu();localStorage.removeItem('golf_guide_seen');$('guide-screen').classList.remove('hidden')">
+        <svg viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+        Guía de inicio
+      </button>
+      <button class="nav-dd-item" onclick="closeNavMenu();$('modal-pwd').classList.remove('hidden');$('pwd-new').value='';$('pwd-confirm').value='';$('pwd-err').classList.remove('show')">
+        <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        Cambiar clave
+      </button>
+      <button class="nav-dd-item danger" onclick="closeNavMenu();doLogout()">
+        <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Salir
+      </button>
+    </div>
+  </div>
 </nav>
 
 <script>
@@ -2503,6 +2527,35 @@ async function guardarNuevoCampo() {
   }
 }
 
+
+function toggleNavMenu(btn) {
+  const menu = $('nav-dd-menu');
+  const isOpen = menu.classList.contains('open');
+  if (isOpen) {
+    menu.classList.remove('open');
+    btn.classList.remove('active');
+  } else {
+    menu.classList.add('open');
+    btn.classList.add('active');
+    // Cerrar al tocar fuera
+    setTimeout(() => document.addEventListener('touchstart', closeNavMenuOutside, {once:true}), 100);
+    setTimeout(() => document.addEventListener('click', closeNavMenuOutside, {once:true}), 100);
+  }
+}
+function closeNavMenu() {
+  const menu = $('nav-dd-menu');
+  menu.classList.remove('open');
+  const btn = $('nav-formula');
+  if (btn && !['inicio','nueva','historial','campos'].some(p => location.href.includes(p))) {
+    // keep active state if on formula page
+  }
+}
+function closeNavMenuOutside(e) {
+  if (!e.target.closest('#nav-formula') && !e.target.closest('#nav-dd-menu')) {
+    closeNavMenu();
+  }
+}
+
 function cancelarEditCampo() {
   const nombre = $('edit-c-nombre')?.value?.trim();
   const barras = getBarrasFromEditor('edit-b-');
@@ -2763,7 +2816,6 @@ async function init() {
       el.addEventListener('touchend', e => { e.preventDefault(); fn(); }, {passive:false});
       el.addEventListener('click', () => fn());
     };
-    addTap('btn-salir-nav', doLogout);
     addTap('btn-guardar-nc', guardarNuevoCampo);
     addTap('btn-guardar-campo', guardarEditCampo);
     addTap('btn-guardar-ronda', guardarEditRonda);
