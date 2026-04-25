@@ -361,7 +361,7 @@ nav.nav-hidden{transform:translateY(100%)}
     <button class="auth-btn" id="btn-login" onclick="doLogin()">Entrar</button>
     <div class="auth-link">¿Sin cuenta? <span onclick="showAuth('register')">Regístrate</span></div>
     <div class="auth-link" style="margin-top:16px;font-size:10px;opacity:.6"><a href="privacy.html" target="_blank" style="color:var(--muted);text-decoration:none">Política de Privacidad</a></div>
-    <div style="text-align:center;margin-top:8px;font-size:9px;color:rgba(255,255,255,.2);letter-spacing:1px">v1.27.03</div>
+    <div style="text-align:center;margin-top:8px;font-size:9px;color:rgba(255,255,255,.2);letter-spacing:1px">v1.27.04</div>
   </div>
 </div>
 
@@ -580,7 +580,7 @@ nav.nav-hidden{transform:translateY(100%)}
       </div>
     </div>
   </div>
-  <div style="text-align:center;padding:12px 0 4px;font-size:9px;letter-spacing:2px;color:rgba(255,255,255,.2);font-family:'DM Mono',monospace">v1.27.03</div>
+  <div style="text-align:center;padding:12px 0 4px;font-size:9px;letter-spacing:2px;color:rgba(255,255,255,.2);font-family:'DM Mono',monospace">v1.27.04</div>
 </div>
 
 <!-- PAGE: NUEVA RONDA -->
@@ -732,6 +732,9 @@ nav.nav-hidden{transform:translateY(100%)}
 
 <!-- PAGE: FÓRMULA -->
 <div class="page" id="page-formula">
+  <button onclick="localStorage.removeItem('golf_guide_seen');$('guide-screen').classList.remove('hidden')" style="width:100%;margin-bottom:10px;background:rgba(201,168,76,.1);border:1px solid rgba(201,168,76,.3);border-radius:8px;color:var(--gold2);font-family:'DM Mono',monospace;font-size:11px;letter-spacing:1px;padding:12px;cursor:pointer;touch-action:manipulation">
+    📖 Ver guía de inicio
+  </button>
   <div class="card" style="margin-bottom:8px">
     <div class="card-title" style="margin-bottom:6px">Fórmula WHS 2020</div>
     <div class="formula-grid">
