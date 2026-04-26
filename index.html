@@ -379,7 +379,7 @@ nav.nav-hidden{transform:translateY(100%)}
     <button class="auth-btn" id="btn-login" onclick="doLogin()">Entrar</button>
     <div class="auth-link">¿Sin cuenta? <span onclick="showAuth('register')">Regístrate</span></div>
     <div class="auth-link" style="margin-top:16px;font-size:10px;opacity:.6"><a href="privacy.html" target="_blank" style="color:var(--muted);text-decoration:none">Política de Privacidad</a></div>
-    <div style="text-align:center;margin-top:8px;font-size:9px;color:rgba(255,255,255,.2);letter-spacing:1px">v1.28.02</div>
+    <div style="text-align:center;margin-top:8px;font-size:9px;color:rgba(255,255,255,.2);letter-spacing:1px">v1.28.03</div>
   </div>
 </div>
 
@@ -598,7 +598,7 @@ nav.nav-hidden{transform:translateY(100%)}
       </div>
     </div>
   </div>
-  <div style="text-align:center;padding:12px 0 4px;font-size:9px;letter-spacing:2px;color:rgba(255,255,255,.2);font-family:'DM Mono',monospace">v1.28.02</div>
+  <div style="text-align:center;padding:12px 0 4px;font-size:9px;letter-spacing:2px;color:rgba(255,255,255,.2);font-family:'DM Mono',monospace">v1.28.03</div>
 </div>
 
 <!-- PAGE: NUEVA RONDA -->
@@ -2390,14 +2390,6 @@ function cancelarNuevoCampo() {
 }
 
 
-function toggleNavMenu() {
-  const menu = $('nav-dd-menu');
-  const btn  = $('nav-formula');
-  if (!menu) return;
-  const isOpen = menu.classList.contains('open');
-  menu.classList.toggle('open', !isOpen);
-  btn.classList.toggle('active', !isOpen);
-}
 function closeNavMenu() {
   const menu = $('nav-dd-menu');
   const btn  = $('nav-formula');
@@ -2561,14 +2553,6 @@ function toggleNavMenu(btn) {
     // Cerrar al tocar fuera
     setTimeout(() => document.addEventListener('touchstart', closeNavMenuOutside, {once:true}), 100);
     setTimeout(() => document.addEventListener('click', closeNavMenuOutside, {once:true}), 100);
-  }
-}
-function closeNavMenu() {
-  const menu = $('nav-dd-menu');
-  menu.classList.remove('open');
-  const btn = $('nav-formula');
-  if (btn && !['inicio','nueva','historial','campos'].some(p => location.href.includes(p))) {
-    // keep active state if on formula page
   }
 }
 function closeNavMenuOutside(e) {
@@ -2796,18 +2780,6 @@ function goTo(id, btn) {
   }, {passive: true});
 })();
 
-function toggleNavMenu() {
-  const dd = $('nav-dropdown');
-  if (!dd) return;
-  dd.classList.toggle('open');
-  // Cerrar al tocar fuera
-  if (dd.classList.contains('open')) {
-    setTimeout(() => {
-      document.addEventListener('touchstart', closeNavMenu, {once:true, passive:true});
-      document.addEventListener('click', closeNavMenu, {once:true});
-    }, 50);
-  }
-}
 function closeNavMenu() {
   $('nav-dropdown')?.classList.remove('open');
 }function doLogoutFromMenu() {
