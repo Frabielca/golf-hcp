@@ -379,7 +379,7 @@ nav.nav-hidden{transform:translateY(100%)}
     <button class="auth-btn" id="btn-login" onclick="doLogin()">Entrar</button>
     <div class="auth-link">¿Sin cuenta? <span onclick="showAuth('register')">Regístrate</span></div>
     <div class="auth-link" style="margin-top:16px;font-size:10px;opacity:.6"><a href="privacy.html" target="_blank" style="color:var(--muted);text-decoration:none">Política de Privacidad</a></div>
-    <div style="text-align:center;margin-top:8px;font-size:9px;color:rgba(255,255,255,.2);letter-spacing:1px">v1.28.06</div>
+    <div style="text-align:center;margin-top:8px;font-size:9px;color:rgba(255,255,255,.2);letter-spacing:1px">v1.28.07</div>
   </div>
 </div>
 
@@ -598,7 +598,7 @@ nav.nav-hidden{transform:translateY(100%)}
       </div>
     </div>
   </div>
-  <div style="text-align:center;padding:12px 0 4px;font-size:9px;letter-spacing:2px;color:rgba(255,255,255,.2);font-family:'DM Mono',monospace">v1.28.06</div>
+  <div style="text-align:center;padding:12px 0 4px;font-size:9px;letter-spacing:2px;color:rgba(255,255,255,.2);font-family:'DM Mono',monospace">v1.28.07</div>
 </div>
 
 <!-- PAGE: NUEVA RONDA -->
@@ -2544,39 +2544,9 @@ async function guardarNuevoCampo() {
 function toggleNavMenu(btn) {
   const menu = $('nav-dd-menu');
   const isOpen = menu.classList.contains('open');
-  if (isOpen) {
-    menu.classList.remove('open');
-    btn.classList.remove('active');
-  } else {
-    menu.classList.add('open');
-    btn.classList.add('active');
-    // Cerrar al tocar fuera
-    setTimeout(() => document.addEventListener('touchstart', closeNavMenuOutside, {once:true}), 100);
-    setTimeout(() => document.addEventListener('click', closeNavMenuOutside, {once:true}), 100);
-  }
+  menu.classList.toggle('open', !isOpen);
 }
-function closeNavMenuOutside(e) {
-  if (!e.target.closest('#nav-formula') && !e.target.closest('#nav-dd-menu')) {
-    closeNavMenu();
-  }
-}
-// Cerrar menu al tocar cualquier parte de la pantalla
-document.addEventListener('click', function(e) {
-  const menu = $('nav-dd-menu');
-  if (menu && menu.classList.contains('open')) {
-    if (!e.target.closest('#nav-formula') && !e.target.closest('#nav-dd-menu')) {
-      closeNavMenu();
-    }
-  }
-});
-document.addEventListener('touchend', function(e) {
-  const menu = $('nav-dd-menu');
-  if (menu && menu.classList.contains('open')) {
-    if (!e.target.closest('#nav-formula') && !e.target.closest('#nav-dd-menu')) {
-      setTimeout(closeNavMenu, 50);
-    }
-  }
-}, {passive: true});
+
 
 function cancelarEditCampo() {
   const nombre = $('edit-c-nombre')?.value?.trim();
@@ -2798,12 +2768,6 @@ function goTo(id, btn) {
   }, {passive: true});
 })();
 
-function closeNavMenu() {
-  $('nav-dropdown')?.classList.remove('open');
-}function doLogoutFromMenu() {
-  closeNavMenu();
-  doLogout();
-}
 
 
 function closeGuide() {
@@ -2830,6 +2794,14 @@ async function init() {
     addTap('btn-guardar-nc', guardarNuevoCampo);
     addTap('btn-guardar-campo', guardarEditCampo);
     addTap('btn-guardar-ronda', guardarEditRonda);
+    // Cerrar menú INFO al tocar fuera
+    document.addEventListener('touchstart', e => {
+      if ($('nav-dd-menu')?.classList.contains('open') &&
+          !e.target.closest('#nav-formula') &&
+          !e.target.closest('#nav-dd-menu')) {
+        closeNavMenu();
+      }
+    }, {passive: true});
   })();
 
   // btn-add: múltiples handlers para máxima compatibilidad iOS
