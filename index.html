@@ -244,7 +244,7 @@ nav.nav-hidden{transform:translateY(100%)}
 .nav-dropdown{display:none}
 .nav-dropdown>button{flex:1;width:100%}.nav-dropdown-menu{position:fixed;bottom:62px;right:6px;background:#162916;border:1px solid rgba(255,255,255,.14);border-radius:8px;min-width:148px;z-index:400;box-shadow:0 -2px 16px rgba(0,0,0,.5);display:none;flex-direction:column;overflow:hidden}
 .nav-dropdown-menu.open{display:flex}
-.nav-dd-item{display:flex;align-items:center;gap:7px;padding:7px 11px;font-size:9px;letter-spacing:.8px;text-transform:uppercase;color:rgba(255,255,255,.75);cursor:pointer;border:none;background:none;width:100%;text-align:left;touch-action:manipulation;border-bottom:1px solid rgba(255,255,255,.06);font-family:'DM Mono',monospace;white-space:nowrap}
+.nav-dd-item{display:flex;flex-direction:row!important;align-items:center;gap:7px;padding:7px 11px;font-size:9px;letter-spacing:.8px;text-transform:uppercase;color:rgba(255,255,255,.75);cursor:pointer;border:none;background:none;width:100%;text-align:left;touch-action:manipulation;border-bottom:1px solid rgba(255,255,255,.06);font-family:'DM Mono',monospace;white-space:nowrap}
 .nav-dd-item:last-child{border-bottom:none}
 .nav-dd-item:active{background:rgba(255,255,255,.05)}
 .nav-dd-item.danger{color:#e05555}
@@ -379,7 +379,7 @@ nav.nav-hidden{transform:translateY(100%)}
     <button class="auth-btn" id="btn-login" onclick="doLogin()">Entrar</button>
     <div class="auth-link">¿Sin cuenta? <span onclick="showAuth('register')">Regístrate</span></div>
     <div class="auth-link" style="margin-top:16px;font-size:10px;opacity:.6"><a href="privacy.html" target="_blank" style="color:var(--muted);text-decoration:none">Política de Privacidad</a></div>
-    <div style="text-align:center;margin-top:8px;font-size:9px;color:rgba(255,255,255,.2);letter-spacing:1px">v1.28.05</div>
+    <div style="text-align:center;margin-top:8px;font-size:9px;color:rgba(255,255,255,.2);letter-spacing:1px">v1.28.06</div>
   </div>
 </div>
 
@@ -598,7 +598,7 @@ nav.nav-hidden{transform:translateY(100%)}
       </div>
     </div>
   </div>
-  <div style="text-align:center;padding:12px 0 4px;font-size:9px;letter-spacing:2px;color:rgba(255,255,255,.2);font-family:'DM Mono',monospace">v1.28.05</div>
+  <div style="text-align:center;padding:12px 0 4px;font-size:9px;letter-spacing:2px;color:rgba(255,255,255,.2);font-family:'DM Mono',monospace">v1.28.06</div>
 </div>
 
 <!-- PAGE: NUEVA RONDA -->
@@ -812,16 +812,16 @@ nav.nav-hidden{transform:translateY(100%)}
 
 <!-- NAV -->
 <nav id="main-nav" style="display:none">
-  <button class="active" onclick="goTo('inicio',this)" id="nav-inicio">
+  <button class="active" onclick="closeNavMenu();goTo('inicio',this)" id="nav-inicio">
     <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M2 12h3M19 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12"/></svg>Inicio
   </button>
-  <button onclick="goTo('nueva',this)" id="nav-nueva">
+  <button onclick="closeNavMenu();goTo('nueva',this)" id="nav-nueva">
     <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>Ronda
   </button>
-  <button onclick="goTo('historial',this)" id="nav-historial">
+  <button onclick="closeNavMenu();goTo('historial',this)" id="nav-historial">
     <svg viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>Historial
   </button>
-  <button onclick="goTo('campos',this)" id="nav-campos">
+  <button onclick="closeNavMenu();goTo('campos',this)" id="nav-campos">
     <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Campos
   </button>
   <button id="nav-formula" onclick="toggleNavMenu(this)">
