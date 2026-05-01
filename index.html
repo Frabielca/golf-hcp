@@ -514,7 +514,7 @@ nav.nav-hidden{transform:translateY(100%)}
     <button class="auth-btn" id="btn-login" onclick="doLogin()" data-i18n="btn_entrar">Entrar</button>
     <div class="auth-link"><span data-i18n="sin_cuenta">¿Sin cuenta?</span> <span onclick="showAuth('register')" data-i18n="registrate">Regístrate</span></div>
     <div class="auth-link" style="margin-top:16px;font-size:10px;opacity:.6"><a href="privacy.html" target="_blank" style="color:var(--muted);text-decoration:none" data-i18n="politica_priv">Política de Privacidad</a></div>
-    <div style="text-align:center;margin-top:8px;font-size:9px;color:rgba(255,255,255,.2);letter-spacing:1px">v1.31.045</div>
+    <div style="text-align:center;margin-top:8px;font-size:9px;color:rgba(255,255,255,.2);letter-spacing:1px">v1.31.046</div>
   </div>
 </div>
 
@@ -734,7 +734,7 @@ nav.nav-hidden{transform:translateY(100%)}
       </div>
     </div>
   </div>
-  <div style="text-align:center;padding:12px 0 4px;font-size:9px;letter-spacing:2px;color:rgba(255,255,255,.2);font-family:'DM Mono',monospace" class="version-label">v1.31.045</div>
+  <div style="text-align:center;padding:12px 0 4px;font-size:9px;letter-spacing:2px;color:rgba(255,255,255,.2);font-family:'DM Mono',monospace" class="version-label">v1.31.046</div>
   <div class="card" style="margin-bottom:8px;padding:12px 14px;display:none" id="mini-chart-wrap">
     <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px"><span style="font-size:11px;letter-spacing:1.5px;color:var(--gold2);font-weight:bold" data-i18n="evolucion_hcp">EVOLUCIÓN HCP</span><span style="font-size:9px;color:var(--muted);letter-spacing:.5px" data-i18n="ultimas_20">20 últimas rondas</span></div>
     <canvas id="mini-hcp-chart" height="100" style="width:100%;display:block"></canvas>
@@ -2198,18 +2198,61 @@ function renderMiniChart() {
     last20.forEach((p,i) => i===0 ? ctx.moveTo(xPos(i),yScale(p.hcp)) : ctx.lineTo(xPos(i),yScale(p.hcp)));
     ctx.stroke();
 
-    // Dots + HCP values at top
+    // Dots + HCP values al top — ALGORITMO C+:
+    // Identificar puntos clave (primero, ultimo, maximo, minimo) y pintarlos siempre.
+    // El resto: pintar de izquierda a derecha y omitir si colisiona horizontalmente
+    // con alguna etiqueta ya pintada. Mantiene la grafica legible incluso con
+    // valores muy proximos en altura.
     ctx.font = '8px DM Mono,monospace';
+
+    // Primero pintar TODOS los puntos (circulos)
     last20.forEach((p,i) => {
       const x = xPos(i), y = yScale(p.hcp);
       ctx.beginPath(); ctx.arc(x,y,2.5,0,Math.PI*2);
       ctx.fillStyle = C.dot; ctx.fill();
-      // Value label above dot
-      ctx.fillStyle = C.valueText;
-      ctx.font='8px DM Mono,monospace';
-      ctx.textAlign = i === n-1 ? 'right' : i === 0 ? 'left' : 'center';
-      ctx.fillText(p.hcp.toFixed(1), x + (i===n-1?-2:i===0?2:0), y-5);
     });
+
+    // Calcular indice del minimo y maximo
+    let idxMin = 0, idxMax = 0;
+    for (let i=1; i<last20.length; i++) {
+      if (last20[i].hcp < last20[idxMin].hcp) idxMin = i;
+      if (last20[i].hcp > last20[idxMax].hcp) idxMax = i;
+    }
+    const keyIndices = new Set([0, n-1, idxMin, idxMax]);
+
+    // Helper: rectangulo aproximado de la etiqueta para detectar colisiones
+    const labelBox = (i) => {
+      const p = last20[i];
+      const txt = p.hcp.toFixed(1);
+      const x = xPos(i), y = yScale(p.hcp);
+      const w = txt.length * 5 + 2; // ~5px por caracter a 8px font
+      const align = i === n-1 ? 'right' : i === 0 ? 'left' : 'center';
+      const cx = align === 'right' ? x - w + 2 : align === 'left' ? x + 2 : x - w/2;
+      return { left: cx, right: cx + w, top: y - 12, bottom: y - 3, align, x, y, txt };
+    };
+
+    const drawn = []; // rectangulos ya pintados
+    const collides = (b) => drawn.some(d =>
+      !(b.right < d.left - 2 || b.left > d.right + 2 ||
+        b.bottom < d.top - 1 || b.top > d.bottom + 1)
+    );
+    const drawLabel = (i) => {
+      const b = labelBox(i);
+      ctx.fillStyle = C.valueText;
+      ctx.textAlign = b.align;
+      ctx.fillText(b.txt, b.x + (b.align==='right'?-2:b.align==='left'?2:0), b.y - 5);
+      drawn.push(b);
+    };
+
+    // 1) Pintar siempre los indices clave (primero, ultimo, min, max)
+    [...keyIndices].sort((a,b)=>a-b).forEach(i => drawLabel(i));
+
+    // 2) Resto: solo si no colisiona con los ya pintados
+    for (let i=0; i<n; i++) {
+      if (keyIndices.has(i)) continue;
+      const b = labelBox(i);
+      if (!collides(b)) drawLabel(i);
+    }
 
     // Date labels below canvas — RAREADAS para evitar amontonamiento
     // <=4: todas / 5-8: cada 2 / 9-14: cada 3 / 15-20: cada 5 (siempre primer y ultimo)
@@ -4013,8 +4056,8 @@ function contactarGolfHCP() {
   const ios = ua.match(/iPhone OS ([\d_]+)/);
   const android = ua.match(/Android ([\d.]+)/);
   const sys = ios ? 'iOS ' + ios[1].replace(/_/g,'.') : android ? 'Android ' + android[1] : 'Web';
-  const appVer = document.title.includes('HCP') ? 'v1.31.045' : 'Golf HCP';
-  const body = encodeURIComponent('Hola,\n\n[Escribe tu consulta aqui]\n\n\n-- \nGolf HCP v1.31.045\n' + sys);
+  const appVer = document.title.includes('HCP') ? 'v1.31.046' : 'Golf HCP';
+  const body = encodeURIComponent('Hola,\n\n[Escribe tu consulta aqui]\n\n\n-- \nGolf HCP v1.31.046\n' + sys);
   window.open('mailto:golf.hcp.webmaster@gmail.com?subject=Golf%20HCP%20App&body=' + body, '_blank');
 }
 
@@ -4479,21 +4522,56 @@ function drawStatsChart(canvasId, labelsId, data, color, minVal, maxVal, labelFn
       i===0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y);
     });
     ctx.stroke();
+
+    // Pintar todos los puntos (circulos)
     data.forEach((d,i) => {
       const x=xPos(i), y=yScale(valueFn(d));
       ctx.beginPath(); ctx.arc(x,y,2.5,0,Math.PI*2); ctx.fillStyle=color; ctx.fill();
-      ctx.fillStyle=color; ctx.font='8px DM Mono,monospace';
-      if (i === n-1) {
-        ctx.textAlign = 'right';
-        ctx.fillText(valueFn(d).toFixed(1), W - padR, y-5);
-      } else if (i === 0) {
-        ctx.textAlign = 'left';
-        ctx.fillText(valueFn(d).toFixed(1), padL, y-5);
-      } else {
-        ctx.textAlign = 'center';
-        ctx.fillText(valueFn(d).toFixed(1), x, y-5);
-      }
     });
+
+    // Etiquetas con algoritmo C+: extremos clave siempre, resto si no colisiona
+    ctx.font='8px DM Mono,monospace';
+
+    // Identificar min y max
+    let idxMin = 0, idxMax = 0;
+    for (let i=1; i<data.length; i++) {
+      if (valueFn(data[i]) < valueFn(data[idxMin])) idxMin = i;
+      if (valueFn(data[i]) > valueFn(data[idxMax])) idxMax = i;
+    }
+    const keyIndices = new Set([0, n-1, idxMin, idxMax]);
+
+    const labelBox = (i) => {
+      const x = xPos(i), y = yScale(valueFn(data[i]));
+      const txt = valueFn(data[i]).toFixed(1);
+      const w = txt.length * 5 + 2;
+      const align = i === n-1 ? 'right' : i === 0 ? 'left' : 'center';
+      const drawX = align === 'right' ? W - padR : align === 'left' ? padL : x;
+      const cx = align === 'right' ? drawX - w : align === 'left' ? drawX : drawX - w/2;
+      return { left: cx, right: cx + w, top: y - 12, bottom: y - 3, align, drawX, y, txt };
+    };
+
+    const drawn = [];
+    const collides = (b) => drawn.some(d =>
+      !(b.right < d.left - 2 || b.left > d.right + 2 ||
+        b.bottom < d.top - 1 || b.top > d.bottom + 1)
+    );
+    const drawLabel = (i) => {
+      const b = labelBox(i);
+      ctx.fillStyle = color;
+      ctx.textAlign = b.align;
+      ctx.fillText(b.txt, b.drawX, b.y - 5);
+      drawn.push(b);
+    };
+
+    // 1) Indices clave siempre
+    [...keyIndices].sort((a,b)=>a-b).forEach(i => drawLabel(i));
+
+    // 2) Resto si no colisiona
+    for (let i=0; i<n; i++) {
+      if (keyIndices.has(i)) continue;
+      const b = labelBox(i);
+      if (!collides(b)) drawLabel(i);
+    }
   }
 
   // Date labels at bottom of canvas - aligned with data points
