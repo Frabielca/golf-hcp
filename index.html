@@ -514,7 +514,7 @@ nav.nav-hidden{transform:translateY(100%)}
     <button class="auth-btn" id="btn-login" onclick="doLogin()" data-i18n="btn_entrar">Entrar</button>
     <div class="auth-link"><span data-i18n="sin_cuenta">¿Sin cuenta?</span> <span onclick="showAuth('register')" data-i18n="registrate">Regístrate</span></div>
     <div class="auth-link" style="margin-top:16px;font-size:10px;opacity:.6"><a href="privacy.html" target="_blank" style="color:var(--muted);text-decoration:none" data-i18n="politica_priv">Política de Privacidad</a></div>
-    <div style="text-align:center;margin-top:8px;font-size:9px;color:rgba(255,255,255,.2);letter-spacing:1px">v1.31.044</div>
+    <div style="text-align:center;margin-top:8px;font-size:9px;color:rgba(255,255,255,.2);letter-spacing:1px">v1.31.045</div>
   </div>
 </div>
 
@@ -734,7 +734,7 @@ nav.nav-hidden{transform:translateY(100%)}
       </div>
     </div>
   </div>
-  <div style="text-align:center;padding:12px 0 4px;font-size:9px;letter-spacing:2px;color:rgba(255,255,255,.2);font-family:'DM Mono',monospace" class="version-label">v1.31.044</div>
+  <div style="text-align:center;padding:12px 0 4px;font-size:9px;letter-spacing:2px;color:rgba(255,255,255,.2);font-family:'DM Mono',monospace" class="version-label">v1.31.045</div>
   <div class="card" style="margin-bottom:8px;padding:12px 14px;display:none" id="mini-chart-wrap">
     <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px"><span style="font-size:11px;letter-spacing:1.5px;color:var(--gold2);font-weight:bold" data-i18n="evolucion_hcp">EVOLUCIÓN HCP</span><span style="font-size:9px;color:var(--muted);letter-spacing:.5px" data-i18n="ultimas_20">20 últimas rondas</span></div>
     <canvas id="mini-hcp-chart" height="100" style="width:100%;display:block"></canvas>
@@ -2133,6 +2133,25 @@ function renderMiniChart() {
 
   wrap.style.display = 'block';
 
+  // Modo claro: verde intenso golf (#2e7d32) en lugar del dorado para mejor contraste.
+  // Solo afecta a linea, puntos y valores numericos. Fechas siguen var(--muted).
+  const isLight = document.documentElement.classList.contains('light');
+  const C = isLight ? {
+    lineFrom:    '#1b5e20',  // verde oscuro
+    lineTo:      '#2e7d32',  // verde intenso
+    dot:         '#2e7d32',
+    valueText:   'rgba(46,125,50,0.9)',
+    fillFrom:    'rgba(46,125,50,0.25)',
+    fillTo:      'rgba(46,125,50,0.02)'
+  } : {
+    lineFrom:    '#c9a84c',
+    lineTo:      '#e8c96a',
+    dot:         '#e8c96a',
+    valueText:   'rgba(232,201,106,0.75)',
+    fillFrom:    'rgba(201,168,76,0.3)',
+    fillTo:      'rgba(201,168,76,0.02)'
+  };
+
   // Use requestAnimationFrame to ensure layout is computed
   requestAnimationFrame(() => {
     const dpr = window.devicePixelRatio || 1;
@@ -2161,8 +2180,8 @@ function renderMiniChart() {
 
     // Fill
     const fillGrad = ctx.createLinearGradient(0,0,0,H);
-    fillGrad.addColorStop(0,'rgba(201,168,76,0.3)');
-    fillGrad.addColorStop(1,'rgba(201,168,76,0.02)');
+    fillGrad.addColorStop(0, C.fillFrom);
+    fillGrad.addColorStop(1, C.fillTo);
     ctx.beginPath();
     last20.forEach((p,i) => i===0 ? ctx.moveTo(xPos(i),yScale(p.hcp)) : ctx.lineTo(xPos(i),yScale(p.hcp)));
     ctx.lineTo(xPos(n-1), H-pad.bottom);
@@ -2171,7 +2190,8 @@ function renderMiniChart() {
 
     // Line
     const grad = ctx.createLinearGradient(0,0,W,0);
-    grad.addColorStop(0,'#c9a84c'); grad.addColorStop(1,'#e8c96a');
+    grad.addColorStop(0, C.lineFrom);
+    grad.addColorStop(1, C.lineTo);
     ctx.strokeStyle=grad; ctx.lineWidth=2;
     ctx.lineJoin='round'; ctx.lineCap='round';
     ctx.beginPath();
@@ -2183,23 +2203,26 @@ function renderMiniChart() {
     last20.forEach((p,i) => {
       const x = xPos(i), y = yScale(p.hcp);
       ctx.beginPath(); ctx.arc(x,y,2.5,0,Math.PI*2);
-      ctx.fillStyle='#e8c96a'; ctx.fill();
+      ctx.fillStyle = C.dot; ctx.fill();
       // Value label above dot
-      ctx.fillStyle='rgba(232,201,106,0.75)';
+      ctx.fillStyle = C.valueText;
       ctx.font='8px DM Mono,monospace';
       ctx.textAlign = i === n-1 ? 'right' : i === 0 ? 'left' : 'center';
       ctx.fillText(p.hcp.toFixed(1), x + (i===n-1?-2:i===0?2:0), y-5);
     });
 
-    // Date labels below canvas
+    // Date labels below canvas — RAREADAS para evitar amontonamiento
+    // <=4: todas / 5-8: cada 2 / 9-14: cada 3 / 15-20: cada 5 (siempre primer y ultimo)
     labelsEl.innerHTML = '';
     labelsEl.style.cssText = 'position:relative;height:14px;margin-top:2px';
     const fmt = d => { if(!d) return ''; const dt=new Date(d); return dt.getDate()+'/'+(dt.getMonth()+1); };
+    const stepLabel = n <= 4 ? 1 : n <= 8 ? 2 : n <= 14 ? 3 : 5;
     last20.forEach((p,i) => {
+      // Mostrar solo si: primero, ultimo, o multiplo de stepLabel
+      if (i !== 0 && i !== n-1 && i % stepLabel !== 0) return;
       const pct = (xPos(i) / W * 100);
       const span = document.createElement('span');
       span.textContent = fmt(p.fecha);
-      const align = i===0?'left':i===n-1?'right':'center';
       const tx = i===0?'0%':i===n-1?'-100%':'-50%';
       span.style.cssText = `position:absolute;left:${pct}%;transform:translateX(${tx});font-size:7px;color:var(--muted);font-family:'DM Mono',monospace;white-space:nowrap`;
       labelsEl.appendChild(span);
@@ -3990,8 +4013,8 @@ function contactarGolfHCP() {
   const ios = ua.match(/iPhone OS ([\d_]+)/);
   const android = ua.match(/Android ([\d.]+)/);
   const sys = ios ? 'iOS ' + ios[1].replace(/_/g,'.') : android ? 'Android ' + android[1] : 'Web';
-  const appVer = document.title.includes('HCP') ? 'v1.31.044' : 'Golf HCP';
-  const body = encodeURIComponent('Hola,\n\n[Escribe tu consulta aqui]\n\n\n-- \nGolf HCP v1.31.044\n' + sys);
+  const appVer = document.title.includes('HCP') ? 'v1.31.045' : 'Golf HCP';
+  const body = encodeURIComponent('Hola,\n\n[Escribe tu consulta aqui]\n\n\n-- \nGolf HCP v1.31.045\n' + sys);
   window.open('mailto:golf.hcp.webmaster@gmail.com?subject=Golf%20HCP%20App&body=' + body, '_blank');
 }
 
@@ -4378,6 +4401,14 @@ if ('serviceWorker' in navigator) {
 function drawStatsChart(canvasId, labelsId, data, color, minVal, maxVal, labelFn, valueFn, barMode) {
   const canvas = document.getElementById(canvasId);
   if (!canvas || !data.length) return;
+
+  // Modo claro: la grafica de Golpes (color dorado #e8c96a) cambia a verde intenso
+  // para mejor contraste sobre fondo claro. Diferenciales (verde) y Stableford (azul)
+  // se mantienen tal cual porque ya tienen buen contraste.
+  if (color === '#e8c96a' && document.documentElement.classList.contains('light')) {
+    color = '#2e7d32'; // verde golf intenso
+  }
+
   const dpr = window.devicePixelRatio || 1;
   // Width from parent div (no padding now)
   const p = canvas.parentElement;
