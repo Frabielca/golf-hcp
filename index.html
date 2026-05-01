@@ -514,7 +514,7 @@ nav.nav-hidden{transform:translateY(100%)}
     <button class="auth-btn" id="btn-login" onclick="doLogin()" data-i18n="btn_entrar">Entrar</button>
     <div class="auth-link"><span data-i18n="sin_cuenta">¿Sin cuenta?</span> <span onclick="showAuth('register')" data-i18n="registrate">Regístrate</span></div>
     <div class="auth-link" style="margin-top:16px;font-size:10px;opacity:.6"><a href="privacy.html" target="_blank" style="color:var(--muted);text-decoration:none" data-i18n="politica_priv">Política de Privacidad</a></div>
-    <div style="text-align:center;margin-top:8px;font-size:9px;color:rgba(255,255,255,.2);letter-spacing:1px">v1.31.036</div>
+    <div style="text-align:center;margin-top:8px;font-size:9px;color:rgba(255,255,255,.2);letter-spacing:1px">v1.31.039</div>
   </div>
 </div>
 
@@ -734,7 +734,7 @@ nav.nav-hidden{transform:translateY(100%)}
       </div>
     </div>
   </div>
-  <div style="text-align:center;padding:12px 0 4px;font-size:9px;letter-spacing:2px;color:rgba(255,255,255,.2);font-family:'DM Mono',monospace" class="version-label">v1.31.036</div>
+  <div style="text-align:center;padding:12px 0 4px;font-size:9px;letter-spacing:2px;color:rgba(255,255,255,.2);font-family:'DM Mono',monospace" class="version-label">v1.31.039</div>
   <div class="card" style="margin-bottom:8px;padding:12px 14px;display:none" id="mini-chart-wrap">
     <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px"><span style="font-size:11px;letter-spacing:1.5px;color:var(--gold2);font-weight:bold" data-i18n="evolucion_hcp">EVOLUCIÓN HCP</span><span style="font-size:9px;color:var(--muted);letter-spacing:.5px" data-i18n="ultimas_20">20 últimas rondas</span></div>
     <canvas id="mini-hcp-chart" height="100" style="width:100%;display:block"></canvas>
@@ -887,6 +887,7 @@ nav.nav-hidden{transform:translateY(100%)}
 <!-- PAGE: ESTADÍSTICAS -->
 <div class="page" id="page-stats">
   <div style="font-size:20px;letter-spacing:2px;text-transform:uppercase;color:var(--gold2);padding:4px 2px 16px;font-family:'DM Mono',monospace;text-align:center" data-i18n="estadisticas">Estadísticas</div>
+  <div id="stats-filters-container"></div>
   <div id="stats-content"><div class="empty">Cargando…</div></div>
 </div>
 
@@ -1598,6 +1599,24 @@ let state = {
   loading: false    // flag anti-doble-llamada
 };
 
+// ── STATS FILTER STATE (v1.31.038) ───────────────────────────────────────
+// Filtro APLICADO (afecta a las stats visibles).
+// No persiste tras recarga (por diseno: arranque siempre limpio).
+const statsFilter = {
+  campos: [],       // array de campo_id; vacio = todos los campos
+  desde: null,      // 'YYYY-MM-DD' o null = sin limite inferior
+  hasta: null,      // 'YYYY-MM-DD' o null = sin limite superior
+  expanded: false   // panel colapsado por defecto
+};
+
+// Filtro PENDIENTE (lo que el usuario edita en el panel sin aplicar todavia).
+// Se sincroniza con statsFilter al abrir el panel; se descarta al cerrar sin Aplicar.
+const statsFilterPending = {
+  campos: [],
+  desde: null,
+  hasta: null
+};
+
 // ── HELPERS ──────────────────────────────────────────────────────────────
 const $ = id => document.getElementById(id);
 function setVal(id, v) { const el = $(id); if (el) el.value = (v == null ? '' : v); }
@@ -2191,17 +2210,250 @@ function renderMiniChart() {
 
 
 
+// ═════════════════════════════════════════════════════════════════════
+// STATS FILTERS (v1.31.038 — diseño compacto con Aplicar)
+// Filtro APLICADO (statsFilter): afecta a las stats visibles.
+// Filtro PENDIENTE (statsFilterPending): lo que se edita en el panel.
+// Pulsar "Aplicar" copia pending -> applied y colapsa el panel.
+// Cerrar el panel sin Aplicar descarta los cambios pendientes.
+// Cap visual fijo de 20 puntos en graficas; metricas sobre todo el rango.
+// ═════════════════════════════════════════════════════════════════════
+
+function hasActiveStatsFilter() {
+  return (statsFilter.campos && statsFilter.campos.length > 0)
+      || statsFilter.desde
+      || statsFilter.hasta;
+}
+
+function hasPendingStatsFilter() {
+  return (statsFilterPending.campos && statsFilterPending.campos.length > 0)
+      || statsFilterPending.desde
+      || statsFilterPending.hasta;
+}
+
+// Devuelve las rondas filtradas segun statsFilter APLICADO (sobre state.rounds raw)
+function getFilteredRawRounds() {
+  let rs = state.rounds || [];
+  if (statsFilter.campos && statsFilter.campos.length > 0) {
+    const set = new Set(statsFilter.campos);
+    rs = rs.filter(r => set.has(r.campo_id));
+  }
+  if (statsFilter.desde) {
+    const d0 = new Date(statsFilter.desde + 'T00:00:00');
+    rs = rs.filter(r => new Date(r.date || r.fecha) >= d0);
+  }
+  if (statsFilter.hasta) {
+    const d1 = new Date(statsFilter.hasta + 'T23:59:59');
+    rs = rs.filter(r => new Date(r.date || r.fecha) <= d1);
+  }
+  return rs;
+}
+
+// Sincroniza el estado APPLIED al PENDING (al abrir el panel)
+function syncPendingFromApplied() {
+  statsFilterPending.campos = (statsFilter.campos || []).slice();
+  statsFilterPending.desde = statsFilter.desde;
+  statsFilterPending.hasta = statsFilter.hasta;
+}
+
+// Toggle del panel. Al ABRIR: copia applied -> pending (para reflejar lo aplicado).
+// Al CERRAR sin aplicar: el pending queda como esta pero no afecta a nada.
+function toggleStatsFilters() {
+  if (!statsFilter.expanded) {
+    syncPendingFromApplied();
+  }
+  statsFilter.expanded = !statsFilter.expanded;
+  renderStatsFilters();
+}
+
+// Solo modifican el estado PENDIENTE — no aplica hasta pulsar Aplicar
+function onStatsCampoToggle(campoId) {
+  const idx = statsFilterPending.campos.indexOf(campoId);
+  if (idx >= 0) statsFilterPending.campos.splice(idx, 1);
+  else statsFilterPending.campos.push(campoId);
+  renderStatsFilters();
+}
+
+function onStatsDateChange(which, value) {
+  statsFilterPending[which] = value || null;
+  renderStatsFilters();
+}
+
+function applyStatsQuickRange(preset) {
+  const now = new Date();
+  const fmt = d => {
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, '0');
+    const dd = String(d.getDate()).padStart(2, '0');
+    return y + '-' + m + '-' + dd;
+  };
+  if (preset === 'todo') {
+    statsFilterPending.desde = null;
+    statsFilterPending.hasta = null;
+  } else if (preset === 'este_anio') {
+    statsFilterPending.desde = now.getFullYear() + '-01-01';
+    statsFilterPending.hasta = fmt(now);
+  } else if (preset === '12m') {
+    const d = new Date(now); d.setMonth(d.getMonth() - 12);
+    statsFilterPending.desde = fmt(d);
+    statsFilterPending.hasta = fmt(now);
+  } else if (preset === '3m') {
+    const d = new Date(now); d.setMonth(d.getMonth() - 3);
+    statsFilterPending.desde = fmt(d);
+    statsFilterPending.hasta = fmt(now);
+  }
+  renderStatsFilters();
+}
+
+// Aplica pending -> applied, colapsa panel y refresca stats
+function applyStatsFilters() {
+  statsFilter.campos = (statsFilterPending.campos || []).slice();
+  statsFilter.desde = statsFilterPending.desde;
+  statsFilter.hasta = statsFilterPending.hasta;
+  statsFilter.expanded = false;
+  renderStatsFilters();
+  renderStats();
+}
+
+// Limpia ambos estados, colapsa panel y refresca stats
+function clearStatsFilter() {
+  statsFilter.campos = [];
+  statsFilter.desde = null;
+  statsFilter.hasta = null;
+  statsFilterPending.campos = [];
+  statsFilterPending.desde = null;
+  statsFilterPending.hasta = null;
+  statsFilter.expanded = false;
+  renderStatsFilters();
+  renderStats();
+}
+
+function renderStatsFilters() {
+  const cont = $('stats-filters-container');
+  if (!cont) return;
+  const lbl = (es, pt, fr) => lang==='fr' ? (fr||es) : lang==='pt' ? pt : es;
+  const active = hasActiveStatsFilter();        // applied
+  const pendingHas = hasPendingStatsFilter();   // pending
+  const expanded = statsFilter.expanded;
+
+  // Lista de campos del usuario (chips)
+  const campos = (state.campos || []).slice().sort((a,b) =>
+    (a.nombre||'').localeCompare(b.nombre||'')
+  );
+
+  const chevron = expanded
+    ? '<svg viewBox="0 0 24 24" style="width:11px;height:11px;stroke:currentColor;fill:none;stroke-width:2.5"><polyline points="18 15 12 9 6 15"/></svg>'
+    : '<svg viewBox="0 0 24 24" style="width:11px;height:11px;stroke:currentColor;fill:none;stroke-width:2.5"><polyline points="6 9 12 15 18 9"/></svg>';
+
+  const badge = active
+    ? '<span style="background:var(--gold2);color:#1a1a1a;font-size:9px;font-weight:bold;padding:1px 5px;border-radius:8px;margin-left:6px;letter-spacing:0;line-height:1.2">●</span>'
+    : '';
+
+  let html = '<div style="margin-bottom:12px">';
+
+  // Boton toggle
+  html += '<button onclick="toggleStatsFilters()" style="width:100%;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:8px;padding:8px 12px;color:var(--cream);font-family:\'DM Mono\',monospace;font-size:11px;letter-spacing:1px;text-transform:uppercase;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px">';
+  html += '<span>' + lbl('Filtros','Filtros','Filtres') + '</span>' + badge + '<span style="margin-left:auto;display:inline-flex;align-items:center">' + chevron + '</span>';
+  html += '</button>';
+
+  if (expanded) {
+    html += '<div style="background:rgba(255,255,255,.03);border:1px solid var(--border);border-top:none;border-radius:0 0 8px 8px;padding:10px;margin-top:-1px">';
+
+    // ── Seccion: Campos (chips horizontales) ──
+    html += '<div style="font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold2);margin-bottom:6px">'
+         + lbl('Campos','Campos','Parcours') + '</div>';
+    if (!campos.length) {
+      html += '<div style="font-size:11px;color:var(--muted);padding:4px 0 10px;font-style:italic">'
+           + lbl('Sin campos','Sem campos','Aucun parcours') + '</div>';
+    } else {
+      html += '<div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:12px">';
+      campos.forEach(c => {
+        const sel = statsFilterPending.campos.indexOf(c.id) >= 0;
+        const bg = sel ? 'var(--gold2)' : 'rgba(255,255,255,.04)';
+        const fg = sel ? '#1a1a1a' : 'var(--text)';
+        const br = sel ? 'var(--gold2)' : 'var(--border)';
+        const fw = sel ? '600' : 'normal';
+        html += '<button type="button" onclick="onStatsCampoToggle(\'' + c.id + '\')" '
+             + 'style="background:' + bg + ';color:' + fg + ';border:1px solid ' + br + ';border-radius:14px;padding:5px 11px;font-family:\'DM Mono\',monospace;font-size:11px;letter-spacing:.3px;cursor:pointer;font-weight:' + fw + ';white-space:nowrap">'
+             + (c.nombre || '—') + '</button>';
+      });
+      html += '</div>';
+    }
+
+    // ── Seccion: Fechas ──
+    html += '<div style="font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold2);margin-bottom:6px">'
+         + lbl('Rango de fechas','Intervalo de datas','Plage de dates') + '</div>';
+
+    // Atajos rapidos
+    const preset = (key, txtEs, txtPt, txtFr) =>
+      '<button type="button" onclick="applyStatsQuickRange(\'' + key + '\')" style="flex:1;min-width:0;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:6px;padding:5px 4px;color:var(--cream);font-family:\'DM Mono\',monospace;font-size:10px;letter-spacing:.3px;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'
+      + lbl(txtEs, txtPt, txtFr) + '</button>';
+    html += '<div style="display:flex;gap:5px;margin-bottom:8px">';
+    html += preset('3m','3 meses','3 meses','3 mois');
+    html += preset('12m','12 meses','12 meses','12 mois');
+    html += preset('este_anio','Este año','Este ano','Cette année');
+    html += preset('todo','Todo','Tudo','Tout');
+    html += '</div>';
+
+    // Inputs Desde/Hasta (leen del PENDING)
+    html += '<div style="display:flex;gap:6px;margin-bottom:10px">';
+    html += '<div style="flex:1;display:flex;flex-direction:column;gap:2px">';
+    html += '<label style="font-size:9px;letter-spacing:1px;color:var(--muted);text-transform:uppercase">' + lbl('Desde','Desde','Du') + '</label>';
+    html += '<input type="date" id="stats-date-desde" value="' + (statsFilterPending.desde||'') + '" onchange="onStatsDateChange(\'desde\', this.value)" style="background:var(--input-bg);border:1px solid var(--border);border-radius:5px;color:var(--text);font-family:\'DM Mono\',monospace;font-size:12px;padding:5px 7px;width:100%;-webkit-appearance:none;outline:none;color-scheme:dark">';
+    html += '</div>';
+    html += '<div style="flex:1;display:flex;flex-direction:column;gap:2px">';
+    html += '<label style="font-size:9px;letter-spacing:1px;color:var(--muted);text-transform:uppercase">' + lbl('Hasta','Até','Au') + '</label>';
+    html += '<input type="date" id="stats-date-hasta" value="' + (statsFilterPending.hasta||'') + '" onchange="onStatsDateChange(\'hasta\', this.value)" style="background:var(--input-bg);border:1px solid var(--border);border-radius:5px;color:var(--text);font-family:\'DM Mono\',monospace;font-size:12px;padding:5px 7px;width:100%;-webkit-appearance:none;outline:none;color-scheme:dark">';
+    html += '</div>';
+    html += '</div>';
+
+    // ── Botones de accion ──
+    html += '<div style="display:flex;gap:6px;margin-top:4px">';
+    // Aplicar (siempre visible, dorado)
+    html += '<button type="button" onclick="applyStatsFilters()" style="flex:1;background:var(--gold2);color:#1a1a1a;border:1px solid var(--gold2);border-radius:6px;padding:8px;font-family:\'DM Mono\',monospace;font-size:11px;letter-spacing:1px;text-transform:uppercase;cursor:pointer;font-weight:600">'
+         + lbl('Aplicar','Aplicar','Appliquer') + '</button>';
+    // Limpiar (solo si hay applied O pending diferente del default)
+    if (active || pendingHas) {
+      html += '<button type="button" onclick="clearStatsFilter()" style="flex:1;background:rgba(224,85,85,.1);border:1px solid var(--red);border-radius:6px;padding:8px;color:var(--red);font-family:\'DM Mono\',monospace;font-size:11px;letter-spacing:1px;text-transform:uppercase;cursor:pointer">'
+           + lbl('Limpiar','Limpar','Effacer') + '</button>';
+    }
+    html += '</div>';
+
+    html += '</div>';
+  }
+
+  html += '</div>';
+  cont.innerHTML = html;
+}
+
 function renderStats() {
+  // Asegurar que el panel de filtros este pintado (idempotente)
+  try { renderStatsFilters(); } catch(e) {}
   const el = $('stats-content');
   if (!el) return;
-  const { combined } = combineNineHoleRounds(state.rounds);
+  const lbl = (es, pt, fr) => lang==='fr' ? (fr||es) : lang==='pt' ? pt : es;
+
+  // Aplicar filtros sobre state.rounds raw, luego combinar 9H
+  const filteredRaw = getFilteredRawRounds();
+  const filterActive = hasActiveStatsFilter();
+  const totalRoundsRaw = (state.rounds || []).length;
+
+  const { combined } = combineNineHoleRounds(filteredRaw);
+  // HCP Index siempre se calcula sobre el conjunto completo, no sobre el filtro
+  // (es una propiedad del jugador, no del filtro)
   const res = getHCP(state.rounds);
+
   if (!combined || combined.length === 0) {
-    el.innerHTML = '<div class="empty">' + (lang==='pt'?'Sem voltas registadas':'Sin rondas registradas') + '</div>';
+    if (filterActive) {
+      el.innerHTML = '<div class="empty">'
+        + lbl('Sin rondas en el filtro seleccionado','Sem voltas no filtro selecionado','Aucune partie dans le filtre sélectionné')
+        + '</div>';
+    } else {
+      el.innerHTML = '<div class="empty">' + (lang==='pt'?'Sem voltas registadas':'Sin rondas registradas') + '</div>';
+    }
     return;
   }
   const fmtD = v => (v >= 0 ? '+' : '') + v.toFixed(1);
-  const lbl = (es, pt, fr) => lang==='fr' ? (fr||es) : lang==='pt' ? pt : es;
 
   // Calcular métricas
   const rounWithScore = combined.filter(r => r.gross > 0);
@@ -2236,10 +2488,14 @@ function renderStats() {
     </div>`;
 
   el.innerHTML = `
+    ${filterActive ? `
+    <div style="background:rgba(201,168,76,.08);border:1px solid var(--gold2);border-radius:6px;padding:8px 10px;margin-bottom:14px;font-size:10px;color:var(--cream);font-family:'DM Mono',monospace;letter-spacing:.5px;text-align:center">
+      ${lbl('Mostrando','A mostrar','Affichage')} <strong style="color:var(--gold2)">${combined.length}</strong> ${lbl('de','de','sur')} <strong style="color:var(--gold2)">${totalRoundsRaw}</strong> ${lbl('rondas','voltas','parties')}
+    </div>` : ''}
     <div style="margin-bottom:16px">
       <div style="font-size:11px;letter-spacing:1px;color:var(--gold2);margin-bottom:6px;display:flex;justify-content:space-between">
         <span>${lbl('GOLPES POR RONDA','PANCADAS POR VOLTA','COUPS PAR PARTIE')}</span><span style="color:var(--muted);font-size:9px">${lbl('18 hoyos / combinadas 9H','18 buracos / combinadas 9B','18 trous / combinées 9T')}</span>
-        <span style="color:var(--muted);font-size:9px">${lbl('últimas 20 rondas','últimas 20 voltas','20 dernières parties')}</span>
+        <span style="color:var(--muted);font-size:9px">${combined.length > 20 ? lbl('últimas 20 del filtro','últimas 20 do filtro','20 dernières du filtre') : lbl('últimas 20 rondas','últimas 20 voltas','20 dernières parties')}</span>
       </div>
       <canvas id="stats-hcp-chart" height="140" style="width:100%;display:block"></canvas>
       <div id="stats-hcp-labels"></div>
@@ -2263,7 +2519,7 @@ function renderStats() {
     ${card(lbl('Mejor resultado (golpes)','Melhor resultado (pancadas)','Meilleur résultat (coups)'), bestScore)}
     ${card(lbl('Peor resultado (golpes)','Pior resultado (pancadas)','Pire résultat (coups)'), worstScore)}
     ${card(lbl('Mejor Stableford','Melhor Stableford','Meilleur Stableford'), bestStbl)}
-    ${card(lbl('Media Stableford (todas las rondas)','Média Stableford (todas as voltas)','Moyenne Stableford (toutes)'), avgStbl)}
+    ${card(lbl('Media Stableford','Média Stableford','Moyenne Stableford'), avgStbl)}
     ${card(lbl('Rondas este mes','Voltas este mês','Parties ce mois'), thisMon)}
   </div>`;
   // Draw charts after DOM renders
@@ -3643,8 +3899,8 @@ function contactarGolfHCP() {
   const ios = ua.match(/iPhone OS ([\d_]+)/);
   const android = ua.match(/Android ([\d.]+)/);
   const sys = ios ? 'iOS ' + ios[1].replace(/_/g,'.') : android ? 'Android ' + android[1] : 'Web';
-  const appVer = document.title.includes('HCP') ? 'v1.31.036' : 'Golf HCP';
-  const body = encodeURIComponent('Hola,\n\n[Escribe tu consulta aqui]\n\n\n-- \nGolf HCP v1.31.036\n' + sys);
+  const appVer = document.title.includes('HCP') ? 'v1.31.039' : 'Golf HCP';
+  const body = encodeURIComponent('Hola,\n\n[Escribe tu consulta aqui]\n\n\n-- \nGolf HCP v1.31.039\n' + sys);
   window.open('mailto:golf.hcp.webmaster@gmail.com?subject=Golf%20HCP%20App&body=' + body, '_blank');
 }
 
@@ -4139,15 +4395,18 @@ function drawStatsChart(canvasId, labelsId, data, color, minVal, maxVal, labelFn
 }
 
 function renderStatsCharts() {
-  const { combined } = combineNineHoleRounds(state.rounds);
+  // Usa rondas filtradas (statsFilter) si hay; cap visual fijo de 20
+  const filteredRaw = (typeof getFilteredRawRounds === 'function')
+    ? getFilteredRawRounds()
+    : state.rounds;
+  const { combined, pending9Ids } = combineNineHoleRounds(filteredRaw);
   if (!combined || combined.length < 2) return;
   const sorted = [...combined].sort((a,b) => new Date(a.fecha||a.date)-new Date(b.fecha||b.date));
   const last20 = sorted.slice(-20);
   const fmt = r => { const dt=new Date(r.fecha||r.date); return dt.getDate()+'/'+(dt.getMonth()+1); };
 
   // Chart 1: Golpes por ronda (18H + combinadas 9H, sin pendientes)
-  const { pending9Ids: pending9IdsG } = combineNineHoleRounds(state.rounds);
-  const golpesData = last20.filter(r => r.gross > 0 && !pending9IdsG.includes(r.id));
+  const golpesData = last20.filter(r => r.gross > 0 && !pending9Ids.includes(r.id));
   if (golpesData.length >= 2) {
     const gVals = golpesData.map(r => r.gross);
     drawStatsChart('stats-hcp-chart','stats-hcp-labels', golpesData, '#e8c96a',
@@ -4155,9 +4414,7 @@ function renderStatsCharts() {
       fmt, r => r.gross, false);
   }
 
-  // Chart 2: Diferenciales
-  // Only use 18H rounds and combined 9H pairs (filter out pending 9H singles)
-  const { pending9Ids } = combineNineHoleRounds(state.rounds);
+  // Chart 2: Diferenciales (18H + combinadas 9H)
   const difData = last20.filter(r => !pending9Ids.includes(r.id));
   const difVals = difData.map(r=>r.diff);
   if (difData.length) {
