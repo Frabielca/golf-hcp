@@ -514,7 +514,7 @@ nav.nav-hidden{transform:translateY(100%)}
     <button class="auth-btn" id="btn-login" onclick="doLogin()" data-i18n="btn_entrar">Entrar</button>
     <div class="auth-link"><span data-i18n="sin_cuenta">¿Sin cuenta?</span> <span onclick="showAuth('register')" data-i18n="registrate">Regístrate</span></div>
     <div class="auth-link" style="margin-top:16px;font-size:10px;opacity:.6"><a href="privacy.html" target="_blank" style="color:var(--muted);text-decoration:none" data-i18n="politica_priv">Política de Privacidad</a></div>
-    <div style="text-align:center;margin-top:8px;font-size:9px;color:rgba(255,255,255,.2);letter-spacing:1px">v1.31.035</div>
+    <div style="text-align:center;margin-top:8px;font-size:9px;color:rgba(255,255,255,.2);letter-spacing:1px">v1.31.036</div>
   </div>
 </div>
 
@@ -734,7 +734,7 @@ nav.nav-hidden{transform:translateY(100%)}
       </div>
     </div>
   </div>
-  <div style="text-align:center;padding:12px 0 4px;font-size:9px;letter-spacing:2px;color:rgba(255,255,255,.2);font-family:'DM Mono',monospace" class="version-label">v1.31.035</div>
+  <div style="text-align:center;padding:12px 0 4px;font-size:9px;letter-spacing:2px;color:rgba(255,255,255,.2);font-family:'DM Mono',monospace" class="version-label">v1.31.036</div>
   <div class="card" style="margin-bottom:8px;padding:12px 14px;display:none" id="mini-chart-wrap">
     <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px"><span style="font-size:11px;letter-spacing:1.5px;color:var(--gold2);font-weight:bold" data-i18n="evolucion_hcp">EVOLUCIÓN HCP</span><span style="font-size:9px;color:var(--muted);letter-spacing:.5px" data-i18n="ultimas_20">20 últimas rondas</span></div>
     <canvas id="mini-hcp-chart" height="100" style="width:100%;display:block"></canvas>
@@ -1827,6 +1827,75 @@ function authMsg(id, text, type) {
   el.classList.add('show');
 }
 
+// ═════════════════════════════════════════════════════════════════════
+// SESSION TRACKING — Estadisticas de uso (v1.31.036)
+// Registra eventos en tabla 'sesiones' de Supabase para analitica.
+// Tipos: login (credenciales), visita (sesion guardada o vuelta del bg),
+//        salida (boton Salir), heartbeat (cada 5 min app activa)
+// Todos los INSERTs son silenciosos (try/catch). Nunca rompen la UX.
+// ═════════════════════════════════════════════════════════════════════
+const SESSION_TRACKING = {
+  HEARTBEAT_MS: 5 * 60 * 1000,           // 5 minutos
+  REVISIT_THRESHOLD_MS: 30 * 60 * 1000,  // 30 min en background = nueva visita
+  heartbeatTimer: null,
+  lastHiddenAt: null
+};
+
+function detectDevice() {
+  const ua = navigator.userAgent || '';
+  if (/iPad|iPhone|iPod/.test(ua)) return 'iOS';
+  if (/Android/.test(ua)) return 'Android';
+  if (/Mac/.test(ua)) return 'macOS';
+  if (/Win/.test(ua)) return 'Windows';
+  if (/Linux/.test(ua)) return 'Linux';
+  return 'desconocido';
+}
+
+async function logSession(tipo) {
+  try {
+    if (!state.user || !state.user.id) return;
+    if (!sb || !sb.from) return;
+    await sb.from('sesiones').insert({
+      user_id: state.user.id,
+      tipo: tipo,
+      dispositivo: detectDevice()
+    });
+  } catch (e) {
+    // Silencioso intencional: nunca romper la UX por fallo de tracking
+  }
+}
+
+function startHeartbeat() {
+  stopHeartbeat();
+  SESSION_TRACKING.heartbeatTimer = setInterval(() => {
+    if (document.visibilityState === 'visible' && state.user && state.user.id) {
+      logSession('heartbeat');
+    }
+  }, SESSION_TRACKING.HEARTBEAT_MS);
+}
+
+function stopHeartbeat() {
+  if (SESSION_TRACKING.heartbeatTimer) {
+    clearInterval(SESSION_TRACKING.heartbeatTimer);
+    SESSION_TRACKING.heartbeatTimer = null;
+  }
+}
+
+// visibilitychange: vuelve del background tras 30+ min => nueva 'visita' (Opcion B)
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'hidden') {
+    SESSION_TRACKING.lastHiddenAt = Date.now();
+  } else if (document.visibilityState === 'visible') {
+    if (SESSION_TRACKING.lastHiddenAt && state.user && state.user.id) {
+      const hiddenMs = Date.now() - SESSION_TRACKING.lastHiddenAt;
+      if (hiddenMs >= SESSION_TRACKING.REVISIT_THRESHOLD_MS) {
+        logSession('visita');
+      }
+    }
+    SESSION_TRACKING.lastHiddenAt = null;
+  }
+});
+
 async function doLogin() {
   if (state.loading) return;
   const email = $('login-email').value.trim();
@@ -1839,6 +1908,8 @@ async function doLogin() {
     const { data, error } = await sb.auth.signInWithPassword({ email, password: pass });
     if (error) throw error;
     await onLogin(data.user);
+    logSession('login');
+    startHeartbeat();
   } catch(e) {
     authMsg('login-err', e.message === 'Invalid login credentials'
       ? 'Email o contraseña incorrectos.' : e.message, 'err');
@@ -1868,6 +1939,8 @@ async function doRegister() {
     }
     if (data.session) {
       await onLogin(data.user);
+      logSession('login');
+      startHeartbeat();
     } else {
       authMsg('reg-ok','✓ Cuenta creada. Revisa tu email para confirmar.','ok');
     }
@@ -1899,6 +1972,9 @@ async function doReset() {
 
 
 function doLogout() {
+  // Tracking ANTES de borrar state.user (logSession lo necesita)
+  logSession('salida');
+  stopHeartbeat();
   state.user = null; state.rounds = []; state.campos = [];
   renderAll(); renderCampos(); renderSelectorCampos();
   $('player-bar').classList.add('hidden');
@@ -3567,8 +3643,8 @@ function contactarGolfHCP() {
   const ios = ua.match(/iPhone OS ([\d_]+)/);
   const android = ua.match(/Android ([\d.]+)/);
   const sys = ios ? 'iOS ' + ios[1].replace(/_/g,'.') : android ? 'Android ' + android[1] : 'Web';
-  const appVer = document.title.includes('HCP') ? 'v1.31.035' : 'Golf HCP';
-  const body = encodeURIComponent('Hola,\n\n[Escribe tu consulta aqui]\n\n\n-- \nGolf HCP v1.31.035\n' + sys);
+  const appVer = document.title.includes('HCP') ? 'v1.31.036' : 'Golf HCP';
+  const body = encodeURIComponent('Hola,\n\n[Escribe tu consulta aqui]\n\n\n-- \nGolf HCP v1.31.036\n' + sys);
   window.open('mailto:golf.hcp.webmaster@gmail.com?subject=Golf%20HCP%20App&body=' + body, '_blank');
 }
 
@@ -3926,8 +4002,13 @@ async function init() {
   // doLogin y doLogout gestionan el resto manualmente
   sb.auth.onAuthStateChange(async (event, session) => {
     if (event === 'INITIAL_SESSION') {
-      if (session?.user) await onLogin(session.user);
-      else showAuth('login');
+      if (session?.user) {
+        await onLogin(session.user);
+        logSession('visita');
+        startHeartbeat();
+      } else {
+        showAuth('login');
+      }
     }
     // SIGNED_IN, SIGNED_OUT, TOKEN_REFRESHED: ignorados
     // El flujo manual (doLogin/doLogout) ya gestiona la UI
