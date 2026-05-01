@@ -514,7 +514,7 @@ nav.nav-hidden{transform:translateY(100%)}
     <button class="auth-btn" id="btn-login" onclick="doLogin()" data-i18n="btn_entrar">Entrar</button>
     <div class="auth-link"><span data-i18n="sin_cuenta">¿Sin cuenta?</span> <span onclick="showAuth('register')" data-i18n="registrate">Regístrate</span></div>
     <div class="auth-link" style="margin-top:16px;font-size:10px;opacity:.6"><a href="privacy.html" target="_blank" style="color:var(--muted);text-decoration:none" data-i18n="politica_priv">Política de Privacidad</a></div>
-    <div style="text-align:center;margin-top:8px;font-size:9px;color:rgba(255,255,255,.2);letter-spacing:1px">v1.31.039</div>
+    <div style="text-align:center;margin-top:8px;font-size:9px;color:rgba(255,255,255,.2);letter-spacing:1px">v1.31.040</div>
   </div>
 </div>
 
@@ -734,7 +734,7 @@ nav.nav-hidden{transform:translateY(100%)}
       </div>
     </div>
   </div>
-  <div style="text-align:center;padding:12px 0 4px;font-size:9px;letter-spacing:2px;color:rgba(255,255,255,.2);font-family:'DM Mono',monospace" class="version-label">v1.31.039</div>
+  <div style="text-align:center;padding:12px 0 4px;font-size:9px;letter-spacing:2px;color:rgba(255,255,255,.2);font-family:'DM Mono',monospace" class="version-label">v1.31.040</div>
   <div class="card" style="margin-bottom:8px;padding:12px 14px;display:none" id="mini-chart-wrap">
     <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px"><span style="font-size:11px;letter-spacing:1.5px;color:var(--gold2);font-weight:bold" data-i18n="evolucion_hcp">EVOLUCIÓN HCP</span><span style="font-size:9px;color:var(--muted);letter-spacing:.5px" data-i18n="ultimas_20">20 últimas rondas</span></div>
     <canvas id="mini-hcp-chart" height="100" style="width:100%;display:block"></canvas>
@@ -2235,8 +2235,10 @@ function hasPendingStatsFilter() {
 function getFilteredRawRounds() {
   let rs = state.rounds || [];
   if (statsFilter.campos && statsFilter.campos.length > 0) {
-    const set = new Set(statsFilter.campos);
-    rs = rs.filter(r => set.has(r.campo_id));
+    // Normalizamos a String: statsFilter.campos guarda strings,
+    // pero r.campo_id puede ser numero segun la tabla
+    const set = new Set(statsFilter.campos.map(String));
+    rs = rs.filter(r => set.has(String(r.campo_id)));
   }
   if (statsFilter.desde) {
     const d0 = new Date(statsFilter.desde + 'T00:00:00');
@@ -2251,7 +2253,7 @@ function getFilteredRawRounds() {
 
 // Sincroniza el estado APPLIED al PENDING (al abrir el panel)
 function syncPendingFromApplied() {
-  statsFilterPending.campos = (statsFilter.campos || []).slice();
+  statsFilterPending.campos = (statsFilter.campos || []).map(String);
   statsFilterPending.desde = statsFilter.desde;
   statsFilterPending.hasta = statsFilter.hasta;
 }
@@ -2267,10 +2269,27 @@ function toggleStatsFilters() {
 }
 
 // Solo modifican el estado PENDIENTE — no aplica hasta pulsar Aplicar
+// IMPORTANTE: normalizamos a String para evitar bug de comparacion
+// (Supabase devuelve c.id como numero en algunas tablas, pero el HTML
+//  pasa siempre string al onclick. indexOf(numero) en array-de-strings = -1)
 function onStatsCampoToggle(campoId) {
-  const idx = statsFilterPending.campos.indexOf(campoId);
+  const id = String(campoId);
+  const idx = statsFilterPending.campos.indexOf(id);
   if (idx >= 0) statsFilterPending.campos.splice(idx, 1);
-  else statsFilterPending.campos.push(campoId);
+  else statsFilterPending.campos.push(id);
+  renderStatsFilters();
+}
+
+// Botón "Todos": si están todos seleccionados → vacía. Si no → selecciona todos.
+function onStatsCamposToggleAll() {
+  const allIds = (state.campos || []).map(c => String(c.id));
+  const allSelected = allIds.length > 0
+    && allIds.every(id => statsFilterPending.campos.indexOf(id) >= 0);
+  if (allSelected) {
+    statsFilterPending.campos = [];
+  } else {
+    statsFilterPending.campos = allIds.slice();
+  }
   renderStatsFilters();
 }
 
@@ -2367,15 +2386,34 @@ function renderStatsFilters() {
            + lbl('Sin campos','Sem campos','Aucun parcours') + '</div>';
     } else {
       html += '<div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:12px">';
+
+      // Chip "Todos" (toggle global) — primero en la lista
+      const allIds = campos.map(c => String(c.id));
+      const allSelected = allIds.length > 0
+        && allIds.every(id => statsFilterPending.campos.indexOf(id) >= 0);
+      const todosBg = allSelected ? 'var(--gold2)' : 'rgba(201,168,76,.08)';
+      const todosFg = allSelected ? '#1a1a1a' : 'var(--gold2)';
+      const todosBr = 'var(--gold2)';
+      const todosFw = allSelected ? '600' : '500';
+      const todosTick = allSelected ? '✓ ' : '';
+      html += '<button type="button" onclick="onStatsCamposToggleAll()" '
+           + 'style="background:' + todosBg + ';color:' + todosFg + ';border:1px solid ' + todosBr + ';border-radius:14px;padding:5px 11px;font-family:\'DM Mono\',monospace;font-size:11px;letter-spacing:.3px;cursor:pointer;font-weight:' + todosFw + ';white-space:nowrap">'
+           + todosTick + lbl('Todos','Todos','Tous') + '</button>';
+
+      // Chips de campos individuales
       campos.forEach(c => {
-        const sel = statsFilterPending.campos.indexOf(c.id) >= 0;
+        const cid = String(c.id);
+        const sel = statsFilterPending.campos.indexOf(cid) >= 0;
         const bg = sel ? 'var(--gold2)' : 'rgba(255,255,255,.04)';
         const fg = sel ? '#1a1a1a' : 'var(--text)';
         const br = sel ? 'var(--gold2)' : 'var(--border)';
         const fw = sel ? '600' : 'normal';
-        html += '<button type="button" onclick="onStatsCampoToggle(\'' + c.id + '\')" '
+        const tick = sel ? '✓ ' : '';
+        // Escapamos comillas simples del id por si acaso (UUIDs no tienen, pero por seguridad)
+        const safeId = cid.replace(/'/g, "\\'");
+        html += '<button type="button" onclick="onStatsCampoToggle(\'' + safeId + '\')" '
              + 'style="background:' + bg + ';color:' + fg + ';border:1px solid ' + br + ';border-radius:14px;padding:5px 11px;font-family:\'DM Mono\',monospace;font-size:11px;letter-spacing:.3px;cursor:pointer;font-weight:' + fw + ';white-space:nowrap">'
-             + (c.nombre || '—') + '</button>';
+             + tick + (c.nombre || '—') + '</button>';
       });
       html += '</div>';
     }
@@ -2396,14 +2434,16 @@ function renderStatsFilters() {
     html += '</div>';
 
     // Inputs Desde/Hasta (leen del PENDING)
+    // onclick fuerza apertura del calendario (fix iOS Safari donde a veces no abre)
+    const showPickerFn = "try{this.showPicker&&this.showPicker()}catch(e){}";
     html += '<div style="display:flex;gap:6px;margin-bottom:10px">';
     html += '<div style="flex:1;display:flex;flex-direction:column;gap:2px">';
     html += '<label style="font-size:9px;letter-spacing:1px;color:var(--muted);text-transform:uppercase">' + lbl('Desde','Desde','Du') + '</label>';
-    html += '<input type="date" id="stats-date-desde" value="' + (statsFilterPending.desde||'') + '" onchange="onStatsDateChange(\'desde\', this.value)" style="background:var(--input-bg);border:1px solid var(--border);border-radius:5px;color:var(--text);font-family:\'DM Mono\',monospace;font-size:12px;padding:5px 7px;width:100%;-webkit-appearance:none;outline:none;color-scheme:dark">';
+    html += '<input type="date" id="stats-date-desde" value="' + (statsFilterPending.desde||'') + '" onchange="onStatsDateChange(\'desde\', this.value)" onclick="' + showPickerFn + '" onfocus="' + showPickerFn + '" style="background:var(--input-bg);border:1px solid var(--border);border-radius:5px;color:var(--text);font-family:\'DM Mono\',monospace;font-size:12px;padding:5px 7px;width:100%;-webkit-appearance:none;outline:none;color-scheme:dark;cursor:pointer">';
     html += '</div>';
     html += '<div style="flex:1;display:flex;flex-direction:column;gap:2px">';
     html += '<label style="font-size:9px;letter-spacing:1px;color:var(--muted);text-transform:uppercase">' + lbl('Hasta','Até','Au') + '</label>';
-    html += '<input type="date" id="stats-date-hasta" value="' + (statsFilterPending.hasta||'') + '" onchange="onStatsDateChange(\'hasta\', this.value)" style="background:var(--input-bg);border:1px solid var(--border);border-radius:5px;color:var(--text);font-family:\'DM Mono\',monospace;font-size:12px;padding:5px 7px;width:100%;-webkit-appearance:none;outline:none;color-scheme:dark">';
+    html += '<input type="date" id="stats-date-hasta" value="' + (statsFilterPending.hasta||'') + '" onchange="onStatsDateChange(\'hasta\', this.value)" onclick="' + showPickerFn + '" onfocus="' + showPickerFn + '" style="background:var(--input-bg);border:1px solid var(--border);border-radius:5px;color:var(--text);font-family:\'DM Mono\',monospace;font-size:12px;padding:5px 7px;width:100%;-webkit-appearance:none;outline:none;color-scheme:dark;cursor:pointer">';
     html += '</div>';
     html += '</div>';
 
@@ -3899,8 +3939,8 @@ function contactarGolfHCP() {
   const ios = ua.match(/iPhone OS ([\d_]+)/);
   const android = ua.match(/Android ([\d.]+)/);
   const sys = ios ? 'iOS ' + ios[1].replace(/_/g,'.') : android ? 'Android ' + android[1] : 'Web';
-  const appVer = document.title.includes('HCP') ? 'v1.31.039' : 'Golf HCP';
-  const body = encodeURIComponent('Hola,\n\n[Escribe tu consulta aqui]\n\n\n-- \nGolf HCP v1.31.039\n' + sys);
+  const appVer = document.title.includes('HCP') ? 'v1.31.040' : 'Golf HCP';
+  const body = encodeURIComponent('Hola,\n\n[Escribe tu consulta aqui]\n\n\n-- \nGolf HCP v1.31.040\n' + sys);
   window.open('mailto:golf.hcp.webmaster@gmail.com?subject=Golf%20HCP%20App&body=' + body, '_blank');
 }
 
