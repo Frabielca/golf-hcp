@@ -514,7 +514,7 @@ nav.nav-hidden{transform:translateY(100%)}
     <button class="auth-btn" id="btn-login" onclick="doLogin()" data-i18n="btn_entrar">Entrar</button>
     <div class="auth-link"><span data-i18n="sin_cuenta">¿Sin cuenta?</span> <span onclick="showAuth('register')" data-i18n="registrate">Regístrate</span></div>
     <div class="auth-link" style="margin-top:16px;font-size:10px;opacity:.6"><a href="privacy.html" target="_blank" style="color:var(--muted);text-decoration:none" data-i18n="politica_priv">Política de Privacidad</a></div>
-    <div style="text-align:center;margin-top:8px;font-size:9px;color:rgba(255,255,255,.2);letter-spacing:1px">v1.31.047</div>
+    <div style="text-align:center;margin-top:8px;font-size:9px;color:rgba(255,255,255,.2);letter-spacing:1px">v1.31.048</div>
   </div>
 </div>
 
@@ -734,7 +734,7 @@ nav.nav-hidden{transform:translateY(100%)}
       </div>
     </div>
   </div>
-  <div style="text-align:center;padding:12px 0 4px;font-size:9px;letter-spacing:2px;color:rgba(255,255,255,.2);font-family:'DM Mono',monospace" class="version-label">v1.31.047</div>
+  <div style="text-align:center;padding:12px 0 4px;font-size:9px;letter-spacing:2px;color:rgba(255,255,255,.2);font-family:'DM Mono',monospace" class="version-label">v1.31.048</div>
   <div class="card" style="margin-bottom:8px;padding:12px 14px;display:none" id="mini-chart-wrap">
     <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px"><span style="font-size:11px;letter-spacing:1.5px;color:var(--gold2);font-weight:bold" data-i18n="evolucion_hcp">EVOLUCIÓN HCP</span><span style="font-size:9px;color:var(--muted);letter-spacing:.5px" data-i18n="ultimas_20">20 últimas rondas</span></div>
     <canvas id="mini-hcp-chart" height="100" style="width:100%;display:block"></canvas>
@@ -2627,11 +2627,97 @@ function renderStats() {
     return d.getMonth()===now.getMonth() && d.getFullYear()===now.getFullYear();
   }).length;
 
-  const card = (desc, val) => `
-    <div style="background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:16px;padding:12px 10px;display:flex;flex-direction:column;align-items:center;gap:5px">
-      <div style="font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);text-align:center;line-height:1.3">${desc}</div>
-      <div style="font-size:20px;color:var(--cream);font-family:'DM Mono',monospace;text-align:center">${val}</div>
+  // ── METRICAS NUEVAS (v1.31.048) — todas respetan el filtro ──
+
+  // Rondas ordenadas por fecha (mas reciente al final / al principio segun uso)
+  const sortedAsc = [...combined].sort((a,b) => new Date(a.fecha||a.date) - new Date(b.fecha||b.date));
+  const sortedDesc = [...sortedAsc].reverse();
+
+  // Promedio rondas/mes: total rondas / nº meses distintos con actividad
+  let avgRoundsPerMonth = '—';
+  if (combined.length > 0) {
+    const monthsSet = new Set();
+    combined.forEach(r => {
+      const d = new Date(r.fecha || r.date);
+      monthsSet.add(d.getFullYear() + '-' + d.getMonth());
+    });
+    if (monthsSet.size > 0) {
+      avgRoundsPerMonth = (combined.length / monthsSet.size).toFixed(1);
+    }
+  }
+
+  // Dias desde ultima ronda
+  let daysSinceLast = '—';
+  if (sortedDesc.length > 0) {
+    const lastDate = new Date(sortedDesc[0].fecha || sortedDesc[0].date);
+    const todayMs = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+    const lastMs = new Date(lastDate.getFullYear(), lastDate.getMonth(), lastDate.getDate()).getTime();
+    const diff = Math.max(0, Math.round((todayMs - lastMs) / 86400000));
+    daysSinceLast = diff;
+  }
+
+  // Stableford medio ultimas 5 (de las filtradas que tengan stbl > 0)
+  let avgStbl5 = '—';
+  const last5Stbl = sortedDesc.filter(r => r.stableford > 0).slice(0, 5);
+  if (last5Stbl.length > 0) {
+    const sum = last5Stbl.reduce((s,r) => s + r.stableford, 0);
+    avgStbl5 = (sum / last5Stbl.length).toFixed(1) + ' pts';
+  }
+
+  // Racha: rondas consecutivas (mas recientes hacia atras) con diferencial estrictamente decreciente
+  // Ej: [r1=15.2, r2=14.8, r3=14.0] desde la mas reciente hacia atras -> racha=3
+  let streakImproving = '—';
+  if (sortedDesc.length >= 2) {
+    let streak = 1;
+    for (let i = 0; i < sortedDesc.length - 1; i++) {
+      // sortedDesc[0] es la mas reciente. Mejora si su diff < el siguiente (mas antiguo)
+      if (sortedDesc[i].diff < sortedDesc[i+1].diff) streak++;
+      else break;
+    }
+    streakImproving = streak >= 2 ? streak : '—';
+  }
+
+  // Campo favorito: moda del campo_id en las rondas filtradas
+  let favCampo = '—';
+  if (combined.length > 0 && state.campos && state.campos.length > 0) {
+    const counts = {};
+    combined.forEach(r => {
+      // En "combined" las rondas combinadas 9H pueden no tener campo_id; usamos el de la
+      // primera mitad si existe. Si no, saltar.
+      const cid = r.campo_id;
+      if (cid != null) {
+        const k = String(cid);
+        counts[k] = (counts[k] || 0) + 1;
+      }
+    });
+    let bestId = null, bestCount = 0;
+    Object.keys(counts).forEach(k => {
+      if (counts[k] > bestCount) { bestCount = counts[k]; bestId = k; }
+    });
+    if (bestId !== null) {
+      const campo = state.campos.find(c => String(c.id) === bestId);
+      if (campo && campo.nombre) favCampo = campo.nombre;
+    }
+  }
+
+  // Helper de tarjeta con tamaño adaptativo:
+  // - Texto corto (<= 14 chars): tamaño normal en 1 linea
+  // - Texto medio (15-22 chars): tamaño normal en 2 lineas (line-height ajustado)
+  // - Texto largo (>22 chars): tamaño reducido en 2 lineas
+  const card = (desc, val) => {
+    const sval = String(val);
+    let valSize = '17px';
+    if (sval.length > 22) valSize = '13px';
+    return `
+    <div style="background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:12px;padding:10px 8px;display:flex;flex-direction:column;align-items:center;gap:4px;min-height:62px;justify-content:center">
+      <div style="font-size:9px;letter-spacing:.5px;text-transform:uppercase;color:var(--muted);text-align:center;line-height:1.2">${desc}</div>
+      <div style="font-size:${valSize};color:var(--cream);font-family:'DM Mono',monospace;text-align:center;line-height:1.05;word-break:break-word">${val}</div>
     </div>`;
+  };
+
+  // Cabecera de seccion (gold separator)
+  const section = (titulo) => `
+    <div style="grid-column:1/-1;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold2);margin:6px 0 -2px 2px;font-family:'DM Mono',monospace">${titulo}</div>`;
 
   // Las graficas requieren minimo 2 rondas para trazar lineas.
   // Con < 2 mostramos un placeholder compacto en su lugar (las cards/tarjetas
@@ -2672,17 +2758,25 @@ function renderStats() {
     <div style="background:rgba(255,255,255,.03);border:1px dashed var(--border);border-radius:8px;padding:14px;margin-bottom:16px;text-align:center;color:var(--muted);font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.5px">
       ${lbl('Las gráficas requieren al menos 2 rondas','Os gráficos precisam de pelo menos 2 voltas','Les graphiques nécessitent au moins 2 parties')}
     </div>`}
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px">
+    ${section(lbl('Rondas','Voltas','Parties'))}
     ${card(lbl('Rondas jugadas','Voltas jogadas','Parties jouées'), combined.length)}
-    ${card(lbl('Usadas en HCP','Usadas no HCP','Utilisées HCP'), res ? res.numBest : '—')}
     ${card(lbl('Mejor diferencial','Melhor diferencial','Meilleur différentiel'), bestDif !== null ? fmtD(bestDif) : '—')}
     ${card(lbl('Tendencia HCP','Tendência HCP','Tendance HCP'), tendencia)}
-    ${card(lbl('Media de golpes','Média de pancadas','Moyenne coups'), avgScore)}
-    ${card(lbl('Mejor resultado (golpes)','Melhor resultado (pancadas)','Meilleur résultat (coups)'), bestScore)}
-    ${card(lbl('Peor resultado (golpes)','Pior resultado (pancadas)','Pire résultat (coups)'), worstScore)}
+    ${card(lbl('Media golpes','Média pancadas','Moyenne coups'), avgScore)}
+    ${card(lbl('Mejor resultado','Melhor resultado','Meilleur résultat'), bestScore)}
+    ${card(lbl('Peor resultado','Pior resultado','Pire résultat'), worstScore)}
+    ${section(lbl('Stableford','Stableford','Stableford'))}
     ${card(lbl('Mejor Stableford','Melhor Stableford','Meilleur Stableford'), bestStbl)}
     ${card(lbl('Media Stableford','Média Stableford','Moyenne Stableford'), avgStbl)}
+    ${card(lbl('Media últ. 5','Média últ. 5','Moyenne 5 dern.'), avgStbl5)}
+    ${section(lbl('Actividad','Atividade','Activité'))}
     ${card(lbl('Rondas mes actual','Voltas mês atual','Parties mois en cours'), thisMon)}
+    ${card(lbl('Promedio rondas/mes','Média voltas/mês','Moyenne parties/mois'), avgRoundsPerMonth)}
+    ${card(lbl('Días sin jugar','Dias sem jogar','Jours sans jouer'), daysSinceLast)}
+    ${card(lbl('Campo favorito','Campo favorito','Parcours favori'), favCampo)}
+    ${card(lbl('Racha mejorando','Sequência a melhorar','Série en amélioration'), streakImproving)}
+    ${card(lbl('Usadas en HCP','Usadas no HCP','Utilisées HCP'), res ? res.numBest : '—')}
   </div>`;
   // Draw charts after DOM renders (only if charts are visible)
   if (showCharts) {
@@ -4063,8 +4157,8 @@ function contactarGolfHCP() {
   const ios = ua.match(/iPhone OS ([\d_]+)/);
   const android = ua.match(/Android ([\d.]+)/);
   const sys = ios ? 'iOS ' + ios[1].replace(/_/g,'.') : android ? 'Android ' + android[1] : 'Web';
-  const appVer = document.title.includes('HCP') ? 'v1.31.047' : 'Golf HCP';
-  const body = encodeURIComponent('Hola,\n\n[Escribe tu consulta aqui]\n\n\n-- \nGolf HCP v1.31.047\n' + sys);
+  const appVer = document.title.includes('HCP') ? 'v1.31.048' : 'Golf HCP';
+  const body = encodeURIComponent('Hola,\n\n[Escribe tu consulta aqui]\n\n\n-- \nGolf HCP v1.31.048\n' + sys);
   window.open('mailto:golf.hcp.webmaster@gmail.com?subject=Golf%20HCP%20App&body=' + body, '_blank');
 }
 
