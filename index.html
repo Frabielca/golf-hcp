@@ -514,7 +514,7 @@ nav.nav-hidden{transform:translateY(100%)}
     <button class="auth-btn" id="btn-login" onclick="doLogin()" data-i18n="btn_entrar">Entrar</button>
     <div class="auth-link"><span data-i18n="sin_cuenta">¿Sin cuenta?</span> <span onclick="showAuth('register')" data-i18n="registrate">Regístrate</span></div>
     <div class="auth-link" style="margin-top:16px;font-size:10px;opacity:.6"><a href="privacy.html" target="_blank" style="color:var(--muted);text-decoration:none" data-i18n="politica_priv">Política de Privacidad</a></div>
-    <div style="text-align:center;margin-top:8px;font-size:9px;color:rgba(255,255,255,.2);letter-spacing:1px">v1.31.040</div>
+    <div style="text-align:center;margin-top:8px;font-size:9px;color:rgba(255,255,255,.2);letter-spacing:1px">v1.31.041</div>
   </div>
 </div>
 
@@ -734,7 +734,7 @@ nav.nav-hidden{transform:translateY(100%)}
       </div>
     </div>
   </div>
-  <div style="text-align:center;padding:12px 0 4px;font-size:9px;letter-spacing:2px;color:rgba(255,255,255,.2);font-family:'DM Mono',monospace" class="version-label">v1.31.040</div>
+  <div style="text-align:center;padding:12px 0 4px;font-size:9px;letter-spacing:2px;color:rgba(255,255,255,.2);font-family:'DM Mono',monospace" class="version-label">v1.31.041</div>
   <div class="card" style="margin-bottom:8px;padding:12px 14px;display:none" id="mini-chart-wrap">
     <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px"><span style="font-size:11px;letter-spacing:1.5px;color:var(--gold2);font-weight:bold" data-i18n="evolucion_hcp">EVOLUCIÓN HCP</span><span style="font-size:9px;color:var(--muted);letter-spacing:.5px" data-i18n="ultimas_20">20 últimas rondas</span></div>
     <canvas id="mini-hcp-chart" height="100" style="width:100%;display:block"></canvas>
@@ -2388,28 +2388,28 @@ function renderStatsFilters() {
       html += '<div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:12px">';
 
       // Chip "Todos" (toggle global) — primero en la lista
+      // Estilo suave coherente con boton Continuar de Guia inicio
       const allIds = campos.map(c => String(c.id));
       const allSelected = allIds.length > 0
         && allIds.every(id => statsFilterPending.campos.indexOf(id) >= 0);
-      const todosBg = allSelected ? 'var(--gold2)' : 'rgba(201,168,76,.08)';
-      const todosFg = allSelected ? '#1a1a1a' : 'var(--gold2)';
-      const todosBr = 'var(--gold2)';
+      const todosBg = allSelected ? 'rgba(201,168,76,.2)' : 'rgba(201,168,76,.06)';
+      const todosFg = '#e8c96a';
+      const todosBr = allSelected ? 'rgba(201,168,76,.6)' : 'rgba(201,168,76,.3)';
       const todosFw = allSelected ? '600' : '500';
       const todosTick = allSelected ? '✓ ' : '';
       html += '<button type="button" onclick="onStatsCamposToggleAll()" '
            + 'style="background:' + todosBg + ';color:' + todosFg + ';border:1px solid ' + todosBr + ';border-radius:14px;padding:5px 11px;font-family:\'DM Mono\',monospace;font-size:11px;letter-spacing:.3px;cursor:pointer;font-weight:' + todosFw + ';white-space:nowrap">'
            + todosTick + lbl('Todos','Todos','Tous') + '</button>';
 
-      // Chips de campos individuales
+      // Chips de campos individuales (estilo suave)
       campos.forEach(c => {
         const cid = String(c.id);
         const sel = statsFilterPending.campos.indexOf(cid) >= 0;
-        const bg = sel ? 'var(--gold2)' : 'rgba(255,255,255,.04)';
-        const fg = sel ? '#1a1a1a' : 'var(--text)';
-        const br = sel ? 'var(--gold2)' : 'var(--border)';
+        const bg = sel ? 'rgba(201,168,76,.2)' : 'rgba(255,255,255,.04)';
+        const fg = sel ? '#e8c96a' : 'var(--muted)';
+        const br = sel ? 'rgba(201,168,76,.4)' : 'var(--border)';
         const fw = sel ? '600' : 'normal';
         const tick = sel ? '✓ ' : '';
-        // Escapamos comillas simples del id por si acaso (UUIDs no tienen, pero por seguridad)
         const safeId = cid.replace(/'/g, "\\'");
         html += '<button type="button" onclick="onStatsCampoToggle(\'' + safeId + '\')" '
              + 'style="background:' + bg + ';color:' + fg + ';border:1px solid ' + br + ';border-radius:14px;padding:5px 11px;font-family:\'DM Mono\',monospace;font-size:11px;letter-spacing:.3px;cursor:pointer;font-weight:' + fw + ';white-space:nowrap">'
@@ -2449,8 +2449,8 @@ function renderStatsFilters() {
 
     // ── Botones de accion ──
     html += '<div style="display:flex;gap:6px;margin-top:4px">';
-    // Aplicar (siempre visible, dorado)
-    html += '<button type="button" onclick="applyStatsFilters()" style="flex:1;background:var(--gold2);color:#1a1a1a;border:1px solid var(--gold2);border-radius:6px;padding:8px;font-family:\'DM Mono\',monospace;font-size:11px;letter-spacing:1px;text-transform:uppercase;cursor:pointer;font-weight:600">'
+    // Aplicar (estilo Continuar de Guia inicio)
+    html += '<button type="button" onclick="applyStatsFilters()" style="flex:1;background:rgba(201,168,76,.2);color:#e8c96a;border:1px solid rgba(201,168,76,.4);border-radius:6px;padding:8px;font-family:\'DM Mono\',monospace;font-size:11px;letter-spacing:1px;text-transform:uppercase;cursor:pointer;font-weight:600">'
          + lbl('Aplicar','Aplicar','Appliquer') + '</button>';
     // Limpiar (solo si hay applied O pending diferente del default)
     if (active || pendingHas) {
@@ -3939,8 +3939,8 @@ function contactarGolfHCP() {
   const ios = ua.match(/iPhone OS ([\d_]+)/);
   const android = ua.match(/Android ([\d.]+)/);
   const sys = ios ? 'iOS ' + ios[1].replace(/_/g,'.') : android ? 'Android ' + android[1] : 'Web';
-  const appVer = document.title.includes('HCP') ? 'v1.31.040' : 'Golf HCP';
-  const body = encodeURIComponent('Hola,\n\n[Escribe tu consulta aqui]\n\n\n-- \nGolf HCP v1.31.040\n' + sys);
+  const appVer = document.title.includes('HCP') ? 'v1.31.041' : 'Golf HCP';
+  const body = encodeURIComponent('Hola,\n\n[Escribe tu consulta aqui]\n\n\n-- \nGolf HCP v1.31.041\n' + sys);
   window.open('mailto:golf.hcp.webmaster@gmail.com?subject=Golf%20HCP%20App&body=' + body, '_blank');
 }
 
