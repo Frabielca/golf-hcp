@@ -514,7 +514,7 @@ nav.nav-hidden{transform:translateY(100%)}
     <button class="auth-btn" id="btn-login" onclick="doLogin()" data-i18n="btn_entrar">Entrar</button>
     <div class="auth-link"><span data-i18n="sin_cuenta">¿Sin cuenta?</span> <span onclick="showAuth('register')" data-i18n="registrate">Regístrate</span></div>
     <div class="auth-link" style="margin-top:16px;font-size:10px;opacity:.6"><a href="privacy.html" target="_blank" style="color:var(--muted);text-decoration:none" data-i18n="politica_priv">Política de Privacidad</a></div>
-    <div style="text-align:center;margin-top:8px;font-size:9px;color:rgba(255,255,255,.2);letter-spacing:1px">v1.31.049</div>
+    <div style="text-align:center;margin-top:8px;font-size:9px;color:rgba(255,255,255,.2);letter-spacing:1px">v1.31.050</div>
   </div>
 </div>
 
@@ -734,7 +734,7 @@ nav.nav-hidden{transform:translateY(100%)}
       </div>
     </div>
   </div>
-  <div style="text-align:center;padding:12px 0 4px;font-size:9px;letter-spacing:2px;color:rgba(255,255,255,.2);font-family:'DM Mono',monospace" class="version-label">v1.31.049</div>
+  <div style="text-align:center;padding:12px 0 4px;font-size:9px;letter-spacing:2px;color:rgba(255,255,255,.2);font-family:'DM Mono',monospace" class="version-label">v1.31.050</div>
   <div class="card" style="margin-bottom:8px;padding:12px 14px;display:none" id="mini-chart-wrap">
     <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px"><span style="font-size:11px;letter-spacing:1.5px;color:var(--gold2);font-weight:bold" data-i18n="evolucion_hcp">EVOLUCIÓN HCP</span><span style="font-size:9px;color:var(--muted);letter-spacing:.5px" data-i18n="ultimas_20">20 últimas rondas</span></div>
     <canvas id="mini-hcp-chart" height="100" style="width:100%;display:block"></canvas>
@@ -2700,17 +2700,21 @@ function renderStats() {
     }
   }
 
-  // Helper de tarjeta con tamaño adaptativo:
-  // - Texto corto (<= 12 chars): 15px en 1 linea (cabe ej. "PLAYA SERENA", "+11.6", "32.0 pts")
-  // - Texto medio (13-16 chars): 15px en 2 lineas
-  // - Texto largo (>16 chars): 12px en 2 lineas (ej. "SANCTI PETRI HILLS")
-  // overflow-wrap:normal evita que palabras cortas se partan; los espacios son donde rompe.
+  // Helper de tarjeta con tamaño adaptativo (mixta v1.31.050):
+  // Padding lateral reducido a 6px para ganar ancho util.
+  // - Texto <= 8 chars  : 15px (numeros y palabras cortas: "+11.6", "32.0 pts", "84")
+  // - Texto 9-12 chars  : 13px (nombres campo cortos: "IZKI GOLF", "LA GRAJERA", "PLAYA SERENA")
+  // - Texto 13-15 chars : 12px (nombres campo medios)
+  // - Texto > 15 chars  : 11px en 2 lineas (caso muy raro: maxlength=15 en nombre campo)
+  // overflow-wrap:normal evita partir una sola palabra; solo rompe en espacios.
   const card = (desc, val) => {
     const sval = String(val);
     let valSize = '15px';
-    if (sval.length > 16) valSize = '12px';
+    if (sval.length > 15) valSize = '11px';
+    else if (sval.length > 12) valSize = '12px';
+    else if (sval.length > 8)  valSize = '13px';
     return `
-    <div style="background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:12px;padding:10px 8px;display:flex;flex-direction:column;align-items:center;gap:4px;min-height:62px;justify-content:center">
+    <div style="background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:12px;padding:10px 6px;display:flex;flex-direction:column;align-items:center;gap:4px;min-height:62px;justify-content:center">
       <div style="font-size:9px;letter-spacing:.5px;text-transform:uppercase;color:var(--muted);text-align:center;line-height:1.2">${desc}</div>
       <div style="font-size:${valSize};color:var(--cream);font-family:'DM Mono',monospace;text-align:center;line-height:1.1;overflow-wrap:break-word;hyphens:none">${val}</div>
     </div>`;
@@ -4158,8 +4162,8 @@ function contactarGolfHCP() {
   const ios = ua.match(/iPhone OS ([\d_]+)/);
   const android = ua.match(/Android ([\d.]+)/);
   const sys = ios ? 'iOS ' + ios[1].replace(/_/g,'.') : android ? 'Android ' + android[1] : 'Web';
-  const appVer = document.title.includes('HCP') ? 'v1.31.049' : 'Golf HCP';
-  const body = encodeURIComponent('Hola,\n\n[Escribe tu consulta aqui]\n\n\n-- \nGolf HCP v1.31.049\n' + sys);
+  const appVer = document.title.includes('HCP') ? 'v1.31.050' : 'Golf HCP';
+  const body = encodeURIComponent('Hola,\n\n[Escribe tu consulta aqui]\n\n\n-- \nGolf HCP v1.31.050\n' + sys);
   window.open('mailto:golf.hcp.webmaster@gmail.com?subject=Golf%20HCP%20App&body=' + body, '_blank');
 }
 
