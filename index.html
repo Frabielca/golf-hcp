@@ -222,9 +222,11 @@ select option{background:var(--bg)}
 .del{background:rgba(224,85,85,.1);border:1px solid rgba(224,85,85,.25);border-radius:4px;color:var(--red);cursor:pointer;font-size:16px;padding:3px 8px;line-height:1}
 
 /* ── TOAST ── */
-.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(16px);background:rgba(26,47,26,.97);border:1px solid rgba(123,198,122,.3);color:#fff;font-size:11px;letter-spacing:1px;padding:10px 16px;border-radius:16px;opacity:0;transition:all .3s;pointer-events:none;white-space:normal;word-break:break-word;z-index:1000;max-width:88vw;text-align:center}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(16px);background:rgba(26,47,26,.97);border:1px solid rgba(123,198,122,.3);color:#e8e4da;font-size:11px;letter-spacing:1px;padding:10px 16px;border-radius:16px;opacity:0;transition:all .3s;pointer-events:none;white-space:normal;word-break:break-word;z-index:1000;max-width:88vw;text-align:center}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-.toast.err{border-color:rgba(224,85,85,.4);color:var(--red)}
+.toast.err{border-color:rgba(224,85,85,.6);color:#ff9999}
+html.light .toast{background:rgba(220,240,220,.97);border-color:rgba(60,140,60,.4);color:#1a3a1a}
+html.light .toast.err{background:rgba(255,235,235,.97);border-color:rgba(180,50,50,.5);color:#8b0000}
 
 /* ── MODAL ── */
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:500;display:flex;align-items:flex-end;justify-content:center;touch-action:manipulation}
@@ -513,7 +515,7 @@ nav.nav-hidden{transform:translateY(100%)}
     <button class="auth-btn" id="btn-login" onclick="doLogin()" data-i18n="btn_entrar">Entrar</button>
     <div class="auth-link"><span data-i18n="sin_cuenta">¿Sin cuenta?</span> <span onclick="showAuth('register')" data-i18n="registrate">Regístrate</span></div>
     <div class="auth-link" style="margin-top:16px;font-size:10px;opacity:.6"><a href="privacy.html" target="_blank" style="color:var(--muted);text-decoration:none" data-i18n="politica_priv">Política de Privacidad</a></div>
-    <div style="text-align:center;margin-top:8px;font-size:9px;color:rgba(255,255,255,.2);letter-spacing:1px">v1.31.069</div>
+    <div style="text-align:center;margin-top:8px;font-size:9px;color:rgba(255,255,255,.2);letter-spacing:1px">v1.31.073</div>
   </div>
 </div>
 
@@ -734,7 +736,7 @@ nav.nav-hidden{transform:translateY(100%)}
       </div>
     </div>
   </div>
-  <div style="text-align:center;padding:12px 0 4px;font-size:9px;letter-spacing:2px;color:rgba(255,255,255,.2);font-family:'DM Mono',monospace" class="version-label">v1.31.069</div>
+  <div style="text-align:center;padding:12px 0 4px;font-size:9px;letter-spacing:2px;color:rgba(255,255,255,.2);font-family:'DM Mono',monospace" class="version-label">v1.31.073</div>
   <div class="card" style="margin-bottom:8px;padding:12px 14px;display:none" id="mini-chart-wrap">
     <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px"><span style="font-size:11px;letter-spacing:1.5px;color:var(--gold2)" data-i18n="evolucion_hcp">EVOLUCIÓN HCP</span><span style="font-size:9px;color:var(--muted);letter-spacing:.5px" data-i18n="ultimas_20">20 últimas rondas</span></div>
     <canvas id="mini-hcp-chart" height="100" style="width:100%;display:block"></canvas>
@@ -1242,9 +1244,13 @@ nav.nav-hidden{transform:translateY(100%)}
   <div style="border-top:1px dashed rgba(255,255,255,.08);margin-bottom:20px"></div>
 
   <!-- Checkbox confirmacion -->
-  <label style="display:flex;align-items:flex-start;gap:12px;cursor:pointer;margin-bottom:20px;padding:14px;background:rgba(224,85,85,.05);border:1px solid rgba(224,85,85,.2);border-radius:8px">
-    <input type="checkbox" id="chk-confirmar-eliminar" onchange="onCheckEliminar(this)"
-      style="width:18px;height:18px;flex-shrink:0;margin-top:1px;accent-color:#e05555;cursor:pointer">
+  <label for="chk-confirmar-eliminar" style="display:flex;align-items:flex-start;gap:12px;cursor:pointer;margin-bottom:20px;padding:14px;background:rgba(224,85,85,.05);border:1px solid rgba(224,85,85,.2);border-radius:8px">
+    <span style="position:relative;flex-shrink:0;width:20px;height:20px;margin-top:1px">
+      <input type="checkbox" id="chk-confirmar-eliminar" onchange="onCheckEliminar(this)"
+        style="opacity:0;position:absolute;width:100%;height:100%;margin:0;cursor:pointer;z-index:1">
+      <span id="chk-visual" style="display:block;width:20px;height:20px;border:2px solid rgba(224,85,85,.5);border-radius:4px;background:transparent;transition:all .15s"></span>
+      <svg id="chk-tick" viewBox="0 0 12 10" style="display:none;position:absolute;top:4px;left:3px;width:14px;height:11px;stroke:#e05555;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round"><polyline points="1,5 4.5,8.5 11,1"/></svg>
+    </span>
     <span style="font-size:11px;color:var(--text);line-height:1.6" data-i18n="eliminar_checkbox">Entiendo que esta acción es irreversible y que perderé todos mis datos permanentemente.</span>
   </label>
 
@@ -2850,7 +2856,7 @@ function renderStats() {
 
 // ═════════════════════════════════════════════════════════════════════
 // ═════════════════════════════════════════════════════════════════════
-// ELIMINAR CUENTA (v1.31.069)
+// ELIMINAR CUENTA (v1.31.073)
 // doExportData: descarga JSON con todos los datos del usuario
 // onCheckEliminar: activa/desactiva el boton de eliminar
 // doDeleteAccount: llama a sb.rpc('delete_user'), muestra mensaje y redirige a login
@@ -2858,6 +2864,13 @@ function renderStats() {
 
 function onCheckEliminar(chk) {
   const btn = $('btn-eliminar-cuenta');
+  const visual = $('chk-visual');
+  const tick = $('chk-tick');
+  // Actualizar visual custom
+  if (visual) visual.style.background = chk.checked ? 'rgba(224,85,85,.15)' : 'transparent';
+  if (visual) visual.style.borderColor = chk.checked ? '#e05555' : 'rgba(224,85,85,.5)';
+  if (tick) tick.style.display = chk.checked ? 'block' : 'none';
+  // Activar/desactivar boton
   if (!btn) return;
   if (chk.checked) {
     btn.disabled = false;
@@ -3809,7 +3822,7 @@ function onBarraChange() {
     if (opt9) {
       if (barraHas9H) {
         opt9.disabled = false; opt9.style.display = '';
-        $('f-num-hoyos').value = '9'; onNumHoyosChange();
+        // No cambiar num_hoyos automaticamente — el usuario elige libremente
       } else {
         opt9.disabled = true; opt9.style.display = 'none';
         if ($('f-num-hoyos').value === '9') { $('f-num-hoyos').value = '18'; onNumHoyosChange(); }
@@ -4817,8 +4830,8 @@ function contactarGolfHCP() {
   const ios = ua.match(/iPhone OS ([\d_]+)/);
   const android = ua.match(/Android ([\d.]+)/);
   const sys = ios ? 'iOS ' + ios[1].replace(/_/g,'.') : android ? 'Android ' + android[1] : 'Web';
-  const appVer = document.title.includes('HCP') ? 'v1.31.069' : 'Golf HCP';
-  const body = encodeURIComponent('Hola,\n\n[Escribe tu consulta aqui]\n\n\n-- \nGolf HCP v1.31.069\n' + sys);
+  const appVer = document.title.includes('HCP') ? 'v1.31.073' : 'Golf HCP';
+  const body = encodeURIComponent('Hola,\n\n[Escribe tu consulta aqui]\n\n\n-- \nGolf HCP v1.31.073\n' + sys);
   window.open('mailto:golf.hcp.webmaster@gmail.com?subject=Golf%20HCP%20App&body=' + body, '_blank');
 }
 
@@ -5064,7 +5077,11 @@ function goTo(id, btn) {
     const chk = $('chk-confirmar-eliminar');
     const btn = $('btn-eliminar-cuenta');
     const msg = $('eliminar-msg');
+    const visual = $('chk-visual');
+    const tick = $('chk-tick');
     if (chk) chk.checked = false;
+    if (visual) { visual.style.background = 'transparent'; visual.style.borderColor = 'rgba(224,85,85,.5)'; }
+    if (tick) tick.style.display = 'none';
     if (msg) { msg.style.display = 'none'; msg.innerHTML = ''; }
     if (btn) {
       btn.style.display = '';
