@@ -514,7 +514,7 @@ nav.nav-hidden{transform:translateY(100%)}
     <button class="auth-btn" id="btn-login" onclick="doLogin()" data-i18n="btn_entrar">Entrar</button>
     <div class="auth-link"><span data-i18n="sin_cuenta">¿Sin cuenta?</span> <span onclick="showAuth('register')" data-i18n="registrate">Regístrate</span></div>
     <div class="auth-link" style="margin-top:16px;font-size:10px;opacity:.6"><a href="privacy.html" target="_blank" style="color:var(--muted);text-decoration:none" data-i18n="politica_priv">Política de Privacidad</a></div>
-    <div style="text-align:center;margin-top:8px;font-size:9px;color:rgba(255,255,255,.2);letter-spacing:1px">v1.31.053</div>
+    <div style="text-align:center;margin-top:8px;font-size:9px;color:rgba(255,255,255,.2);letter-spacing:1px">v1.31.054</div>
   </div>
 </div>
 
@@ -734,7 +734,7 @@ nav.nav-hidden{transform:translateY(100%)}
       </div>
     </div>
   </div>
-  <div style="text-align:center;padding:12px 0 4px;font-size:9px;letter-spacing:2px;color:rgba(255,255,255,.2);font-family:'DM Mono',monospace" class="version-label">v1.31.053</div>
+  <div style="text-align:center;padding:12px 0 4px;font-size:9px;letter-spacing:2px;color:rgba(255,255,255,.2);font-family:'DM Mono',monospace" class="version-label">v1.31.054</div>
   <div class="card" style="margin-bottom:8px;padding:12px 14px;display:none" id="mini-chart-wrap">
     <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px"><span style="font-size:11px;letter-spacing:1.5px;color:var(--gold2);font-weight:bold" data-i18n="evolucion_hcp">EVOLUCIÓN HCP</span><span style="font-size:9px;color:var(--muted);letter-spacing:.5px" data-i18n="ultimas_20">20 últimas rondas</span></div>
     <canvas id="mini-hcp-chart" height="100" style="width:100%;display:block"></canvas>
@@ -1034,15 +1034,7 @@ nav.nav-hidden{transform:translateY(100%)}
       <span data-i18n="volver_btn">VOLVER</span>
     </button>
   </div>
-  <div class="card">
-    <div style="font-size:13px;letter-spacing:1.5px;color:var(--gold2);margin-bottom:14px" data-i18n="menu_privacidad">POLÍTICA DE PRIVACIDAD</div>
-    <div style="font-size:11px;color:var(--muted);line-height:1.8">
-      <p style="margin:0 0 12px" data-i18n="priv_p1">Golf HCP almacena tus datos de juego (rondas, campos, resultados) en una base de datos segura (Supabase) vinculada a tu cuenta de email.</p>
-      <p style="margin:0 0 12px" data-i18n="priv_p2">No compartimos tus datos con terceros. No mostramos publicidad. Tus datos son de uso exclusivo para el funcionamiento de la aplicación.</p>
-      <p style="margin:0 0 12px" data-i18n="priv_p3">Puedes eliminar tu cuenta y todos tus datos en cualquier momento contactando con nosotros.</p>
-      <p style="margin:0" data-i18n="priv_p4">Esta aplicación no recopila datos de localización ni información sensible del dispositivo.</p>
-    </div>
-  </div>
+  <div id="privacidad-content"></div>
 </div>
 
 <!-- PAGE: AJUSTES -->
@@ -1162,7 +1154,7 @@ nav.nav-hidden{transform:translateY(100%)}
       <svg class="ajuste-chevron" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
     </button>
     <div class="ajuste-sep"></div>
-    <button class="ajuste-btn" onclick="window.open('privacy.html','_blank')">
+    <button class="ajuste-btn" onclick="goTo('privacidad',null)">
       <div class="ajuste-icon"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
       <div class="ajuste-text"><div data-i18n="menu_privacidad">Política de Privacidad</div><div class="ajuste-sub" data-i18n="sub_privacidad">Cómo usamos tus datos</div></div>
       <svg class="ajuste-chevron" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
@@ -2796,6 +2788,280 @@ function renderStats() {
 
 
 
+// ═════════════════════════════════════════════════════════════════════
+// RENDER PRIVACIDAD (v1.31.054)
+// Politica de privacidad completa renderizada inline en ES/PT/FR.
+// Se llama al navegar a 'privacidad'. Boton <- vuelve a Ajustes.
+// URL externa privacy.html se mantiene para App Store Connect.
+// ═════════════════════════════════════════════════════════════════════
+function renderPrivacidad() {
+  const el = document.getElementById('privacidad-content');
+  if (!el) return;
+
+  const L = lang || 'es';
+
+  const s = (title, body) =>
+    `<div style="margin-bottom:28px">
+      <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--gold2);font-weight:500;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--border)">${title}</div>
+      ${body}
+    </div>`;
+
+  const p = (txt) => `<p style="font-size:11px;color:var(--text);line-height:1.7;margin-bottom:8px">${txt}</p>`;
+
+  const card = (items) =>
+    `<div style="background:var(--card);border:1px solid var(--border);border-radius:8px;padding:14px;margin:10px 0;font-size:11px;color:var(--text)">
+      ${items.map(i => `<p style="margin-bottom:8px">${i}</p>`).join('')}
+    </div>`;
+
+  const row = (a, b) =>
+    `<div style="display:flex;gap:8px;border-bottom:1px solid rgba(201,168,76,.07);padding:7px 0;font-size:11px">
+      <div style="flex:1;color:var(--cream)">${a}</div>
+      <div style="flex:1.2;color:var(--text)">${b}</div>
+    </div>`;
+
+  const note = (txt) =>
+    `<div style="background:rgba(59,130,246,.06);border-left:2px solid rgba(59,130,246,.35);border-radius:0 6px 6px 0;padding:10px 12px;margin:10px 0;font-size:11px;color:var(--text)">${txt}</div>`;
+
+  const stores = (a, b, c) =>
+    `<div style="display:flex;flex-wrap:wrap;gap:7px;margin:10px 0">
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:6px;padding:6px 11px;font-size:11px;color:var(--cream)">🍎 ${a}</div>
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:6px;padding:6px 11px;font-size:11px;color:var(--cream)">🤖 ${b}</div>
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:6px;padding:6px 11px;font-size:11px;color:var(--cream)">🌐 ${c}</div>
+    </div>`;
+
+  const contact_email = 'golf.hcp.webmaster@gmail.com';
+  const contact_link = `<a href="mailto:${contact_email}" style="color:var(--gold2)">${contact_email}</a>`;
+
+  const sections = {
+    es: [
+      s('01 — Responsable del tratamiento',
+        card([
+          '<strong>Proyecto:</strong> Golf HCP',
+          '<strong>Responsable de Privacidad:</strong> Golf HCP Team',
+          `<strong>Contacto:</strong> ${contact_link}`,
+          '<strong>Ámbito:</strong> Unión Europea'
+        ]) +
+        p('Golf HCP es una aplicación para el cálculo del Hándicap Index según el sistema WHS 2020, el registro de rondas de golf y la consulta de estadísticas de juego. Este documento informa al usuario del tratamiento de sus datos personales de conformidad con el RGPD y la legislación española aplicable.')
+      ),
+      s('02 — Datos que tratamos',
+        p('Golf HCP recoge únicamente los datos estrictamente necesarios. No recogemos geolocalización, contactos, cámara ni datos del dispositivo ajenos al juego de golf.') +
+        row('<strong>Correo electrónico</strong>', 'Identificación y autenticación — Ejecución del contrato') +
+        row('<strong>Contraseña (hash)</strong>', 'Autenticación segura. Nunca en texto plano') +
+        row('<strong>Rondas de golf</strong>', 'Cálculo del Hándicap Index, historial y estadísticas') +
+        row('<strong>Campos de golf</strong>', 'Gestión de campos (CR, Slope, par, barras de salida)') +
+        row('<strong>Datos de sesión</strong>', 'Análisis interno de uso. No compartidos con terceros — Interés legítimo')
+      ),
+      s('03 — Finalidad',
+        card([
+          '🏌️ <strong>Prestación del servicio:</strong> calcular el Hándicap Index WHS 2020, registrar rondas, gestionar campos y generar estadísticas personalizadas.',
+          '🔒 <strong>Autenticación y seguridad:</strong> garantizar que cada usuario accede únicamente a sus propios datos.',
+          '📊 <strong>Análisis interno:</strong> métricas de uso para mejorar la aplicación. No se asocian a perfiles comerciales ni se ceden a terceros.'
+        ]) +
+        p('Golf HCP <strong>no realiza marketing directo, no muestra publicidad y no cede datos a terceros</strong> con fines comerciales.')
+      ),
+      s('04 — Plataformas de distribución',
+        stores(
+          'Apple App Store (iOS) — próximamente',
+          'Google Play Store (Android) — próximamente',
+          'Web (PWA) — activa'
+        ) +
+        p('El tratamiento de datos personales por Golf HCP se rige exclusivamente por el presente documento, independientemente de la plataforma utilizada.')
+      ),
+      s('05 — Infraestructura y transferencias',
+        row('<strong>Supabase</strong>', 'BD y autenticación — UE, AWS eu-west-1 (Irlanda)') +
+        row('<strong>GitHub Pages</strong>', 'Alojamiento app web — CDN global') +
+        row('<strong>Apple App Store</strong>', 'Distribución iOS (previsto)') +
+        row('<strong>Google Play Store</strong>', 'Distribución Android (previsto)') +
+        note('Los datos personales <strong>no se transfieren fuera del Espacio Económico Europeo</strong>. Supabase usa AWS eu-west-1 (Irlanda).')
+      ),
+      s('06 — Conservación de datos',
+        row('<strong>Cuenta de usuario</strong>', 'Hasta eliminar cuenta o solicitar supresión') +
+        row('<strong>Rondas, campos y estadísticas</strong>', 'Hasta que el usuario los elimine o elimine su cuenta') +
+        row('<strong>Datos de sesión</strong>', 'Máximo 24 meses') +
+        p('Tras eliminar la cuenta, todos los datos se borran permanentemente en un máximo de <strong>30 días naturales</strong>.')
+      ),
+      s('07 — Tus derechos (RGPD)',
+        p('Puedes ejercer los derechos de acceso, rectificación, supresión, limitación, portabilidad y oposición escribiendo a ' + contact_link + '. Respuesta en máximo <strong>30 días naturales</strong>.') +
+        p('El derecho de supresión puede ejercerse directamente desde la app en <strong>Ajustes → Eliminar cuenta</strong>.') +
+        p('Reclamaciones ante la <strong>AEPD</strong>: <a href="https://www.aepd.es" style="color:var(--gold2)">www.aepd.es</a>.')
+      ),
+      s('08 — Seguridad',
+        card([
+          '🔐 <strong>Contraseñas cifradas</strong> con hash (bcrypt). Nunca accesibles en texto plano.',
+          '🛡️ <strong>Row Level Security (RLS):</strong> aislamiento total entre cuentas a nivel de BD.',
+          '🔒 <strong>Cifrado en tránsito:</strong> HTTPS/TLS en todas las comunicaciones.',
+          '🏗️ <strong>Infraestructura certificada:</strong> Supabase cumple SOC 2 Type II y RGPD.'
+        ])
+      ),
+      s('09 — Menores, cookies y contacto',
+        p('Golf HCP no está dirigida a menores de 16 años. Para eliminar datos de un menor: ' + contact_link + '.') +
+        p('Utilizamos <strong>almacenamiento local del dispositivo</strong> exclusivamente para mantener la sesión activa. Sin cookies de seguimiento ni publicidad.') +
+        card([
+          `📧 <strong>Email:</strong> ${contact_link}`,
+          '🍎 <strong>App Store (iOS):</strong> próximamente',
+          '🤖 <strong>Google Play:</strong> próximamente',
+          '⏱️ <strong>Plazo de respuesta:</strong> máximo 30 días naturales'
+        ]) +
+        p('Golf HCP Team puede actualizar esta política en cualquier momento. Los cambios significativos se notificarán en la app. La fecha de actualización es <strong>mayo 2026</strong>.')
+      )
+    ],
+
+    pt: [
+      s('01 — Responsável pelo tratamento',
+        card([
+          '<strong>Projeto:</strong> Golf HCP',
+          '<strong>Responsável de Privacidade:</strong> Golf HCP Team',
+          `<strong>Contacto:</strong> ${contact_link}`,
+          '<strong>Âmbito:</strong> União Europeia'
+        ]) +
+        p('Golf HCP é uma aplicação para o cálculo do Handicap Index segundo o sistema WHS 2020, o registo de voltas de golfe e a consulta de estatísticas de jogo. Este documento informa o utilizador sobre o tratamento dos seus dados pessoais em conformidade com o RGPD e a legislação portuguesa aplicável.')
+      ),
+      s('02 — Dados que tratamos',
+        p('Golf HCP recolhe apenas os dados estritamente necessários. Não recolhemos geolocalização, contactos, câmara nem dados do dispositivo alheios ao jogo de golfe.') +
+        row('<strong>Endereço de e-mail</strong>', 'Identificação e autenticação — Execução do contrato') +
+        row('<strong>Palavra-passe (hash)</strong>', 'Autenticação segura. Nunca em texto simples') +
+        row('<strong>Voltas de golfe</strong>', 'Cálculo do Handicap Index, histórico e estatísticas') +
+        row('<strong>Campos de golfe</strong>', 'Gestão de campos (CR, Slope, par, saídas)') +
+        row('<strong>Dados de sessão</strong>', 'Análise interna de utilização. Não partilhados com terceiros')
+      ),
+      s('03 — Finalidade',
+        card([
+          '🏌️ <strong>Prestação do serviço:</strong> calcular o Handicap Index WHS 2020, registar voltas, gerir campos e gerar estatísticas personalizadas.',
+          '🔒 <strong>Autenticação e segurança:</strong> garantir que cada utilizador acede apenas aos seus próprios dados.',
+          '📊 <strong>Análise interna:</strong> métricas de utilização para melhorar a aplicação. Não associadas a perfis comerciais nem cedidas a terceiros.'
+        ]) +
+        p('Golf HCP <strong>não realiza marketing direto, não apresenta publicidade e não cede dados a terceiros</strong> para fins comerciais.')
+      ),
+      s('04 — Plataformas de distribuição',
+        stores(
+          'Apple App Store (iOS) — brevemente',
+          'Google Play Store (Android) — brevemente',
+          'Web (PWA) — disponível'
+        ) +
+        p('O tratamento de dados pessoais pela Golf HCP rege-se exclusivamente pelo presente documento, independentemente da plataforma utilizada.')
+      ),
+      s('05 — Infraestrutura e transferências',
+        row('<strong>Supabase</strong>', 'BD e autenticação — UE, AWS eu-west-1 (Irlanda)') +
+        row('<strong>GitHub Pages</strong>', 'Alojamento app web — CDN global') +
+        row('<strong>Apple App Store</strong>', 'Distribuição iOS (previsto)') +
+        row('<strong>Google Play Store</strong>', 'Distribuição Android (previsto)') +
+        note('Os dados pessoais <strong>não são transferidos para fora do Espaço Económico Europeu</strong>. A Supabase utiliza AWS eu-west-1 (Irlanda).')
+      ),
+      s('06 — Conservação de dados',
+        row('<strong>Conta de utilizador</strong>', 'Até eliminar conta ou solicitar supressão') +
+        row('<strong>Voltas, campos e estatísticas</strong>', 'Até o utilizador os eliminar ou eliminar a conta') +
+        row('<strong>Dados de sessão</strong>', 'Máximo 24 meses') +
+        p('Após eliminar a conta, todos os dados são apagados permanentemente no prazo máximo de <strong>30 dias naturais</strong>.')
+      ),
+      s('07 — Os seus direitos (RGPD)',
+        p('Pode exercer os direitos de acesso, retificação, supressão, limitação, portabilidade e oposição escrevendo para ' + contact_link + '. Resposta no prazo máximo de <strong>30 dias naturais</strong>.') +
+        p('O direito de supressão pode ser exercido diretamente na app em <strong>Definições → Eliminar conta</strong>.') +
+        p('Reclamações: <strong>CNPD</strong> — <a href="https://www.cnpd.pt" style="color:var(--gold2)">www.cnpd.pt</a>.')
+      ),
+      s('08 — Segurança',
+        card([
+          '🔐 <strong>Palavras-passe cifradas</strong> com hash (bcrypt). Nunca acessíveis em texto simples.',
+          '🛡️ <strong>Row Level Security (RLS):</strong> isolamento total entre contas ao nível da BD.',
+          '🔒 <strong>Cifração em trânsito:</strong> HTTPS/TLS em todas as comunicações.',
+          '🏗️ <strong>Infraestrutura certificada:</strong> Supabase cumpre SOC 2 Type II e RGPD.'
+        ])
+      ),
+      s('09 — Menores, cookies e contacto',
+        p('Golf HCP não se destina a menores de 16 anos. Para eliminar dados de um menor: ' + contact_link + '.') +
+        p('Utilizamos <strong>armazenamento local do dispositivo</strong> exclusivamente para manter a sessão ativa. Sem cookies de rastreamento nem publicidade.') +
+        card([
+          `📧 <strong>E-mail:</strong> ${contact_link}`,
+          '🍎 <strong>App Store (iOS):</strong> brevemente',
+          '🤖 <strong>Google Play:</strong> brevemente',
+          '⏱️ <strong>Prazo de resposta:</strong> máximo 30 dias naturais'
+        ]) +
+        p('A Golf HCP Team pode atualizar esta política a qualquer momento. As alterações significativas serão notificadas na app. Data de atualização: <strong>maio 2026</strong>.')
+      )
+    ],
+
+    fr: [
+      s('01 — Responsable du traitement',
+        card([
+          '<strong>Projet :</strong> Golf HCP',
+          '<strong>Responsable Confidentialité :</strong> Golf HCP Team',
+          `<strong>Contact :</strong> ${contact_link}`,
+          '<strong>Périmètre :</strong> Union Européenne'
+        ]) +
+        p('Golf HCP est une application pour le calcul du Handicap Index selon le système WHS 2020, l\'enregistrement de parties de golf et la consultation de statistiques de jeu. Ce document informe l\'utilisateur du traitement de ses données personnelles conformément au RGPD et à la législation française applicable.')
+      ),
+      s('02 — Données que nous traitons',
+        p('Golf HCP collecte uniquement les données strictement nécessaires. Nous ne collectons aucune donnée de géolocalisation, de contacts, de caméra ni de l\'appareil non liée au jeu de golf.') +
+        row('<strong>Adresse e-mail</strong>', 'Identification et authentification — Exécution du contrat') +
+        row('<strong>Mot de passe (hash)</strong>', 'Authentification sécurisée. Jamais en clair') +
+        row('<strong>Parties de golf</strong>', 'Calcul du Handicap Index, historique et statistiques') +
+        row('<strong>Parcours de golf</strong>', 'Gestion des parcours (CR, Slope, par, départs)') +
+        row('<strong>Données de session</strong>', 'Analyse interne d\'utilisation. Non partagées avec des tiers')
+      ),
+      s('03 — Finalité',
+        card([
+          '🏌️ <strong>Prestation du service :</strong> calculer le Handicap Index WHS 2020, enregistrer des parties, gérer des parcours et générer des statistiques personnalisées.',
+          '🔒 <strong>Authentification et sécurité :</strong> garantir que chaque utilisateur accède uniquement à ses propres données.',
+          '📊 <strong>Analyse interne :</strong> métriques d\'utilisation pour améliorer l\'application. Non associées à des profils commerciaux ni cédées à des tiers.'
+        ]) +
+        p('Golf HCP <strong>ne pratique pas de marketing direct, n\'affiche pas de publicité et ne cède pas de données à des tiers</strong> à des fins commerciales.')
+      ),
+      s('04 — Plateformes de distribution',
+        stores(
+          'Apple App Store (iOS) — prochainement',
+          'Google Play Store (Android) — prochainement',
+          'Web (PWA) — disponible'
+        ) +
+        p('Le traitement des données personnelles par Golf HCP est régi exclusivement par le présent document, quelle que soit la plateforme utilisée.')
+      ),
+      s('05 — Infrastructure et transferts',
+        row('<strong>Supabase</strong>', 'BD et authentification — UE, AWS eu-west-1 (Irlande)') +
+        row('<strong>GitHub Pages</strong>', 'Hébergement app web — CDN mondial') +
+        row('<strong>Apple App Store</strong>', 'Distribution iOS (prévu)') +
+        row('<strong>Google Play Store</strong>', 'Distribution Android (prévu)') +
+        note('Les données personnelles <strong>ne sont pas transférées en dehors de l\'EEE</strong>. Supabase utilise AWS eu-west-1 (Irlande).')
+      ),
+      s('06 — Conservation des données',
+        row('<strong>Compte utilisateur</strong>', 'Jusqu\'à la suppression du compte ou la demande de suppression') +
+        row('<strong>Parties, parcours et statistiques</strong>', 'Jusqu\'à leur suppression par l\'utilisateur') +
+        row('<strong>Données de session</strong>', 'Maximum 24 mois') +
+        p('Après suppression du compte, toutes les données sont effacées définitivement dans un délai maximum de <strong>30 jours calendaires</strong>.')
+      ),
+      s('07 — Vos droits (RGPD)',
+        p('Vous pouvez exercer vos droits d\'accès, de rectification, de suppression, de limitation, de portabilité et d\'opposition en écrivant à ' + contact_link + '. Réponse dans un délai maximum de <strong>30 jours calendaires</strong>.') +
+        p('Le droit à la suppression peut être exercé directement dans l\'app via <strong>Réglages → Supprimer le compte</strong>.') +
+        p('Réclamations : <strong>CNIL</strong> — <a href="https://www.cnil.fr" style="color:var(--gold2)">www.cnil.fr</a>.')
+      ),
+      s('08 — Sécurité',
+        card([
+          '🔐 <strong>Mots de passe chiffrés</strong> par hash (bcrypt). Jamais accessibles en clair.',
+          '🛡️ <strong>Row Level Security (RLS) :</strong> isolation totale entre comptes au niveau BD.',
+          '🔒 <strong>Chiffrement en transit :</strong> HTTPS/TLS pour toutes les communications.',
+          '🏗️ <strong>Infrastructure certifiée :</strong> Supabase est conforme SOC 2 Type II et RGPD.'
+        ])
+      ),
+      s('09 — Mineurs, cookies et contact',
+        p('Golf HCP n\'est pas destinée aux mineurs de moins de 16 ans. Pour supprimer des données d\'un mineur : ' + contact_link + '.') +
+        p('Nous utilisons le <strong>stockage local de l\'appareil</strong> exclusivement pour maintenir la session active. Aucun cookie de suivi ni de publicité.') +
+        card([
+          `📧 <strong>E-mail :</strong> ${contact_link}`,
+          '🍎 <strong>App Store (iOS) :</strong> prochainement',
+          '🤖 <strong>Google Play :</strong> prochainement',
+          '⏱️ <strong>Délai de réponse :</strong> maximum 30 jours calendaires'
+        ]) +
+        p('La Golf HCP Team peut mettre à jour cette politique à tout moment. Les changements significatifs seront notifiés dans l\'application. Date de mise à jour : <strong>mai 2026</strong>.')
+      )
+    ]
+  };
+
+  const content = sections[L] || sections.es;
+  el.innerHTML = `
+    <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--gold2);margin-bottom:18px;padding-bottom:8px;border-bottom:1px solid var(--border)">${L==='fr'?'Politique de Confidentialité':L==='pt'?'Política de Privacidade':'Política de Privacidad'}</div>
+    ${content.join('')}
+    <div style="text-align:center;margin-top:24px;padding-top:16px;border-top:1px solid var(--border)">
+      <a href="privacy.html" target="_blank" style="color:var(--muted);font-size:10px;letter-spacing:1px;text-decoration:none">${L==='fr'?'Voir la version complète ↗':L==='pt'?'Ver versão completa ↗':'Ver versión completa ↗'}</a>
+    </div>`;
+}
+
 function renderResult() {
   renderMiniChart();
   const { combined } = combineNineHoleRounds(state.rounds);
@@ -4330,8 +4596,8 @@ function contactarGolfHCP() {
   const ios = ua.match(/iPhone OS ([\d_]+)/);
   const android = ua.match(/Android ([\d.]+)/);
   const sys = ios ? 'iOS ' + ios[1].replace(/_/g,'.') : android ? 'Android ' + android[1] : 'Web';
-  const appVer = document.title.includes('HCP') ? 'v1.31.053' : 'Golf HCP';
-  const body = encodeURIComponent('Hola,\n\n[Escribe tu consulta aqui]\n\n\n-- \nGolf HCP v1.31.053\n' + sys);
+  const appVer = document.title.includes('HCP') ? 'v1.31.054' : 'Golf HCP';
+  const body = encodeURIComponent('Hola,\n\n[Escribe tu consulta aqui]\n\n\n-- \nGolf HCP v1.31.054\n' + sys);
   window.open('mailto:golf.hcp.webmaster@gmail.com?subject=Golf%20HCP%20App&body=' + body, '_blank');
 }
 
@@ -4569,6 +4835,9 @@ function goTo(id, btn) {
     }, 50);
   }
 
+  if (id === 'privacidad') {
+    try { renderPrivacidad(); } catch(e) { console.error('renderPrivacidad:', e); }
+  }
   if (id === 'inicio') {
     // Avisar si no hay campos creados
     if (state.user && !state.campos.length) {
