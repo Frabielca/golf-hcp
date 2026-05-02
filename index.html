@@ -514,7 +514,7 @@ nav.nav-hidden{transform:translateY(100%)}
     <button class="auth-btn" id="btn-login" onclick="doLogin()" data-i18n="btn_entrar">Entrar</button>
     <div class="auth-link"><span data-i18n="sin_cuenta">¿Sin cuenta?</span> <span onclick="showAuth('register')" data-i18n="registrate">Regístrate</span></div>
     <div class="auth-link" style="margin-top:16px;font-size:10px;opacity:.6"><a href="privacy.html" target="_blank" style="color:var(--muted);text-decoration:none" data-i18n="politica_priv">Política de Privacidad</a></div>
-    <div style="text-align:center;margin-top:8px;font-size:9px;color:rgba(255,255,255,.2);letter-spacing:1px">v1.31.050</div>
+    <div style="text-align:center;margin-top:8px;font-size:9px;color:rgba(255,255,255,.2);letter-spacing:1px">v1.31.051</div>
   </div>
 </div>
 
@@ -734,7 +734,7 @@ nav.nav-hidden{transform:translateY(100%)}
       </div>
     </div>
   </div>
-  <div style="text-align:center;padding:12px 0 4px;font-size:9px;letter-spacing:2px;color:rgba(255,255,255,.2);font-family:'DM Mono',monospace" class="version-label">v1.31.050</div>
+  <div style="text-align:center;padding:12px 0 4px;font-size:9px;letter-spacing:2px;color:rgba(255,255,255,.2);font-family:'DM Mono',monospace" class="version-label">v1.31.051</div>
   <div class="card" style="margin-bottom:8px;padding:12px 14px;display:none" id="mini-chart-wrap">
     <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px"><span style="font-size:11px;letter-spacing:1.5px;color:var(--gold2);font-weight:bold" data-i18n="evolucion_hcp">EVOLUCIÓN HCP</span><span style="font-size:9px;color:var(--muted);letter-spacing:.5px" data-i18n="ultimas_20">20 últimas rondas</span></div>
     <canvas id="mini-hcp-chart" height="100" style="width:100%;display:block"></canvas>
@@ -879,6 +879,11 @@ nav.nav-hidden{transform:translateY(100%)}
     <button class="btn-danger" id="btn-borrar-todo" onclick="clearAll()" style="visibility:hidden;font-size:8px;padding:5px 8px;height:26px;border-radius:6px;letter-spacing:.3px;white-space:nowrap" data-i18n="borrar_todo">Borrar</button>
   </div>
   <div style="font-size:9px;letter-spacing:.5px;color:var(--muted);text-align:center;padding-bottom:10px" data-i18n="toca_ronda">Toca una ronda para más detalles</div>
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:10px">
+    <input type="text" id="hist-search" placeholder="🔍 campo, mes/año (11/2025), día (25/04)…" oninput="onHistSearch(this.value)"
+      style="flex:1;background:var(--input-bg);border:1px solid var(--border);border-radius:6px;color:var(--text);font-family:'DM Mono',monospace;font-size:11px;padding:6px 10px;-webkit-appearance:none;outline:none">
+    <div id="hist-counter" style="font-size:10px;color:var(--muted);font-family:'DM Mono',monospace;letter-spacing:.3px;white-space:nowrap"></div>
+  </div>
   <div class="card" style="margin-bottom:70px">
     <div id="hist-container"><div class="empty">Cargando…</div></div>
   </div>
@@ -2822,14 +2827,77 @@ function renderResult() {
   }
 }
 
+// ═════════════════════════════════════════════════════════════════════
+// HISTORIAL — Agrupacion por mes + busqueda (v1.31.051)
+// - Mes actual expandido por defecto al cargar la primera vez
+// - Resto colapsado por defecto
+// - Search filter: nombre campo (contiene) o fecha (DD, DD/MM, DD/MM/YYYY,
+//   MM/YYYY, YYYY) — todo en cifras, multiidioma
+// - Con search activo: todos los meses con resultados se expanden
+// ═════════════════════════════════════════════════════════════════════
+const histState = {
+  search: '',
+  expandedMonths: new Set(),      // claves "YYYY-MM" expandidos
+  initialDone: false              // ya inicializamos con mes actual
+};
+
+function onHistSearch(val) {
+  histState.search = (val || '').trim().toLowerCase();
+  renderHistory();
+}
+
+function toggleHistMonth(key) {
+  if (histState.expandedMonths.has(key)) histState.expandedMonths.delete(key);
+  else histState.expandedMonths.add(key);
+  renderHistory();
+}
+
+// Devuelve true si la ronda matchea el filtro de busqueda
+function matchHistSearch(round, search) {
+  if (!search) return true;
+  // Por nombre de campo
+  if ((round.name || '').toLowerCase().includes(search)) return true;
+  // Por fecha en distintos formatos
+  const d = round.date || '';
+  if (!d) return false;
+  // d viene como 'YYYY-MM-DD'
+  const [Y, M, D] = d.split('-');
+  // Posibles formas que pueda escribir el usuario:
+  //   "2026"          -> YYYY
+  //   "04/2026"       -> MM/YYYY
+  //   "4/2026"        -> M/YYYY
+  //   "25/04/2026"    -> DD/MM/YYYY
+  //   "25/04"         -> DD/MM (cualquier año)
+  //   "25"            -> DD (cualquier mes/año)
+  const formats = [
+    Y,                                            // 2026
+    M.padStart(2,'0') + '/' + Y,                  // 04/2026
+    parseInt(M,10) + '/' + Y,                     // 4/2026
+    D + '/' + M.padStart(2,'0') + '/' + Y,        // 25/04/2026
+    D + '/' + M.padStart(2,'0'),                  // 25/04
+    parseInt(D,10) + '/' + parseInt(M,10),        // 25/4
+    D + '/' + parseInt(M,10) + '/' + Y,           // 25/4/2026
+    parseInt(D,10) + '/' + parseInt(M,10) + '/' + Y, // 25/4/2026
+    D                                             // 25 (poco util, pero soportado)
+  ];
+  return formats.some(f => f === search || f.includes(search));
+}
+
 function renderHistory() {
   const c = $('hist-container'), btn = $('btn-borrar-todo');
+  const counterEl = $('hist-counter');
+  const lbl = (es, pt, fr) => lang==='fr' ? (fr||es) : lang==='pt' ? pt : es;
+
+  // Reset visibility cuando no hay rondas
   if (!state.rounds.length) {
     c.innerHTML = `<div class="empty">${lang==='pt'?'Sem voltas registadas':'No hay rondas registradas'}</div>`;
     btn.style.visibility = 'hidden';
+    if (counterEl) counterEl.textContent = '';
     return;
   }
   btn.style.visibility = 'visible';
+
+  // ── Calcular usedSet (rondas usadas en el calculo de HCP)
   const { combined, pending9Ids } = combineNineHoleRounds(state.rounds);
   const pending9Set = new Set(pending9Ids);
   const res = getHCP(state.rounds);
@@ -2841,15 +2909,65 @@ function renderHistory() {
       else usedSet.add(r.id);
     });
   }
+
   const totalRounds = state.rounds.length;
+
+  // ── Ordenar rondas por fecha desc
   const sortedRounds = [...state.rounds].sort((a, b) => {
     const da = a.date || '', db = b.date || '';
-    return db.localeCompare(da); // decreciente por fecha
+    return db.localeCompare(da);
   });
-  const rows = sortedRounds.map((r, idx) => {
-    const rowNum = idx + 1;
+
+  // ── Aplicar filtro de busqueda
+  const search = histState.search;
+  const filtered = search
+    ? sortedRounds.filter(r => matchHistSearch(r, search))
+    : sortedRounds;
+
+  // ── Inicializacion: la primera vez expandir el mes actual
+  if (!histState.initialDone) {
+    const now = new Date();
+    const currentKey = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0');
+    histState.expandedMonths.add(currentKey);
+    histState.initialDone = true;
+  }
+
+  // ── Actualizar contador
+  if (counterEl) {
+    if (search) {
+      counterEl.textContent = filtered.length + ' ' + lbl('de','de','sur') + ' ' + totalRounds;
+    } else {
+      counterEl.textContent = lbl('Total','Total','Total') + ': ' + totalRounds;
+    }
+  }
+
+  // ── Caso especial: filtro sin resultados
+  if (filtered.length === 0) {
+    c.innerHTML = `<div class="empty">${lbl('Sin resultados para','Sem resultados para','Aucun résultat pour')} "${escapeHtml(search)}"</div>`;
+    return;
+  }
+
+  // ── Agrupar por mes (clave "YYYY-MM")
+  const groups = new Map();
+  filtered.forEach(r => {
+    const d = r.date || '';
+    if (!d) return;
+    const key = d.substring(0, 7); // "YYYY-MM"
+    if (!groups.has(key)) groups.set(key, []);
+    groups.get(key).push(r);
+  });
+
+  // ── Helper: nombre de mes localizado
+  const monthNames = {
+    es: ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'],
+    pt: ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'],
+    fr: ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre']
+  };
+  const localMonth = (M) => (monthNames[lang] || monthNames.es)[parseInt(M,10)-1];
+
+  // ── Helper: renderizar una fila de ronda (idéntico al formato anterior)
+  const renderRow = (r) => {
     const used = usedSet.has(r.id);
-    const vLabel = r.num_hoyos === 9 ? (r.vuelta === 2 ? ' 10-18' : ' 1-9') : '';
     const isPending9 = pending9Set.has(r.id);
     const nine_style_ok  = 'background:rgba(59,130,246,.15);border:1px solid rgba(59,130,246,.4);color:#3b82f6;font-size:7px;padding:2px 4px;border-radius:50%;margin-left:4px;vertical-align:middle;display:inline-block;width:14px;height:14px;text-align:center;line-height:12px';
     const nine_style_pend = 'background:rgba(224,85,85,.15);border:1px solid rgba(224,85,85,.4);color:#e05555;font-size:7px;padding:2px 4px;border-radius:50%;margin-left:4px;vertical-align:middle;display:inline-block;width:14px;height:14px;text-align:center;line-height:12px';
@@ -2877,21 +2995,71 @@ function renderHistory() {
         </div>
       </td>
     </tr>`;
-  }).join('');
-  c.innerHTML = `<div class="hist-wrap"><table class="hist-table">
-    <thead><tr>
+  };
+
+  const tableHead = `<thead><tr>
       <th class="col-fecha">${t('fecha_col')}</th>
       <th class="col-campo-hdr">${t('campo_col')}</th>
       <th>${t('golpes_col')}</th><th>${t('dif_col')}</th>
       <th>${t('barra_col')}</th><th>${t('stbl_col')}</th><th>HCP✓</th><th></th>
-    </tr></thead>
-    <tbody>${rows}</tbody>
-  </table></div>
-  <div style="margin-top:8px;font-size:9px;color:var(--muted);display:flex;flex-direction:column;gap:4px;align-items:center;text-align:center">
+    </tr></thead>`;
+
+  // ── Construir HTML por grupos. Ordenar claves desc (mes mas reciente primero).
+  const sortedKeys = [...groups.keys()].sort((a,b) => b.localeCompare(a));
+  let lastYear = null;
+  let groupsHtml = '';
+
+  sortedKeys.forEach(key => {
+    const [Y, M] = key.split('-');
+    const year = parseInt(Y,10);
+    const monthLabel = localMonth(M).toUpperCase();
+    const rounds = groups.get(key);
+
+    // Con search activo: forzar expandido. Sin search: usar estado.
+    const isExpanded = search ? true : histState.expandedMonths.has(key);
+
+    // Separador de año cambiado
+    if (lastYear !== null && lastYear !== year) {
+      groupsHtml += `<div style="border-top:1px dashed var(--border);margin:14px 0 8px;text-align:center;position:relative">
+        <span style="background:var(--card-bg,#1a1a1a);padding:0 10px;font-size:9px;letter-spacing:1.5px;color:var(--muted);font-family:'DM Mono',monospace;position:relative;top:-7px">${year + 1}</span>
+      </div>`;
+    }
+    lastYear = year;
+
+    const chev = isExpanded
+      ? '<svg viewBox="0 0 24 24" style="width:11px;height:11px;stroke:currentColor;fill:none;stroke-width:2.5"><polyline points="18 15 12 9 6 15"/></svg>'
+      : '<svg viewBox="0 0 24 24" style="width:11px;height:11px;stroke:currentColor;fill:none;stroke-width:2.5"><polyline points="6 9 12 15 18 9"/></svg>';
+
+    const headerStyle = `width:100%;background:rgba(201,168,76,.06);border:1px solid var(--border);border-radius:6px;padding:7px 10px;color:var(--cream);font-family:'DM Mono',monospace;font-size:11px;letter-spacing:1px;text-transform:uppercase;cursor:pointer;display:flex;align-items:center;gap:6px;margin-bottom:${isExpanded?'4px':'4px'}`;
+
+    groupsHtml += `<div style="margin-bottom:6px">
+      <button onclick="toggleHistMonth('${key}')" style="${headerStyle}">
+        <span>${monthLabel} ${year}</span>
+        <span style="color:var(--muted);font-size:10px;font-weight:normal">(${rounds.length})</span>
+        <span style="margin-left:auto;display:inline-flex;align-items:center;color:var(--muted)">${chev}</span>
+      </button>
+      ${isExpanded ? `<div class="hist-wrap"><table class="hist-table">${tableHead}<tbody>${rounds.map(renderRow).join('')}</tbody></table></div>` : ''}
+    </div>`;
+  });
+
+  // ── Año del primer mes mostrado (cabecera superior)
+  let topYearHtml = '';
+  if (sortedKeys.length > 0) {
+    const firstYear = parseInt(sortedKeys[0].split('-')[0], 10);
+    topYearHtml = `<div style="text-align:center;font-size:9px;letter-spacing:1.5px;color:var(--muted);font-family:'DM Mono',monospace;margin-bottom:10px">${firstYear}</div>`;
+  }
+
+  c.innerHTML = topYearHtml + groupsHtml + `
+  <div style="margin-top:10px;font-size:9px;color:var(--muted);display:flex;flex-direction:column;gap:4px;align-items:center;text-align:center">
     <div><span class="used-badge" style="margin-right:6px;vertical-align:middle">✓</span>${lang==='fr'?'HCP✓ = différentiel utilisé dans le calcul':lang==='pt'?'HCP✓ = diferencial usado no cálculo':'HCP✓ = diferencial usado en el cálculo'}</div>
     <div><span style="background:rgba(59,130,246,.15);border:1px solid rgba(59,130,246,.4);color:#3b82f6;font-size:7px;border-radius:50%;margin-right:6px;vertical-align:middle;display:inline-flex;align-items:center;justify-content:center;width:14px;height:14px">✓</span> ${lang==='fr'?'Partie de 9 trous combinée':lang==='pt'?'Volta de 9 buracos combinada':'Ronda de 9 hoyos combinada'}</div>
     <div><span style="background:rgba(224,85,85,.15);border:1px solid rgba(224,85,85,.4);color:#e05555;font-size:7px;border-radius:50%;margin-right:6px;vertical-align:middle;display:inline-flex;align-items:center;justify-content:center;width:14px;height:14px">✓</span> ${lang==='fr'?'Partie de 9 trous en attente':lang==='pt'?'Volta de 9 buracos pendente':'Ronda de 9 hoyos pendiente de combinar'}</div>
   </div>`;
+}
+
+// Helper: escape HTML
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 }
 
 function renderCampos() {
@@ -4162,8 +4330,8 @@ function contactarGolfHCP() {
   const ios = ua.match(/iPhone OS ([\d_]+)/);
   const android = ua.match(/Android ([\d.]+)/);
   const sys = ios ? 'iOS ' + ios[1].replace(/_/g,'.') : android ? 'Android ' + android[1] : 'Web';
-  const appVer = document.title.includes('HCP') ? 'v1.31.050' : 'Golf HCP';
-  const body = encodeURIComponent('Hola,\n\n[Escribe tu consulta aqui]\n\n\n-- \nGolf HCP v1.31.050\n' + sys);
+  const appVer = document.title.includes('HCP') ? 'v1.31.051' : 'Golf HCP';
+  const body = encodeURIComponent('Hola,\n\n[Escribe tu consulta aqui]\n\n\n-- \nGolf HCP v1.31.051\n' + sys);
   window.open('mailto:golf.hcp.webmaster@gmail.com?subject=Golf%20HCP%20App&body=' + body, '_blank');
 }
 
