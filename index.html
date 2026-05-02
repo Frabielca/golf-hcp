@@ -58,7 +58,7 @@ body{overflow-y:auto;-webkit-overflow-scrolling:touch;padding-top:env(safe-area-
 .auth-field label{font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--green);opacity:.9}
 .auth-field input{background:rgba(255,255,255,.07);border:1px solid var(--border);border-radius:5px;color:var(--text,#fff);font-family:'DM Mono',monospace;font-size:16px;padding:12px;outline:none;width:100%;-webkit-appearance:none;box-sizing:border-box}.auth-field input:-webkit-autofill,.auth-field input:-webkit-autofill:hover,.auth-field input:-webkit-autofill:focus{-webkit-box-shadow:0 0 0 1000px var(--input-bg,#1e3d1e) inset!important;-webkit-text-fill-color:var(--text,#fff)!important;border-color:var(--border)!important}
 .auth-field input:focus{border-color:var(--gold);background:rgba(201,168,76,.09)}
-.auth-btn{background:rgba(201,168,76,.2);color:#e8c96a;border:1px solid rgba(201,168,76,.4);border-radius:8px;font-family:'DM Mono',monospace;font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;padding:14px;cursor:pointer;width:100%;margin-top:6px}
+.auth-btn{background:rgba(201,168,76,.2);color:#e8c96a;border:1px solid rgba(201,168,76,.4);border-radius:8px;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:2px;text-transform:uppercase;padding:14px;cursor:pointer;width:100%;margin-top:6px}
 .auth-btn:disabled{opacity:.5;cursor:not-allowed}
 .auth-link{text-align:center;margin-top:14px;font-size:11px;color:var(--muted)}
 .auth-link span{color:var(--gold);cursor:pointer;text-decoration:underline}
@@ -513,7 +513,7 @@ nav.nav-hidden{transform:translateY(100%)}
     <button class="auth-btn" id="btn-login" onclick="doLogin()" data-i18n="btn_entrar">Entrar</button>
     <div class="auth-link"><span data-i18n="sin_cuenta">¿Sin cuenta?</span> <span onclick="showAuth('register')" data-i18n="registrate">Regístrate</span></div>
     <div class="auth-link" style="margin-top:16px;font-size:10px;opacity:.6"><a href="privacy.html" target="_blank" style="color:var(--muted);text-decoration:none" data-i18n="politica_priv">Política de Privacidad</a></div>
-    <div style="text-align:center;margin-top:8px;font-size:9px;color:rgba(255,255,255,.2);letter-spacing:1px">v1.31.062</div>
+    <div style="text-align:center;margin-top:8px;font-size:9px;color:rgba(255,255,255,.2);letter-spacing:1px">v1.31.063</div>
   </div>
 </div>
 
@@ -734,9 +734,9 @@ nav.nav-hidden{transform:translateY(100%)}
       </div>
     </div>
   </div>
-  <div style="text-align:center;padding:12px 0 4px;font-size:9px;letter-spacing:2px;color:rgba(255,255,255,.2);font-family:'DM Mono',monospace" class="version-label">v1.31.062</div>
+  <div style="text-align:center;padding:12px 0 4px;font-size:9px;letter-spacing:2px;color:rgba(255,255,255,.2);font-family:'DM Mono',monospace" class="version-label">v1.31.063</div>
   <div class="card" style="margin-bottom:8px;padding:12px 14px;display:none" id="mini-chart-wrap">
-    <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px"><span style="font-size:11px;letter-spacing:1.5px;color:var(--gold2);font-weight:bold" data-i18n="evolucion_hcp">EVOLUCIÓN HCP</span><span style="font-size:9px;color:var(--muted);letter-spacing:.5px" data-i18n="ultimas_20">20 últimas rondas</span></div>
+    <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px"><span style="font-size:11px;letter-spacing:1.5px;color:var(--gold2)" data-i18n="evolucion_hcp">EVOLUCIÓN HCP</span><span style="font-size:9px;color:var(--muted);letter-spacing:.5px" data-i18n="ultimas_20">20 últimas rondas</span></div>
     <canvas id="mini-hcp-chart" height="100" style="width:100%;display:block"></canvas>
     <div id="mini-chart-labels" style="display:flex;justify-content:space-between;margin-top:4px;font-size:8px;color:var(--muted);font-family:'DM Mono',monospace"></div>
   </div>
@@ -2461,7 +2461,7 @@ function renderStatsFilters() {
     : '<svg viewBox="0 0 24 24" style="width:11px;height:11px;stroke:currentColor;fill:none;stroke-width:2.5"><polyline points="6 9 12 15 18 9"/></svg>';
 
   const badge = active
-    ? '<span style="background:var(--gold2);color:#1a1a1a;font-size:9px;font-weight:bold;padding:1px 5px;border-radius:8px;margin-left:6px;letter-spacing:0;line-height:1.2">●</span>'
+    ? '<span style="font-size:9px;color:var(--gold2);margin-left:6px;letter-spacing:.3px">activos</span>'
     : '';
 
   let html = '<div style="margin-bottom:12px">';
@@ -4607,8 +4607,8 @@ function contactarGolfHCP() {
   const ios = ua.match(/iPhone OS ([\d_]+)/);
   const android = ua.match(/Android ([\d.]+)/);
   const sys = ios ? 'iOS ' + ios[1].replace(/_/g,'.') : android ? 'Android ' + android[1] : 'Web';
-  const appVer = document.title.includes('HCP') ? 'v1.31.062' : 'Golf HCP';
-  const body = encodeURIComponent('Hola,\n\n[Escribe tu consulta aqui]\n\n\n-- \nGolf HCP v1.31.062\n' + sys);
+  const appVer = document.title.includes('HCP') ? 'v1.31.063' : 'Golf HCP';
+  const body = encodeURIComponent('Hola,\n\n[Escribe tu consulta aqui]\n\n\n-- \nGolf HCP v1.31.063\n' + sys);
   window.open('mailto:golf.hcp.webmaster@gmail.com?subject=Golf%20HCP%20App&body=' + body, '_blank');
 }
 
