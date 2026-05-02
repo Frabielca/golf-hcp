@@ -394,6 +394,64 @@ nav.nav-hidden{transform:translateY(100%)}
 .nav-dropdown-item:active{background:rgba(255,255,255,.08)}
 .nav-dropdown-item svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
 .nav-dropdown-item.danger{color:var(--red)}
+
+/* ── INFORME MENSUAL (v1.31.074) ── */
+
+.inf-nav-bar{display:flex;align-items:center;justify-content:space-between;gap:6px;background:var(--card-bg);border:1px solid var(--border);border-radius:10px;padding:6px 8px;margin-bottom:12px}
+.inf-nav-btn{background:none;border:none;color:var(--gold2);font-family:'DM Mono',monospace;font-size:13px;cursor:pointer;padding:6px 10px;border-radius:6px;touch-action:manipulation;min-width:36px;-webkit-tap-highlight-color:transparent}
+.inf-nav-btn:active{background:rgba(255,255,255,.06)}
+.inf-nav-btn:disabled{color:var(--muted);cursor:not-allowed;opacity:.4}
+.inf-nav-title{flex:1;text-align:center;font-family:'DM Mono',monospace;font-size:13px;letter-spacing:1.5px;text-transform:uppercase;color:var(--cream)}
+:root.light .inf-nav-btn{color:#2e7d32}
+:root.light .inf-nav-title{color:#1a2f1a}
+
+.inf-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.inf-card{background:var(--card-bg);border:1px solid var(--border);border-radius:10px;padding:10px 8px;text-align:center;min-height:70px;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:3px}
+.inf-card.wide{grid-column:1 / -1}
+.inf-card-label{font-size:9px;letter-spacing:.8px;text-transform:uppercase;color:var(--muted);font-family:'DM Mono',monospace;line-height:1.3}
+.inf-card-num{font-size:22px;color:var(--gold2);font-family:'DM Mono',monospace;font-weight:500;letter-spacing:.5px}
+.inf-card-num.small{font-size:16px}
+.inf-card-num.green{color:var(--green)}
+.inf-card-num.red{color:var(--red)}
+.inf-card-num.muted{color:var(--muted);font-size:18px}
+.inf-card-sub{font-size:9px;color:var(--muted);font-family:'DM Mono',monospace;letter-spacing:.3px}
+:root.light .inf-card-num{color:#2e7d32}
+:root.light .inf-card-num.green{color:#1b5e20}
+:root.light .inf-card-num.red{color:#b01010}
+
+.inf-chart-wrap{background:var(--card-bg);border:1px solid var(--border);border-radius:10px;padding:12px 10px;margin-bottom:12px}
+.inf-chart-title{font-size:10px;letter-spacing:1.2px;text-transform:uppercase;color:var(--gold2);font-family:'DM Mono',monospace;margin-bottom:8px;text-align:center}
+:root.light .inf-chart-title{color:#2e7d32}
+
+.inf-empty{background:var(--card-bg);border:1px dashed var(--border);border-radius:10px;padding:32px 16px;text-align:center;color:var(--muted);font-family:'DM Mono',monospace;font-size:12px;line-height:1.6;margin-bottom:12px}
+
+.inf-pdf-btn{width:100%;background:rgba(201,168,76,.12);border:1px solid rgba(201,168,76,.4);border-radius:10px;color:var(--gold2);font-family:'DM Mono',monospace;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;padding:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;touch-action:manipulation;margin-bottom:24px;-webkit-tap-highlight-color:transparent}
+.inf-pdf-btn:active{background:rgba(201,168,76,.22)}
+.inf-pdf-btn svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2}
+:root.light .inf-pdf-btn{color:#1a4a1a;border-color:rgba(46,125,50,.4);background:rgba(46,125,50,.08)}
+
+@media print{
+  body *{visibility:hidden !important}
+  #informe-print-area, #informe-print-area *{visibility:visible !important}
+  #informe-print-area{position:absolute !important;left:0 !important;top:0 !important;width:100% !important;padding:24px !important;background:#ffffff !important;color:#000000 !important;font-family:'DM Mono',monospace !important}
+  .informe-no-print{display:none !important}
+  #informe-print-area .inf-card{background:#fafafa !important;border:1px solid #ccc !important;color:#000 !important;page-break-inside:avoid}
+  #informe-print-area .inf-card-label{color:#555 !important}
+  #informe-print-area .inf-card-num{color:#1a4a1a !important}
+  #informe-print-area .inf-card-num.red{color:#b01010 !important}
+  #informe-print-area .inf-card-num.green{color:#1b5e20 !important}
+  #informe-print-area .inf-card-num.muted{color:#888 !important}
+  #informe-print-area .inf-card-sub{color:#666 !important}
+  #informe-print-area .inf-chart-wrap{background:#fafafa !important;border:1px solid #ccc !important;page-break-inside:avoid}
+  #informe-print-area .inf-chart-title{color:#1a4a1a !important}
+  #informe-print-area .inf-empty{color:#666 !important;border-color:#ccc !important}
+  #informe-print-area .inf-print-header{display:block !important;text-align:center;margin-bottom:18px;border-bottom:1px solid #ccc;padding-bottom:12px}
+  #informe-print-area .inf-print-header .ph-title{font-family:'Playfair Display',serif;font-size:22px;color:#1a2f1a;margin-bottom:4px}
+  #informe-print-area .inf-print-header .ph-sub{font-size:11px;color:#666;letter-spacing:1px}
+  nav, #toast, #splash, .auth-screen, #guide-screen{display:none !important}
+  @page{margin:14mm}
+}
+.inf-print-header{display:none}
 </style>
 </head>
 <body>
@@ -515,7 +573,7 @@ nav.nav-hidden{transform:translateY(100%)}
     <button class="auth-btn" id="btn-login" onclick="doLogin()" data-i18n="btn_entrar">Entrar</button>
     <div class="auth-link"><span data-i18n="sin_cuenta">¿Sin cuenta?</span> <span onclick="showAuth('register')" data-i18n="registrate">Regístrate</span></div>
     <div class="auth-link" style="margin-top:16px;font-size:10px;opacity:.6"><a href="privacy.html" target="_blank" style="color:var(--muted);text-decoration:none" data-i18n="politica_priv">Política de Privacidad</a></div>
-    <div style="text-align:center;margin-top:8px;font-size:9px;color:rgba(255,255,255,.2);letter-spacing:1px">v1.31.073</div>
+    <div style="text-align:center;margin-top:8px;font-size:9px;color:rgba(255,255,255,.2);letter-spacing:1px">v1.31.075</div>
   </div>
 </div>
 
@@ -736,7 +794,7 @@ nav.nav-hidden{transform:translateY(100%)}
       </div>
     </div>
   </div>
-  <div style="text-align:center;padding:12px 0 4px;font-size:9px;letter-spacing:2px;color:rgba(255,255,255,.2);font-family:'DM Mono',monospace" class="version-label">v1.31.073</div>
+  <div style="text-align:center;padding:12px 0 4px;font-size:9px;letter-spacing:2px;color:rgba(255,255,255,.2);font-family:'DM Mono',monospace" class="version-label">v1.31.075</div>
   <div class="card" style="margin-bottom:8px;padding:12px 14px;display:none" id="mini-chart-wrap">
     <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px"><span style="font-size:11px;letter-spacing:1.5px;color:var(--gold2)" data-i18n="evolucion_hcp">EVOLUCIÓN HCP</span><span style="font-size:9px;color:var(--muted);letter-spacing:.5px" data-i18n="ultimas_20">20 últimas rondas</span></div>
     <canvas id="mini-hcp-chart" height="100" style="width:100%;display:block"></canvas>
@@ -1039,6 +1097,42 @@ nav.nav-hidden{transform:translateY(100%)}
   <div id="privacidad-content"></div>
 </div>
 
+<!-- PAGE: INFORME MENSUAL (v1.31.074) -->
+<div class="page" id="page-informe">
+  <div id="informe-print-area">
+    <!-- Cabecera solo para impresión -->
+    <div class="inf-print-header">
+      <div class="ph-title">Golf HCP</div>
+      <div class="ph-sub" id="inf-print-sub">Informe Mensual</div>
+    </div>
+
+    <div class="informe-no-print" style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+      <button onclick="goTo('ajustes',$('nav-ajustes'))" style="background:none;border:none;color:var(--muted);font-family:'DM Mono',monospace;font-size:14px;cursor:pointer;padding:0;display:flex;align-items:center;gap:5px;height:40px">
+        <svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2"><polyline points="15 18 9 12 15 6"/></svg>
+        <span data-i18n="volver_btn">VOLVER</span>
+      </button>
+    </div>
+
+    <div style="font-size:20px;letter-spacing:2px;text-transform:uppercase;color:var(--gold2);padding:4px 2px 16px;font-family:'DM Mono',monospace;text-align:center" data-i18n="menu_informe_mensual">Informe Mensual</div>
+
+    <!-- Navegación entre meses -->
+    <div class="inf-nav-bar informe-no-print">
+      <button class="inf-nav-btn" id="inf-prev-btn" onclick="informePrev()" aria-label="Mes anterior">‹</button>
+      <div class="inf-nav-title" id="inf-nav-title">—</div>
+      <button class="inf-nav-btn" id="inf-next-btn" onclick="informeNext()" aria-label="Mes siguiente">›</button>
+    </div>
+
+    <!-- Contenido dinámico del informe -->
+    <div id="informe-contenido"></div>
+
+    <!-- Botón PDF -->
+    <button class="inf-pdf-btn informe-no-print" onclick="exportarInformePDF()">
+      <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      <span data-i18n="inf_descargar_pdf">Descargar PDF</span>
+    </button>
+  </div>
+</div>
+
 <!-- PAGE: AJUSTES -->
 <div class="page" id="page-ajustes">
 
@@ -1048,6 +1142,16 @@ nav.nav-hidden{transform:translateY(100%)}
     <button class="ajuste-btn" onclick="goTo('campos',null)">
       <div class="ajuste-icon"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
       <div class="ajuste-text"><div data-i18n="gestionar_campos">Gestionar Campos</div><div class="ajuste-sub" data-i18n="sub_campos">Añade y edita tus campos de golf</div></div>
+      <svg class="ajuste-chevron" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+    </button>
+  </div>
+
+  <!-- SECTION: Informes (v1.31.074) -->
+  <div style="font-size:13px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);padding:0 4px 6px" data-i18n="sec_informes">Informes</div>
+  <div style="background:var(--card-bg);border-radius:14px;overflow:hidden;margin-bottom:18px;border:1px solid var(--border)">
+    <button class="ajuste-btn" onclick="abrirInformeMensualUltimo()">
+      <div class="ajuste-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg></div>
+      <div class="ajuste-text"><div data-i18n="menu_informe_mensual">Informe Mensual</div><div class="ajuste-sub" data-i18n="sub_informe_mensual">Resumen de tu juego mes a mes</div></div>
       <svg class="ajuste-chevron" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
     </button>
   </div>
@@ -1330,7 +1434,7 @@ nav.nav-hidden{transform:translateY(100%)}
 const i18n = {
   es: {
     'nav_inicio':'Inicio','nav_ronda':'Ronda','nav_rondas':'Rondas','nav_historial':'Historial','nav_campos':'Campos','nav_info':'Info','nav_stats':'Estadísticas','nav_ajustes':'Ajustes','ajustes_titulo':'Ajustes','estadisticas':'Estadísticas','compartir_hcp':'Compartir mi HCP','gestionar_campos':'Gestionar Campos','evolucion_hcp':'EVOLUCIÓN HCP','ultimas_20':'20 últimas rondas','ultimas_10':'10 últimas rondas',
-    'menu_info_hcp':'Info Hándicap','menu_guia_didactica':'Guía Didáctica del Jugador','sub_guia_didactica':'Aprende a gestionar tu hándicap','menu_guia':'Guía de inicio','menu_clave':'Cambiar clave','sec_campos_juego':'Campos y Juego','sec_guias':'Guías','sec_cuenta':'Cuenta','sec_estilo':'Estilo App','sec_compartir':'Compartir y Soporte','sec_sobre':'Sobre Golf HCP','sub_sobre':'Versión, créditos y más','sobre_desc':'Calculadora de Hándicap WHS actualizada a 2024 para uso personal. Diseñada para jugadores de golf que quieren conocer su Hándicap Index de forma rápida y sencilla.','sobre_sistema':'Sistema','sobre_sistema':'Sistema','sobre_plataforma':'Plataforma','sec_legal':'Legal','menu_idioma':'Idioma','menu_tema':'Apariencia','sub_campos':'Añade y edita tus campos de golf','sub_guia':'Aprende a usar la app','sub_info_hcp':'Cómo se calcula el HCP WHS','sub_clave':'Actualiza tu contraseña','sub_compartir':'Comparte Golf HCP con tus compañeros','sub_contacto':'Envíanos tus sugerencias','sub_legal':'No afiliado a R&A / USGA','sub_privacidad':'Cómo usamos tus datos','sub_salir':'Cerrar sesión','sub_tema':'','menu_salir':'Salir','menu_eliminar_cuenta':'Eliminar cuenta','sub_eliminar_cuenta':'Borrar cuenta y todos tus datos','eliminar_aviso':'Esta accion borrara permanentemente tu cuenta y TODOS tus datos de Golf HCP: rondas, campos, barras de salida, estadisticas y perfil.','eliminar_irreversible':'Esta accion es irreversible. No podras recuperar tus datos.','eliminar_export_titulo':'Antes de borrar, descarga tus datos','eliminar_export_btn':'Descargar mis datos (2 archivos CSV)','eliminar_checkbox':'Entiendo que esta accion es irreversible y que perdere todos mis datos permanentemente.','eliminar_btn':'Eliminar mi cuenta','legal_p1':'Golf HCP es una herramienta de cálculo de Hándicap de uso personal e informativo.','legal_p2':'Esta aplicación <strong style="font-weight:normal;color:var(--cream)">no está afiliada, asociada ni respaldada</strong> por The R&amp;A ni por la USGA (United States Golf Association).','legal_p3':'El sistema de Hándicap WHS (World Handicap System) es propiedad de The R&amp;A y la USGA. Los cálculos realizados por esta app son aproximados y tienen carácter orientativo.','legal_p4':'Para competiciones oficiales, consulta siempre con tu federación o club de golf.','priv_p1':'Golf HCP almacena tus datos de juego (rondas, campos, resultados) en una base de datos segura (Supabase) vinculada a tu cuenta de email.','priv_p2':'No compartimos tus datos con terceros. No mostramos publicidad. Tus datos son de uso exclusivo para el funcionamiento de la aplicación.','priv_p3':'Puedes eliminar tu cuenta y todos tus datos en cualquier momento contactando con nosotros.','priv_p4':'Esta aplicación no recopila datos de localización ni información sensible del dispositivo.','menu_legal':'Info Legal','menu_privacidad':'Política de Privacidad','menu_compartir_app':'Compartir App Golf HCP','menu_contacto':'Contacto Golf HCP',
+    'menu_info_hcp':'Info Hándicap','menu_guia_didactica':'Guía Didáctica del Jugador','sub_guia_didactica':'Aprende a gestionar tu hándicap','menu_guia':'Guía de inicio','menu_clave':'Cambiar clave','sec_campos_juego':'Campos y Juego','sec_guias':'Guías','sec_cuenta':'Cuenta','sec_estilo':'Estilo App','sec_compartir':'Compartir y Soporte','sec_sobre':'Sobre Golf HCP','sub_sobre':'Versión, créditos y más','sobre_desc':'Calculadora de Hándicap WHS actualizada a 2024 para uso personal. Diseñada para jugadores de golf que quieren conocer su Hándicap Index de forma rápida y sencilla.','sobre_sistema':'Sistema','sobre_sistema':'Sistema','sobre_plataforma':'Plataforma','sec_legal':'Legal','menu_idioma':'Idioma','menu_tema':'Apariencia','sub_campos':'Añade y edita tus campos de golf','sub_guia':'Aprende a usar la app','sub_info_hcp':'Cómo se calcula el HCP WHS','sub_clave':'Actualiza tu contraseña','sub_compartir':'Comparte Golf HCP con tus compañeros','sub_contacto':'Envíanos tus sugerencias','sub_legal':'No afiliado a R&A / USGA','sub_privacidad':'Cómo usamos tus datos','sub_salir':'Cerrar sesión','sub_tema':'','menu_salir':'Salir','menu_eliminar_cuenta':'Eliminar cuenta','sub_eliminar_cuenta':'Borrar cuenta y todos tus datos','eliminar_aviso':'Esta accion borrara permanentemente tu cuenta y TODOS tus datos de Golf HCP: rondas, campos, barras de salida, estadisticas y perfil.','eliminar_irreversible':'Esta accion es irreversible. No podras recuperar tus datos.','eliminar_export_titulo':'Antes de borrar, descarga tus datos','eliminar_export_btn':'Descargar mis datos (2 archivos CSV)','eliminar_checkbox':'Entiendo que esta accion es irreversible y que perdere todos mis datos permanentemente.','eliminar_btn':'Eliminar mi cuenta','legal_p1':'Golf HCP es una herramienta de cálculo de Hándicap de uso personal e informativo.','legal_p2':'Esta aplicación <strong style="font-weight:normal;color:var(--cream)">no está afiliada, asociada ni respaldada</strong> por The R&amp;A ni por la USGA (United States Golf Association).','legal_p3':'El sistema de Hándicap WHS (World Handicap System) es propiedad de The R&amp;A y la USGA. Los cálculos realizados por esta app son aproximados y tienen carácter orientativo.','legal_p4':'Para competiciones oficiales, consulta siempre con tu federación o club de golf.','priv_p1':'Golf HCP almacena tus datos de juego (rondas, campos, resultados) en una base de datos segura (Supabase) vinculada a tu cuenta de email.','priv_p2':'No compartimos tus datos con terceros. No mostramos publicidad. Tus datos son de uso exclusivo para el funcionamiento de la aplicación.','priv_p3':'Puedes eliminar tu cuenta y todos tus datos en cualquier momento contactando con nosotros.','priv_p4':'Esta aplicación no recopila datos de localización ni información sensible del dispositivo.','menu_legal':'Info Legal','menu_privacidad':'Política de Privacidad','menu_compartir_app':'Compartir App Golf HCP','menu_contacto':'Contacto Golf HCP','sec_informes':'Informes','menu_informe_mensual':'Informe Mensual','sub_informe_mensual':'Resumen de tu juego mes a mes','inf_descargar_pdf':'Descargar PDF','inf_sin_actividad':'Sin actividad este mes','inf_sin_actividad_sub':'No registraste ninguna ronda en este periodo','inf_hcp_inicio':'HCP Index inicio','inf_hcp_fin':'HCP Index fin','inf_rondas':'Rondas jugadas','inf_mejor_dif':'Mejor diferencial','inf_hcp_medio':'HCP medio del mes','inf_golpes_prom':'Golpes promedio','inf_tendencia':'Tendencia HCP','inf_mejor_golpes':'Mejor resultado','inf_peor_golpes':'Peor resultado','inf_mejor_stbl':'Mejor Stableford','inf_media_golpes':'Media resultado','inf_evolucion_hcp':'Evolución HCP del mes','inf_pts':'pts','inf_golpes_unit':'golpes','inf_mejorando':'Mejorando','inf_subiendo':'Subiendo','inf_estable':'Estable','inf_no_calc':'No calculable',
     'email':'Email','password':'Contraseña','btn_entrar':'Entrar','sin_cuenta':'¿Sin cuenta?','registrate':'Regístrate','politica_priv':'Política de Privacidad','acepta_privacidad':'Al registrarte aceptas nuestra <a href="privacy.html" target="_blank" style="color:var(--gold2);text-decoration:underline">Política de Privacidad</a>',
     'ya_cuenta':'¿Ya tienes cuenta?','inicia_sesion':'Inicia sesión','crear_cuenta':'Crear Cuenta',
     'enviar_enlace':'Enviar enlace','volver':'← Volver','volver_btn':'VOLVER','recuperar_pass':'Recuperar contraseña',
@@ -1423,7 +1527,7 @@ const i18n = {
   },
   pt: {
     'nav_inicio':'Início','nav_ronda':'Volta','nav_rondas':'Voltas','nav_historial':'Histórico','nav_campos':'Campos','nav_info':'Info','nav_stats':'Estatísticas','nav_ajustes':'Ajustes','ajustes_titulo':'Ajustes','estadisticas':'Estatísticas','compartir_hcp':'Partilhar o meu HCP','gestionar_campos':'Gerir Campos','evolucion_hcp':'EVOLUÇÃO HCP','ultimas_20':'20 últimas voltas','ultimas_10':'10 últimas voltas',
-    'menu_info_hcp':'Info Handicap','menu_guia_didactica':'Guia Didática do Jogador','sub_guia_didactica':'Aprende a gerir o teu handicap','menu_guia':'Guia inicial','menu_clave':'Alterar senha','sec_campos_juego':'Campos e Jogo','sec_guias':'Guias','sec_cuenta':'Conta','sec_estilo':'Estilo App','sec_compartir':'Partilhar e Suporte','sec_sobre':'Sobre Golf HCP','sub_sobre':'Versão, créditos e mais','sobre_desc':'Calculadora de Handicap WHS atualizada a 2024 para uso pessoal. Desenhada para jogadores de golfe que querem conhecer o seu Handicap Index de forma rápida e simples.','sobre_plataforma':'Plataforma','sec_legal':'Legal','menu_idioma':'Idioma','menu_tema':'Apariencia','sub_campos':'Adiciona e edita os teus campos de golfe','sub_guia':'Aprende a usar a app','sub_info_hcp':'Como se calcula o HCP WHS','sub_clave':'Atualiza a tua palavra-passe','sub_compartir':'Partilha Golf HCP com os teus colegas','sub_contacto':'Envia-nos as tuas sugestões','sub_legal':'Não afiliado à R&A / USGA','sub_privacidad':'Como usamos os teus dados','sub_salir':'Terminar sessão','sub_tema':'','menu_salir':'Sair','menu_eliminar_cuenta':'Eliminar conta','sub_eliminar_cuenta':'Apagar conta e todos os dados','eliminar_aviso':'Esta acao apagara permanentemente a tua conta e TODOS os teus dados do Golf HCP: voltas, campos, saidas, estatisticas e perfil.','eliminar_irreversible':'Esta acao e irreversivel. Nao poderas recuperar os teus dados.','eliminar_export_titulo':'Antes de apagar, descarrega os teus dados','eliminar_export_btn':'Descarregar os meus dados (2 ficheiros CSV)','eliminar_checkbox':'Entendo que esta acao e irreversivel e que perderei todos os meus dados permanentemente.','eliminar_btn':'Eliminar a minha conta','legal_p1':'Golf HCP é uma ferramenta de cálculo de Handicap de uso pessoal e informativo.','legal_p2':'Esta aplicação <strong style="font-weight:normal;color:var(--cream)">não está afiliada, associada nem apoiada</strong> pela R&amp;A nem pela USGA (United States Golf Association).','legal_p3':'O sistema de Handicap WHS (World Handicap System) é propriedade da R&amp;A e da USGA. Os cálculos realizados por esta app são aproximados e têm carácter orientativo.','legal_p4':'Para competições oficiais, consulta sempre a tua federação ou clube de golfe.','priv_p1':'Golf HCP armazena os teus dados de jogo (voltas, campos, resultados) numa base de dados segura (Supabase) associada à tua conta de email.','priv_p2':'Não partilhamos os teus dados com terceiros. Não mostramos publicidade. Os teus dados são de uso exclusivo para o funcionamento da aplicação.','priv_p3':'Podes eliminar a tua conta e todos os teus dados a qualquer momento contactando-nos.','priv_p4':'Esta aplicação não recolhe dados de localização nem informação sensível do dispositivo.','menu_legal':'Info Legal','menu_privacidad':'Política de Privacidade','menu_compartir_app':'Partilhar App Golf HCP','menu_contacto':'Contacto Golf HCP',
+    'menu_info_hcp':'Info Handicap','menu_guia_didactica':'Guia Didática do Jogador','sub_guia_didactica':'Aprende a gerir o teu handicap','menu_guia':'Guia inicial','menu_clave':'Alterar senha','sec_campos_juego':'Campos e Jogo','sec_guias':'Guias','sec_cuenta':'Conta','sec_estilo':'Estilo App','sec_compartir':'Partilhar e Suporte','sec_sobre':'Sobre Golf HCP','sub_sobre':'Versão, créditos e mais','sobre_desc':'Calculadora de Handicap WHS atualizada a 2024 para uso pessoal. Desenhada para jogadores de golfe que querem conhecer o seu Handicap Index de forma rápida e simples.','sobre_plataforma':'Plataforma','sec_legal':'Legal','menu_idioma':'Idioma','menu_tema':'Apariencia','sub_campos':'Adiciona e edita os teus campos de golfe','sub_guia':'Aprende a usar a app','sub_info_hcp':'Como se calcula o HCP WHS','sub_clave':'Atualiza a tua palavra-passe','sub_compartir':'Partilha Golf HCP com os teus colegas','sub_contacto':'Envia-nos as tuas sugestões','sub_legal':'Não afiliado à R&A / USGA','sub_privacidad':'Como usamos os teus dados','sub_salir':'Terminar sessão','sub_tema':'','menu_salir':'Sair','menu_eliminar_cuenta':'Eliminar conta','sub_eliminar_cuenta':'Apagar conta e todos os dados','eliminar_aviso':'Esta acao apagara permanentemente a tua conta e TODOS os teus dados do Golf HCP: voltas, campos, saidas, estatisticas e perfil.','eliminar_irreversible':'Esta acao e irreversivel. Nao poderas recuperar os teus dados.','eliminar_export_titulo':'Antes de apagar, descarrega os teus dados','eliminar_export_btn':'Descarregar os meus dados (2 ficheiros CSV)','eliminar_checkbox':'Entendo que esta acao e irreversivel e que perderei todos os meus dados permanentemente.','eliminar_btn':'Eliminar a minha conta','legal_p1':'Golf HCP é uma ferramenta de cálculo de Handicap de uso pessoal e informativo.','legal_p2':'Esta aplicação <strong style="font-weight:normal;color:var(--cream)">não está afiliada, associada nem apoiada</strong> pela R&amp;A nem pela USGA (United States Golf Association).','legal_p3':'O sistema de Handicap WHS (World Handicap System) é propriedade da R&amp;A e da USGA. Os cálculos realizados por esta app são aproximados e têm carácter orientativo.','legal_p4':'Para competições oficiais, consulta sempre a tua federação ou clube de golfe.','priv_p1':'Golf HCP armazena os teus dados de jogo (voltas, campos, resultados) numa base de dados segura (Supabase) associada à tua conta de email.','priv_p2':'Não partilhamos os teus dados com terceiros. Não mostramos publicidade. Os teus dados são de uso exclusivo para o funcionamento da aplicação.','priv_p3':'Podes eliminar a tua conta e todos os teus dados a qualquer momento contactando-nos.','priv_p4':'Esta aplicação não recolhe dados de localização nem informação sensível do dispositivo.','menu_legal':'Info Legal','menu_privacidad':'Política de Privacidade','menu_compartir_app':'Partilhar App Golf HCP','menu_contacto':'Contacto Golf HCP','sec_informes':'Relatórios','menu_informe_mensual':'Relatório Mensal','sub_informe_mensual':'Resumo do teu jogo mês a mês','inf_descargar_pdf':'Descarregar PDF','inf_sin_actividad':'Sem actividade este mês','inf_sin_actividad_sub':'Não registaste nenhuma volta neste período','inf_hcp_inicio':'HCP Index início','inf_hcp_fin':'HCP Index fim','inf_rondas':'Voltas jogadas','inf_mejor_dif':'Melhor diferencial','inf_hcp_medio':'HCP médio do mês','inf_golpes_prom':'Pancadas média','inf_tendencia':'Tendência HCP','inf_mejor_golpes':'Melhor resultado','inf_peor_golpes':'Pior resultado','inf_mejor_stbl':'Melhor Stableford','inf_media_golpes':'Média resultado','inf_evolucion_hcp':'Evolução HCP do mês','inf_pts':'pts','inf_golpes_unit':'pancadas','inf_mejorando':'A melhorar','inf_subiendo':'A subir','inf_estable':'Estável','inf_no_calc':'Não calculável',
     'email':'Email','password':'Senha','btn_entrar':'Entrar','sin_cuenta':'Sem conta?','registrate':'Registe-se','politica_priv':'Política de Privacidade','acepta_privacidad':'Ao registar-te aceitas a nossa <a href="privacy.html" target="_blank" style="color:var(--gold2);text-decoration:underline">Política de Privacidade</a>',
     'ya_cuenta':'Já tem conta?','inicia_sesion':'Iniciar sessão','crear_cuenta':'Criar Conta',
     'enviar_enlace':'Enviar link','volver':'← Voltar','volver_btn':'VOLTAR','recuperar_pass':'Recuperar senha',
@@ -1513,7 +1617,7 @@ const i18n = {
     'g_formatos':'🏌️ Formatos de jogo','g_simbolos':'💡 Símbolos em cada buraco',
     'g_nav':'🧭 Navegação','f_titulo':'Fórmula WHS (actualizado 2024)','fi_aviso_titulo':'ℹ️ FERRAMENTA INFORMATIVA','fi_aviso_texto':'Golf HCP calcula o teu Handicap Index segundo a metodologia oficial do World Handicap System (WHS 2020), publicado conjuntamente pela R&A e USGA.<br><br>Este cálculo é orientativo e de uso pessoal. Golf HCP é uma aplicação independente, não afiliada nem apoiada pela R&A, USGA nem por nenhuma federação oficial de golfe.<br><br>Para Handicap oficial homologado, contacta a tua federação ou clube de golfe.','fi_aviso_titulo':'ℹ️ HERRAMIENTA INFORMATIVA','fi_aviso_texto':'Golf HCP calcula tu Hándicap Index según la metodología oficial del World Handicap System (WHS 2020), publicado conjuntamente por R&A y USGA.<br><br>Este cálculo es orientativo y de uso personal. Golf HCP es una aplicación independiente, no afiliada ni respaldada por R&A, USGA ni ninguna federación oficial de golf.<br><br>Para Hándicap oficial homologado, contacta con tu federación o club de golf.',
   },
-  fr: {'nav_inicio':'Accueil','nav_ronda':'Partie','nav_rondas':'Parties','nav_historial':'Historique','nav_campos':'Parcours','nav_info':'Info','nav_stats':'Statistiques','nav_ajustes':'Réglages','ajustes_titulo':'Réglages','estadisticas':'Statistiques','historial':'Historique des parties','nueva_ronda':'+ Nouvelle partie','borrar_todo':'Tout supprimer','cancelar':'Annuler','guardar':'Enregistrer','cambiar':'Modifier','salir':'Quitter','campo':'Parcours','barra':'Départ','hoyos':'Trous','golpes':'Coups','diferencial':'Différentiel','stableford':'Stableford','handicap':'Handicap','hcp_campo':'HCP du parcours','hcp_index':'HCP Index','fecha':'Date','par':'Par','cr':'CR','slope':'Slope','nombre':'Nom','confirmar':'Confirmer','eliminar':'Supprimer','editar':'Modifier','compartir':'Partager','ajustes':'Réglages','inicio':'Accueil','rondas':'Parties','campos':'Parcours','vuelta':'Tour','primera_vuelta':'1ère sortie','segunda_vuelta':'2ème sortie','ronda_completa':'Partie complète','hoyo':'Trou','golpes_hoyo':'Coups par trou','total_golpes':'Total coups','sin_rondas':'Aucune partie enregistrée','campo_requerido':'Parcours requis','barra_requerida':'Départ requis','hoyos_requeridos':'Trous requis','golpes_requeridos':'Coups requis','cambiar_clave':'Changer le mot de passe','contrasena_actual':'Mot de passe actuel','nueva_contrasena':'Nouveau mot de passe','confirmar_pass':'Confirmer le mot de passe','contrasenas_no_coinciden':'Les mots de passe ne correspondent pas','contrasena_corta':'Mot de passe trop court (6 caractères min)','clave_cambiada':'Mot de passe modifié','error_clave':'Erreur lors du changement','email':'Email','password':'Mot de passe','btn_entrar':'Connexion','sin_cuenta':'Pas de compte ?','registrate':'Inscription','politica_priv':'Politique de confidentialité','acepta_privacidad':'En vous inscrivant, vous acceptez notre <a href="privacy.html" target="_blank" style="color:var(--gold2);text-decoration:underline">Politique de Confidentialité</a>','ya_cuenta':'Déjà un compte ?','inicia_sesion':'Se connecter','restablecer_pass':'Réinitialiser le mot de passe','enviar':'Envoyer','volver_login':'Retour connexion','email_enviado':'Email envoyé','nueva_ronda_titulo':'Nouvelle partie','detalle_ronda':'Détail de la partie','editar_ronda':'Modifier la partie','borrar_ronda':'Supprimer la partie','confirmar_borrar':'Confirmer la suppression','confirmar_borrar_msg':'Supprimer cette partie ?','confirmar_borrar_todo':'Supprimer toutes les parties ?','si':'Oui','no':'Non','guardado':'Enregistré','error_guardado':'Erreur lors de l\'enregistrement','cargando':'Chargement…','sin_campos':'Aucun parcours enregistré','nuevo_campo':'Nouveau parcours','editar_campo':'Modifier le parcours','borrar_campo':'Supprimer le parcours','campo_borrado':'Parcours supprimé','campo_guardado':'Parcours enregistré','campo_actualizado':'Parcours mis à jour','barras_salida':'Départs','blanca':'Blanc','amarilla':'Jaune','azul':'Bleu','roja':'Rouge','violeta':'Violet','naranja':'Orange','negra':'Noir','info_hcp':'Info Handicap','formula_whs':'Formule WHS','guia_inicio':'Guide de démarrage','sobre':'À propos de Golf HCP','legal':'Mentions légales','privacidad':'Confidentialité','contacto':'Contact','version':'Version','plataforma':'Plateforme','compartir_app':'Partager Golf HCP','idioma':'Langue','tema':'Apparence','modo_oscuro':'Mode sombre','modo_claro':'Mode clair','menu_campos':'Gérer les parcours','menu_info_hcp':'Info Handicap','menu_guia_didactica':'Guide du joueur','sub_guia_didactica':'Apprenez à gérer votre handicap','menu_guia':'Guide de démarrage','menu_clave':'Changer le mot de passe','sec_campos_juego':'Parcours et jeu','sec_guias':'Guides','sec_cuenta':'Compte','sec_estilo':'Style App','sec_compartir':'Partager et support','sec_sobre':'À propos de Golf HCP','sub_sobre':'Version, crédits et plus','sobre_desc':'Calculateur de Handicap WHS mis à jour 2024 pour usage personnel.','sobre_sistema':'Système','sobre_plataforma':'Plateforme','sec_legal':'Légal','menu_idioma':'Langue','menu_tema':'Apparence','sub_campos':'Ajoutez et modifiez vos parcours','sub_guia':'Apprenez à utiliser l\'app','sub_info_hcp':'Comment le HCP WHS est calculé','sub_clave':'Mettez à jour votre mot de passe','sub_compartir':'Partagez Golf HCP avec vos amis','sub_contacto':'Envoyez-nous vos suggestions','sub_legal':'Non affilié à R&A / USGA','sub_privacidad':'Comment nous utilisons vos données','sub_salir':'Fermer la session','sub_tema':'','menu_salir':'Quitter','menu_eliminar_cuenta':'Supprimer le compte','sub_eliminar_cuenta':'Supprimer le compte et toutes les donnees','eliminar_aviso':'Cette action supprimera definitivement votre compte et TOUTES vos donnees Golf HCP: parties, parcours, departs, statistiques et profil.','eliminar_irreversible':'Cette action est irreversible. Vous ne pourrez pas recuperer vos donnees.','eliminar_export_titulo':'Avant de supprimer, telechargez vos donnees','eliminar_export_btn':'Telecharger mes donnees (2 fichiers CSV)','eliminar_checkbox':'Je comprends que cette action est irreversible et que je perdrai toutes mes donnees definitivement.','eliminar_btn':'Supprimer mon compte','legal_p1':'Golf HCP est un outil de calcul de Handicap à usage personnel et informatif.','legal_p2':'Cette application <strong style="font-weight:normal;color:var(--cream)">n\'est pas affiliée, associée ni soutenue</strong> par The R&A ni par l\'USGA.','legal_p3':'Le système WHS est la propriété de The R&A et de l\'USGA. Les calculs sont approximatifs et informatifs.','legal_p4':'Pour les compétitions officielles, consultez toujours votre fédération ou club de golf.','priv_p1':'Golf HCP stocke vos données de jeu dans une base de données sécurisée (Supabase) liée à votre compte email.','priv_p2':'Nous ne partageons pas vos données avec des tiers. Pas de publicité.','priv_p3':'Vous pouvez supprimer votre compte à tout moment en nous contactant.','priv_p4':'Cette application ne collecte pas de données de localisation.','menu_legal':'Info légale','menu_privacidad':'Politique de confidentialité','menu_compartir_app':'Partager Golf HCP','menu_contacto':'Contact Golf HCP','email_ph':'votre@email.com','pass_ph':'••••••••','f_titulo':'Formule WHS (mise à jour 2024)','fi_dif':'Différentiel','fi_dif_f':'(Coups − CR) × 113 / Slope','fi_hcp_jug':'HCP Joueur','fi_hcp_jug_f':'Moyenne meilleurs différentiels × 0,95','fi_r14':'1–4 parties','fi_mejor_dif2':'Meilleur différentiel − 2,0','fi_r56':'5–6 parties','fi_mejor_dif1':'Meilleur différentiel − 1,0','fi_r78':'7–8 parties','fi_mejor_dif':'Meilleur différentiel','fi_r911':'9–11 parties','fi_2best':'2 meilleurs · sans ajustement','fi_r1214':'12–14 parties','fi_3best':'3 meilleurs · sans ajustement','fi_r1516':'15–16 parties','fi_4best':'4 meilleurs · sans ajustement','fi_r1718':'17–18 parties','fi_5best':'5 meilleurs · sans ajustement','fi_r1920':'19–20 parties','fi_6best':'6 meilleurs · sans ajustement','fi_max':'Maximum','fi_max_f':'Différentiel Net Double Bogey','fi_aviso_titulo':'ℹ️ OUTIL INFORMATIF','fi_aviso_texto':'Golf HCP calcule votre Handicap Index selon la méthodologie officielle WHS 2020, mise à jour 2024. Cet outil est indicatif et non officiel.','fi_hi_label':'HI','fi_hi_desc':'Handicap Index (votre niveau de jeu)','fi_chcp':'Course HCP','fi_chcp_f':'HI × SR/113 + CR − Par','fi_chcp9':'Course HCP 9T','fi_chcp9_f':'0,5 × HI × SR/113 + CR − Par','fi_chcp_old':'Avant 2024','fi_chcp_old_f':'HI × SR/113 (sans CR−Par)','g_continuar':'Continuer','g_sub':'Calculateur WHS 2020 · mis à jour 2024','g_tagline':'Votre handicap toujours à jour','g_como_empezar':'Comment commencer','g_inicio_txt1':'Allez dans Réglages → Gérer les parcours et créez votre parcours avec les 18 trous, par et index, et les départs avec CR et Slope.','g_inicio_txt2':'Dans Accueil, sélectionnez le parcours et le départ. Entrez votre HCP réel. Le HCP du parcours est calculé instantanément.','g_inicio_txt3':'Appuyez sur Nouvelle partie, sélectionnez parcours, trous et départ, et entrez les coups trou par trou.','g_inicio_txt4':'Vous pouvez enregistrer des parties de 9 trous : elles sont combinées par paires pour le calcul du handicap.','g_hcp_index':'📊 Handicap Index (WHS 2024)','g_hcp_txt1':'Calculé avec les 20 dernières parties selon le système WHS, mis à jour 2024.','g_hcp_txt2':'Plus vous enregistrez de parties, plus votre handicap sera précis.','g_hcp_txt3':'Les parties de 9 trous sont combinées par paires avant le calcul.','g_hcp_txt4':'Le HCP du parcours inclut l\'ajustement CR et Slope du départ choisi.','g_formatos':'🏌️ Formats de jeu','g_fmt_100':'100% — Jeu informel entre amis.','g_fmt_95':'95% — Medal play ou Stableford officiel.','g_fmt_85':'85% — Four Ball (jeu en équipes).','g_simbolos':'💡 Symboles par trou','g_nav':'🧭 Navigation','g_nav_inicio':'Accueil — HCP Index, parcours et départ, HCP du parcours et coups objectif.','g_nav_ronda':'Parties — Historique des parties. Touchez-en une pour voir les détails, modifier ou supprimer.','g_nav_hist':'Nouvelle partie — Accédez via le bouton ✏️ sur l\'écran Accueil ou Parties.','g_nav_campos':'Statistiques — Graphiques d\'évolution et métriques de votre jeu.','g_nav_clave':'Réglages — Parcours, guides, langue, apparence, compte et plus.','g_nav_salir':'Partager — Partagez votre HCP Index depuis l\'écran d\'Accueil.','g_tip_cerrar':'💡 Il est recommandé de fermer l\'application en glissant vers le haut (multitâche) lorsque vous ne l\'utilisez plus, pour protéger votre compte et recharger les données lors de nouveaux accès.','e_9h_incompleto':'Données incomplètes pour les 9 trous - ','e_barras':'Au moins un départ (Blanc ou Jaune) est requis','e_nombre':'Le nom du parcours est requis','e_sin_sesion':'Session expirée, reconnectez-vous','e_golpes':'Entrez les coups pour tous les trous','c_cancelar_edit_campo':'Annuler les modifications ?','t_completa_hoyos':'Complétez tous les trous','t_campo_no_encontrado':'Parcours introuvable','t_campo_actualizado':'Parcours mis à jour','t_campo_guardado':'Parcours enregistré','t_campo_borrado':'Parcours supprimé','t_ronda_guardada':'Partie enregistrée','t_ronda_borrada':'Partie supprimée','sub_campos_juego':'Gérez vos parcours de golf','sem_voltas':'Aucune partie enregistrée','nueva_ronda_btn':'Nouvelle partie'
+  fr: {'nav_inicio':'Accueil','nav_ronda':'Partie','nav_rondas':'Parties','nav_historial':'Historique','nav_campos':'Parcours','nav_info':'Info','nav_stats':'Statistiques','nav_ajustes':'Réglages','ajustes_titulo':'Réglages','estadisticas':'Statistiques','historial':'Historique des parties','nueva_ronda':'+ Nouvelle partie','borrar_todo':'Tout supprimer','cancelar':'Annuler','guardar':'Enregistrer','cambiar':'Modifier','salir':'Quitter','campo':'Parcours','barra':'Départ','hoyos':'Trous','golpes':'Coups','diferencial':'Différentiel','stableford':'Stableford','handicap':'Handicap','hcp_campo':'HCP du parcours','hcp_index':'HCP Index','fecha':'Date','par':'Par','cr':'CR','slope':'Slope','nombre':'Nom','confirmar':'Confirmer','eliminar':'Supprimer','editar':'Modifier','compartir':'Partager','ajustes':'Réglages','inicio':'Accueil','rondas':'Parties','campos':'Parcours','vuelta':'Tour','primera_vuelta':'1ère sortie','segunda_vuelta':'2ème sortie','ronda_completa':'Partie complète','hoyo':'Trou','golpes_hoyo':'Coups par trou','total_golpes':'Total coups','sin_rondas':'Aucune partie enregistrée','campo_requerido':'Parcours requis','barra_requerida':'Départ requis','hoyos_requeridos':'Trous requis','golpes_requeridos':'Coups requis','cambiar_clave':'Changer le mot de passe','contrasena_actual':'Mot de passe actuel','nueva_contrasena':'Nouveau mot de passe','confirmar_pass':'Confirmer le mot de passe','contrasenas_no_coinciden':'Les mots de passe ne correspondent pas','contrasena_corta':'Mot de passe trop court (6 caractères min)','clave_cambiada':'Mot de passe modifié','error_clave':'Erreur lors du changement','email':'Email','password':'Mot de passe','btn_entrar':'Connexion','sin_cuenta':'Pas de compte ?','registrate':'Inscription','politica_priv':'Politique de confidentialité','acepta_privacidad':'En vous inscrivant, vous acceptez notre <a href="privacy.html" target="_blank" style="color:var(--gold2);text-decoration:underline">Politique de Confidentialité</a>','ya_cuenta':'Déjà un compte ?','inicia_sesion':'Se connecter','restablecer_pass':'Réinitialiser le mot de passe','enviar':'Envoyer','volver_login':'Retour connexion','email_enviado':'Email envoyé','nueva_ronda_titulo':'Nouvelle partie','detalle_ronda':'Détail de la partie','editar_ronda':'Modifier la partie','borrar_ronda':'Supprimer la partie','confirmar_borrar':'Confirmer la suppression','confirmar_borrar_msg':'Supprimer cette partie ?','confirmar_borrar_todo':'Supprimer toutes les parties ?','si':'Oui','no':'Non','guardado':'Enregistré','error_guardado':'Erreur lors de l\'enregistrement','cargando':'Chargement…','sin_campos':'Aucun parcours enregistré','nuevo_campo':'Nouveau parcours','editar_campo':'Modifier le parcours','borrar_campo':'Supprimer le parcours','campo_borrado':'Parcours supprimé','campo_guardado':'Parcours enregistré','campo_actualizado':'Parcours mis à jour','barras_salida':'Départs','blanca':'Blanc','amarilla':'Jaune','azul':'Bleu','roja':'Rouge','violeta':'Violet','naranja':'Orange','negra':'Noir','info_hcp':'Info Handicap','formula_whs':'Formule WHS','guia_inicio':'Guide de démarrage','sobre':'À propos de Golf HCP','legal':'Mentions légales','privacidad':'Confidentialité','contacto':'Contact','version':'Version','plataforma':'Plateforme','compartir_app':'Partager Golf HCP','idioma':'Langue','tema':'Apparence','modo_oscuro':'Mode sombre','modo_claro':'Mode clair','menu_campos':'Gérer les parcours','menu_info_hcp':'Info Handicap','menu_guia_didactica':'Guide du joueur','sub_guia_didactica':'Apprenez à gérer votre handicap','menu_guia':'Guide de démarrage','menu_clave':'Changer le mot de passe','sec_campos_juego':'Parcours et jeu','sec_guias':'Guides','sec_cuenta':'Compte','sec_estilo':'Style App','sec_compartir':'Partager et support','sec_sobre':'À propos de Golf HCP','sub_sobre':'Version, crédits et plus','sobre_desc':'Calculateur de Handicap WHS mis à jour 2024 pour usage personnel.','sobre_sistema':'Système','sobre_plataforma':'Plateforme','sec_legal':'Légal','menu_idioma':'Langue','menu_tema':'Apparence','sub_campos':'Ajoutez et modifiez vos parcours','sub_guia':'Apprenez à utiliser l\'app','sub_info_hcp':'Comment le HCP WHS est calculé','sub_clave':'Mettez à jour votre mot de passe','sub_compartir':'Partagez Golf HCP avec vos amis','sub_contacto':'Envoyez-nous vos suggestions','sub_legal':'Non affilié à R&A / USGA','sub_privacidad':'Comment nous utilisons vos données','sub_salir':'Fermer la session','sub_tema':'','menu_salir':'Quitter','menu_eliminar_cuenta':'Supprimer le compte','sub_eliminar_cuenta':'Supprimer le compte et toutes les donnees','eliminar_aviso':'Cette action supprimera definitivement votre compte et TOUTES vos donnees Golf HCP: parties, parcours, departs, statistiques et profil.','eliminar_irreversible':'Cette action est irreversible. Vous ne pourrez pas recuperer vos donnees.','eliminar_export_titulo':'Avant de supprimer, telechargez vos donnees','eliminar_export_btn':'Telecharger mes donnees (2 fichiers CSV)','eliminar_checkbox':'Je comprends que cette action est irreversible et que je perdrai toutes mes donnees definitivement.','eliminar_btn':'Supprimer mon compte','legal_p1':'Golf HCP est un outil de calcul de Handicap à usage personnel et informatif.','legal_p2':'Cette application <strong style="font-weight:normal;color:var(--cream)">n\'est pas affiliée, associée ni soutenue</strong> par The R&A ni par l\'USGA.','legal_p3':'Le système WHS est la propriété de The R&A et de l\'USGA. Les calculs sont approximatifs et informatifs.','legal_p4':'Pour les compétitions officielles, consultez toujours votre fédération ou club de golf.','priv_p1':'Golf HCP stocke vos données de jeu dans une base de données sécurisée (Supabase) liée à votre compte email.','priv_p2':'Nous ne partageons pas vos données avec des tiers. Pas de publicité.','priv_p3':'Vous pouvez supprimer votre compte à tout moment en nous contactant.','priv_p4':'Cette application ne collecte pas de données de localisation.','menu_legal':'Info légale','menu_privacidad':'Politique de confidentialité','menu_compartir_app':'Partager Golf HCP','menu_contacto':'Contact Golf HCP','email_ph':'votre@email.com','pass_ph':'••••••••','f_titulo':'Formule WHS (mise à jour 2024)','fi_dif':'Différentiel','fi_dif_f':'(Coups − CR) × 113 / Slope','fi_hcp_jug':'HCP Joueur','fi_hcp_jug_f':'Moyenne meilleurs différentiels × 0,95','fi_r14':'1–4 parties','fi_mejor_dif2':'Meilleur différentiel − 2,0','fi_r56':'5–6 parties','fi_mejor_dif1':'Meilleur différentiel − 1,0','fi_r78':'7–8 parties','fi_mejor_dif':'Meilleur différentiel','fi_r911':'9–11 parties','fi_2best':'2 meilleurs · sans ajustement','fi_r1214':'12–14 parties','fi_3best':'3 meilleurs · sans ajustement','fi_r1516':'15–16 parties','fi_4best':'4 meilleurs · sans ajustement','fi_r1718':'17–18 parties','fi_5best':'5 meilleurs · sans ajustement','fi_r1920':'19–20 parties','fi_6best':'6 meilleurs · sans ajustement','fi_max':'Maximum','fi_max_f':'Différentiel Net Double Bogey','fi_aviso_titulo':'ℹ️ OUTIL INFORMATIF','fi_aviso_texto':'Golf HCP calcule votre Handicap Index selon la méthodologie officielle WHS 2020, mise à jour 2024. Cet outil est indicatif et non officiel.','fi_hi_label':'HI','fi_hi_desc':'Handicap Index (votre niveau de jeu)','fi_chcp':'Course HCP','fi_chcp_f':'HI × SR/113 + CR − Par','fi_chcp9':'Course HCP 9T','fi_chcp9_f':'0,5 × HI × SR/113 + CR − Par','fi_chcp_old':'Avant 2024','fi_chcp_old_f':'HI × SR/113 (sans CR−Par)','g_continuar':'Continuer','g_sub':'Calculateur WHS 2020 · mis à jour 2024','g_tagline':'Votre handicap toujours à jour','g_como_empezar':'Comment commencer','g_inicio_txt1':'Allez dans Réglages → Gérer les parcours et créez votre parcours avec les 18 trous, par et index, et les départs avec CR et Slope.','g_inicio_txt2':'Dans Accueil, sélectionnez le parcours et le départ. Entrez votre HCP réel. Le HCP du parcours est calculé instantanément.','g_inicio_txt3':'Appuyez sur Nouvelle partie, sélectionnez parcours, trous et départ, et entrez les coups trou par trou.','g_inicio_txt4':'Vous pouvez enregistrer des parties de 9 trous : elles sont combinées par paires pour le calcul du handicap.','g_hcp_index':'📊 Handicap Index (WHS 2024)','g_hcp_txt1':'Calculé avec les 20 dernières parties selon le système WHS, mis à jour 2024.','g_hcp_txt2':'Plus vous enregistrez de parties, plus votre handicap sera précis.','g_hcp_txt3':'Les parties de 9 trous sont combinées par paires avant le calcul.','g_hcp_txt4':'Le HCP du parcours inclut l\'ajustement CR et Slope du départ choisi.','g_formatos':'🏌️ Formats de jeu','g_fmt_100':'100% — Jeu informel entre amis.','g_fmt_95':'95% — Medal play ou Stableford officiel.','g_fmt_85':'85% — Four Ball (jeu en équipes).','g_simbolos':'💡 Symboles par trou','g_nav':'🧭 Navigation','g_nav_inicio':'Accueil — HCP Index, parcours et départ, HCP du parcours et coups objectif.','g_nav_ronda':'Parties — Historique des parties. Touchez-en une pour voir les détails, modifier ou supprimer.','g_nav_hist':'Nouvelle partie — Accédez via le bouton ✏️ sur l\'écran Accueil ou Parties.','g_nav_campos':'Statistiques — Graphiques d\'évolution et métriques de votre jeu.','g_nav_clave':'Réglages — Parcours, guides, langue, apparence, compte et plus.','g_nav_salir':'Partager — Partagez votre HCP Index depuis l\'écran d\'Accueil.','g_tip_cerrar':'💡 Il est recommandé de fermer l\'application en glissant vers le haut (multitâche) lorsque vous ne l\'utilisez plus, pour protéger votre compte et recharger les données lors de nouveaux accès.','e_9h_incompleto':'Données incomplètes pour les 9 trous - ','e_barras':'Au moins un départ (Blanc ou Jaune) est requis','e_nombre':'Le nom du parcours est requis','e_sin_sesion':'Session expirée, reconnectez-vous','e_golpes':'Entrez les coups pour tous les trous','c_cancelar_edit_campo':'Annuler les modifications ?','t_completa_hoyos':'Complétez tous les trous','t_campo_no_encontrado':'Parcours introuvable','t_campo_actualizado':'Parcours mis à jour','t_campo_guardado':'Parcours enregistré','t_campo_borrado':'Parcours supprimé','t_ronda_guardada':'Partie enregistrée','t_ronda_borrada':'Partie supprimée','sub_campos_juego':'Gérez vos parcours de golf','sem_voltas':'Aucune partie enregistrée','nueva_ronda_btn':'Nouvelle partie','sec_informes':'Rapports','menu_informe_mensual':'Rapport Mensuel','sub_informe_mensual':'Résumé de votre jeu mois par mois','inf_descargar_pdf':'Télécharger PDF','inf_sin_actividad':'Aucune activité ce mois','inf_sin_actividad_sub':"Vous n'avez enregistré aucune partie sur cette période",'inf_hcp_inicio':'HCP Index début','inf_hcp_fin':'HCP Index fin','inf_rondas':'Parties jouées','inf_mejor_dif':'Meilleur différentiel','inf_hcp_medio':'HCP moyen du mois','inf_golpes_prom':'Coups moyens','inf_tendencia':'Tendance HCP','inf_mejor_golpes':'Meilleur résultat','inf_peor_golpes':'Pire résultat','inf_mejor_stbl':'Meilleur Stableford','inf_media_golpes':'Moyenne résultat','inf_evolucion_hcp':'Évolution HCP du mois','inf_pts':'pts','inf_golpes_unit':'coups','inf_mejorando':'En amélioration','inf_subiendo':'En hausse','inf_estable':'Stable','inf_no_calc':'Non calculable'
  ,'compartir_hcp':'Partager mon HCP','gestionar_campos':'Gérer les parcours','evolucion_hcp':'ÉVOLUTION HCP','ultimas_20':'20 dernières parties','ultimas_10':'10 dernières parties','crear_cuenta':'Créer un compte','enviar_enlace':'Envoyer le lien','volver':'← Retour','volver_btn':'RETOUR','recuperar_pass':'Récupérer le mot de passe','selecciona_campo':'— Sélectionner parcours —','selecciona_campo_calc':'Sélectionnez un parcours pour calculer.','fi_dif_formula':'Différentiel = (Coups − CR) × 113 / Slope','selecciona_barra':'— Sélectionner départ —','selecciona_hoyos':'— Trous —','hcp_jugador':'HCP Joueur','handicap_jugador':'Handicap Joueur','course_rating':'Course Rating','slope_rating':'Slope Rating','formato':'Format de jeu','salida_19':'Aller 1–9','vuelta_1018':'Retour 10–18','golpe_ventaja':'Coup de handicap (HCP parcours)','punto_stbl':'Point Stableford','fmt_100_lbl':'100%<br>Informel','fmt_100':'100% — Informel','fmt_95_lbl':'95%<br>Stroke/Stblf','fmt_95':'95% — Stroke / Stblf','fmt_85_lbl':'85%<br>Four Ball','fmt_85':'85% — Four Ball','total_label':'Total:','stbl_label':'Stableford:','ida':'1er (1–9)','vuelta2':'2ème (10–18)','hoyos_18':'18 trous','hoyos_9':'9 trous','barra_salida':'Départ','hcp_idx':'HCP Index','registrar_ronda':'+ Enregistrer partie','guardando':'Enregistrement…','toca_ronda':'Touchez une partie pour plus de détails','fecha_col':'Date','campo_col':'Parcours','golpes_col':'Coups','dif_col':'Dif.','barra_col':'Départ','stbl_col':'Stbl','mis_campos':'Mes Parcours','nuevo_campo_title':'Nouveau Parcours','nombre_campo':'Nom du parcours','max15':'(max. 15 caractères)','par_indice':'Par et Index par Trou','golpes_brutos':'Coups bruts','par_campo':'Par du parcours','stbl_label_f':'Stableford','nombre_label':'Nom','par_label':'Par','slope_label':'Slope','cr_18h':'CR 18T','slope_18h':'Slope 18T','confirmar_label':'Confirmer','hcp_campo':'HCP Parcours','hcp_campo_title':'Handicap du Parcours','guardar_campo':'Enregistrer Parcours','ida_label':'ALLER','vuelta_label':'RETOUR','opcional_9h':'OPTIONNEL: 9 TROUS','ind_label':'Idx','nueva_pass':'Nouveau mot de passe','min6':'minimum 6 caractères','repite_pass':'répétez le mot de passe','t_campo_eliminado':'✓ Parcours supprimé','t_historial_borrado':'✓ Historique effacé','t_ronda_eliminada':'✓ Partie supprimée','t_ronda_no_encontrada':'Partie introuvable','t_sin_sesion':'Aucune session active','t_completa_golpes':'⚠️ Complétez les coups de tous les trous','t_selecciona_campo':'⚠️ Sélectionnez un parcours avant d\'enregistrer la partie.','t_pass_actualizada':'✓ Mot de passe mis à jour','t_ronda_actualizada':'✓ Partie mise à jour','t_error_borrar':'❌ Erreur lors de la suppression','t_error_eliminar':'❌ Erreur lors de la suppression','t_error_guardar':'❌ Erreur lors de l\'enregistrement: ','t_error':'❌ Erreur: ','c_sin_campos':'Aucun parcours créé.\n\nAller dans Parcours pour en créer un ?','c_borrar_rondas':'Supprimer TOUTES les parties ? Cette action est irréversible.','c_cancelar_edit_ronda':'Annuler la modification ? Les changements ne seront pas sauvegardés.','c_cancelar_nueva_ronda':'Annuler la partie ? Les données saisies seront perdues.','c_cancelar_nuevo_campo':'Annuler le parcours ? Les données saisies seront perdues.','c_cerrar_sesion':'Fermer la session ?','c_salir':'⚠️ QUITTER L\'APPLICATION ?\n\nVotre session sera fermée.','e_nombre_campo':'Complétez le nom du parcours.','e_pass_min':'Le mot de passe doit contenir au moins 6 caractères.','e_pass_match':'Les mots de passe ne correspondent pas.','e_hoyos_completos':'⚠️ Complétez les 18 trous avec par et index avant de sauvegarder.','pts':' pts','ver_guia':'📖 Voir le guide de démarrage','fi_eagle':'Eagle ou mieux','fi_bogey':'Bogey','fi_dbogey':'Double bogey +','fi_stbl_title':'Stableford','fi_barras_title':'Départs','fi_7best':'7 meilleurs · sans ajustement','fi_8best':'8 meilleurs · sans ajustement','fi_4pts':'4 points','fi_birdie':'Birdie','fi_3pts':'3 points','fi_par':'Par','fi_2pts':'2 points','fi_1pt':'1 point','fi_0pts':'0 point','fi_blanca_desc':'Professionnels et joueurs de bas handicap','fi_amarilla_desc':'Amateurs, niveau moyen et général','fi_azul_desc':'Professionnelles, juniors ou seniors','fi_roja_desc':'Dames, débutants et enfants','fi_r17':'17 parties','fi_r18':'18 parties','fi_r19':'19 parties','fi_r20':'20 parties','sin_barras':'sans départs' },
 };
 let lang = localStorage.getItem('golf_lang') || 'es';
@@ -4830,8 +4934,8 @@ function contactarGolfHCP() {
   const ios = ua.match(/iPhone OS ([\d_]+)/);
   const android = ua.match(/Android ([\d.]+)/);
   const sys = ios ? 'iOS ' + ios[1].replace(/_/g,'.') : android ? 'Android ' + android[1] : 'Web';
-  const appVer = document.title.includes('HCP') ? 'v1.31.073' : 'Golf HCP';
-  const body = encodeURIComponent('Hola,\n\n[Escribe tu consulta aqui]\n\n\n-- \nGolf HCP v1.31.073\n' + sys);
+  const appVer = document.title.includes('HCP') ? 'v1.31.075' : 'Golf HCP';
+  const body = encodeURIComponent('Hola,\n\n[Escribe tu consulta aqui]\n\n\n-- \nGolf HCP v1.31.075\n' + sys);
   window.open('mailto:golf.hcp.webmaster@gmail.com?subject=Golf%20HCP%20App&body=' + body, '_blank');
 }
 
@@ -5102,6 +5206,9 @@ function goTo(id, btn) {
         }
       }, 300);
     }
+  }
+  if (id === 'informe') {
+    try { renderInforme(); } catch(e) { console.error('renderInforme:', e); }
   }
   if (id === 'nueva') {
     // Avisar si no hay campos creados
@@ -5431,7 +5538,481 @@ function renderStatsCharts() {
   }
 }
 
-// ── GUÍA DIDÁCTICA ─────────────────────────────────────────────
+// ═════════════════════════════════════════════════════════════════════
+// INFORME MENSUAL (v1.31.074)
+// - Vista de resumen del mes anterior con 12 metricas
+// - Banner en Inicio el dia 1 de mes nuevo (persiste hasta consultar)
+// - Navegacion entre meses (prev / next) limitada al rango con datos
+// - Export a PDF via window.print() (iOS Safari / WKWebView nativo)
+// - SIN background processing: todo se calcula al abrir la vista
+// ═════════════════════════════════════════════════════════════════════
+
+const MONTH_NAMES = {
+  es: ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'],
+  pt: ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'],
+  fr: ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre']
+};
+
+const informeState = { year: null, month: null }; // mes 0-11
+
+// Devuelve nombre + año del mes formateado segun idioma
+function informeMesLabel(year, month) {
+  const names = MONTH_NAMES[lang] || MONTH_NAMES.es;
+  return names[month] + ' ' + year;
+}
+
+// Calcula metricas del informe para un (year, month)
+// month: 0-11
+function getInformeMes(year, month) {
+  const allRounds = state.rounds || [];
+  const firstDay = new Date(year, month, 1, 0, 0, 0);
+  const lastDay  = new Date(year, month + 1, 0, 23, 59, 59);
+
+  // HCP Index al inicio: usando rondas anteriores al primer dia del mes
+  const roundsBeforeMonth = allRounds.filter(r => {
+    const d = new Date(r.fecha || r.date);
+    return d < firstDay;
+  });
+  const roundsThruEndMonth = allRounds.filter(r => {
+    const d = new Date(r.fecha || r.date);
+    return d <= lastDay;
+  });
+  const hcpInicio = getHCP(roundsBeforeMonth);
+  const hcpFin    = getHCP(roundsThruEndMonth);
+
+  // Combinar 9H sobre el conjunto completo, luego filtrar por mes
+  const { combined } = combineNineHoleRounds(allRounds);
+  const inMonth = combined.filter(r => {
+    const d = new Date(r.fecha || r.date);
+    return d.getFullYear() === year && d.getMonth() === month;
+  });
+  const inMonthSorted = [...inMonth].sort((a,b) =>
+    new Date(a.fecha||a.date) - new Date(b.fecha||b.date)
+  );
+
+  if (inMonth.length === 0) {
+    return { numRondas: 0, hcpInicio, hcpFin, firstDay, lastDay, inMonthSorted };
+  }
+
+  const bestDif = Math.min(...inMonth.map(r => r.diff));
+
+  // HCP medio del mes: promedio de hcp_idx almacenado en cada ronda del mes
+  // Si una ronda combinada 9H no tiene hcp_idx, se usa el de la mas reciente del par
+  const hcpsInMonth = inMonth.map(r => r.hcp_idx).filter(h => h != null && !isNaN(h));
+  const avgHcp = hcpsInMonth.length
+    ? hcpsInMonth.reduce((s,h) => s+h, 0) / hcpsInMonth.length
+    : null;
+
+  const withGross = inMonth.filter(r => r.gross > 0);
+  const avgGolpes  = withGross.length ? withGross.reduce((s,r)=>s+r.gross,0)/withGross.length : null;
+  const bestGolpes = withGross.length ? Math.min(...withGross.map(r=>r.gross)) : null;
+  const worstGolpes= withGross.length ? Math.max(...withGross.map(r=>r.gross)) : null;
+
+  const withStbl = inMonth.filter(r => r.stableford > 0);
+  const bestStbl = withStbl.length ? Math.max(...withStbl.map(r=>r.stableford)) : null;
+
+  // Tendencia: delta HCP fin - inicio
+  let tendencia = null;
+  if (hcpInicio && hcpInicio.hcp != null && hcpFin && hcpFin.hcp != null) {
+    tendencia = hcpFin.hcp - hcpInicio.hcp;
+  }
+
+  return {
+    numRondas: inMonth.length,
+    hcpInicio, hcpFin, bestDif, avgHcp,
+    avgGolpes, bestGolpes, worstGolpes, bestStbl, tendencia,
+    firstDay, lastDay, inMonthSorted
+  };
+}
+
+// Devuelve el rango [minDate, maxDate] de rondas del usuario (para limites de navegacion)
+function getRondasRangeMonths() {
+  const all = state.rounds || [];
+  if (!all.length) return null;
+  let min = null, max = null;
+  all.forEach(r => {
+    const d = new Date(r.fecha || r.date);
+    if (isNaN(d.getTime())) return;
+    if (!min || d < min) min = d;
+    if (!max || d > max) max = d;
+  });
+  if (!min || !max) return null;
+  return {
+    minYear: min.getFullYear(), minMonth: min.getMonth(),
+    maxYear: max.getFullYear(), maxMonth: max.getMonth()
+  };
+}
+
+// Renderiza el informe del mes en informeState
+function renderInforme() {
+  const cont = $('informe-contenido');
+  const titleEl = $('inf-nav-title');
+  const prevBtn = $('inf-prev-btn');
+  const nextBtn = $('inf-next-btn');
+  const printSub = $('inf-print-sub');
+  if (!cont) return;
+
+  // Si no hay year/month definidos, usar mes anterior
+  if (informeState.year == null || informeState.month == null) {
+    const now = new Date();
+    const prev = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+    informeState.year  = prev.getFullYear();
+    informeState.month = prev.getMonth();
+  }
+
+  const y = informeState.year, m = informeState.month;
+  const label = informeMesLabel(y, m);
+  if (titleEl) titleEl.textContent = label;
+  if (printSub) printSub.textContent = (lang==='fr' ? 'Rapport Mensuel · ' : lang==='pt' ? 'Relatório Mensal · ' : 'Informe Mensual · ') + label;
+
+  // Limites de navegacion: no permitir ir a meses futuros (mas alla del mes actual)
+  // ni mas antiguo que la primera ronda
+  const now = new Date();
+  const curY = now.getFullYear(), curM = now.getMonth();
+  const range = getRondasRangeMonths();
+
+  const isFuture = (y > curY) || (y === curY && m >= curM);
+  if (nextBtn) nextBtn.disabled = isFuture;
+
+  let isOldest = false;
+  if (range) {
+    isOldest = (y < range.minYear) || (y === range.minYear && m <= range.minMonth);
+  }
+  if (prevBtn) prevBtn.disabled = isOldest;
+
+  // Calcular metricas
+  const inf = getInformeMes(y, m);
+  const lbl = (es, pt, fr) => lang==='fr' ? (fr||es) : lang==='pt' ? pt : es;
+
+  const fmtH = h => (h == null) ? '—' : h.toFixed(1).replace('.',',');
+  const fmtN = n => (n == null) ? '—' : Math.round(n).toString();
+  const fmtN1= n => (n == null) ? '—' : n.toFixed(1).replace('.',',');
+  const fmtDif = v => (v == null) ? '—' : ((v >= 0 ? '+' : '') + v.toFixed(1).replace('.',','));
+
+  // Construir HTML del informe
+  let html = '';
+
+  if (inf.numRondas === 0) {
+    // Estado vacio: mostrar solo HCP inicio/fin (si los hay) + mensaje
+    html += '<div class="inf-grid">';
+    html += '<div class="inf-card">'
+         +    '<div class="inf-card-label">' + t('inf_hcp_inicio') + '</div>'
+         +    '<div class="inf-card-num">' + fmtH(inf.hcpInicio?.hcp) + '</div>'
+         +  '</div>';
+    html += '<div class="inf-card">'
+         +    '<div class="inf-card-label">' + t('inf_hcp_fin') + '</div>'
+         +    '<div class="inf-card-num">' + fmtH(inf.hcpFin?.hcp) + '</div>'
+         +  '</div>';
+    html += '</div>';
+    html += '<div class="inf-empty">'
+         +    '<div style="font-size:32px;margin-bottom:10px">📭</div>'
+         +    '<div style="font-size:13px;color:var(--cream);margin-bottom:6px">' + t('inf_sin_actividad') + '</div>'
+         +    '<div>' + t('inf_sin_actividad_sub') + '</div>'
+         +  '</div>';
+    cont.innerHTML = html;
+    return;
+  }
+
+  // Tendencia: arrow + label
+  let tendArrow = '→', tendLabel = t('inf_estable'), tendColor = '';
+  if (inf.tendencia != null) {
+    if (inf.tendencia < -0.2) { tendArrow = '↘'; tendLabel = t('inf_mejorando'); tendColor = 'green'; }
+    else if (inf.tendencia > 0.2) { tendArrow = '↗'; tendLabel = t('inf_subiendo'); tendColor = 'red'; }
+  } else {
+    tendArrow = '—'; tendLabel = t('inf_no_calc');
+  }
+
+  // GRID DE MÉTRICAS (12 cards)
+  html += '<div class="inf-grid">';
+
+  // 1. HCP Index inicio
+  html += '<div class="inf-card">'
+       +    '<div class="inf-card-label">' + t('inf_hcp_inicio') + '</div>'
+       +    '<div class="inf-card-num">' + fmtH(inf.hcpInicio?.hcp) + '</div>'
+       +  '</div>';
+
+  // 2. HCP Index fin
+  html += '<div class="inf-card">'
+       +    '<div class="inf-card-label">' + t('inf_hcp_fin') + '</div>'
+       +    '<div class="inf-card-num">' + fmtH(inf.hcpFin?.hcp) + '</div>'
+       +  '</div>';
+
+  // 3. Rondas jugadas
+  html += '<div class="inf-card">'
+       +    '<div class="inf-card-label">' + t('inf_rondas') + '</div>'
+       +    '<div class="inf-card-num">' + inf.numRondas + '</div>'
+       +  '</div>';
+
+  // 4. Mejor diferencial
+  html += '<div class="inf-card">'
+       +    '<div class="inf-card-label">' + t('inf_mejor_dif') + '</div>'
+       +    '<div class="inf-card-num">' + fmtDif(inf.bestDif) + '</div>'
+       +  '</div>';
+
+  // 5. HCP medio del mes
+  html += '<div class="inf-card">'
+       +    '<div class="inf-card-label">' + t('inf_hcp_medio') + '</div>'
+       +    '<div class="inf-card-num">' + fmtH(inf.avgHcp) + '</div>'
+       +  '</div>';
+
+  // 6. Golpes promedio
+  html += '<div class="inf-card">'
+       +    '<div class="inf-card-label">' + t('inf_golpes_prom') + '</div>'
+       +    '<div class="inf-card-num">' + (inf.avgGolpes != null ? fmtN1(inf.avgGolpes) : '—') + '</div>'
+       +  '</div>';
+
+  // 7. Tendencia HCP (wide)
+  const tendValStr = (inf.tendencia != null) ? (' ' + fmtDif(inf.tendencia)) : '';
+  html += '<div class="inf-card wide">'
+       +    '<div class="inf-card-label">' + t('inf_tendencia') + '</div>'
+       +    '<div class="inf-card-num small ' + tendColor + '">' + tendArrow + ' ' + tendLabel + tendValStr + '</div>'
+       +  '</div>';
+
+  // 8. Mejor resultado (golpes)
+  html += '<div class="inf-card">'
+       +    '<div class="inf-card-label">' + t('inf_mejor_golpes') + '</div>'
+       +    '<div class="inf-card-num green">' + (inf.bestGolpes != null ? inf.bestGolpes : '—') + '</div>'
+       +    '<div class="inf-card-sub">' + t('inf_golpes_unit') + '</div>'
+       +  '</div>';
+
+  // 9. Peor resultado (golpes)
+  html += '<div class="inf-card">'
+       +    '<div class="inf-card-label">' + t('inf_peor_golpes') + '</div>'
+       +    '<div class="inf-card-num red">' + (inf.worstGolpes != null ? inf.worstGolpes : '—') + '</div>'
+       +    '<div class="inf-card-sub">' + t('inf_golpes_unit') + '</div>'
+       +  '</div>';
+
+  // 10. Mejor Stableford
+  html += '<div class="inf-card">'
+       +    '<div class="inf-card-label">' + t('inf_mejor_stbl') + '</div>'
+       +    '<div class="inf-card-num">' + (inf.bestStbl != null ? inf.bestStbl : '—') + '</div>'
+       +    '<div class="inf-card-sub">' + t('inf_pts') + '</div>'
+       +  '</div>';
+
+  // 11. Media resultado (golpes)
+  html += '<div class="inf-card">'
+       +    '<div class="inf-card-label">' + t('inf_media_golpes') + '</div>'
+       +    '<div class="inf-card-num">' + (inf.avgGolpes != null ? fmtN1(inf.avgGolpes) : '—') + '</div>'
+       +    '<div class="inf-card-sub">' + t('inf_golpes_unit') + '</div>'
+       +  '</div>';
+
+  html += '</div>'; // /inf-grid
+
+  // 12. Evolución gráfica HCP del mes
+  html += '<div class="inf-chart-wrap">'
+       +    '<div class="inf-chart-title">' + t('inf_evolucion_hcp') + '</div>'
+       +    '<canvas id="inf-hcp-chart" height="120" style="width:100%;display:block"></canvas>'
+       +  '</div>';
+
+  cont.innerHTML = html;
+
+  // Dibujar grafica con un peque\u00f1o delay para que el canvas tenga tama\u00f1o calculado
+  setTimeout(() => { try { drawInformeChart(inf); } catch(e) { console.error('drawInformeChart:', e); } }, 60);
+}
+
+// Dibuja la evolucion del HCP del mes en el canvas
+function drawInformeChart(inf) {
+  const canvas = document.getElementById('inf-hcp-chart');
+  if (!canvas) return;
+
+  // Construir serie de puntos: [hcpInicio en firstDay] + cada ronda con su hcp_idx + [hcpFin en lastDay]
+  const points = [];
+  if (inf.hcpInicio && inf.hcpInicio.hcp != null) {
+    points.push({ date: inf.firstDay, hcp: inf.hcpInicio.hcp, marker: 'start' });
+  }
+  inf.inMonthSorted.forEach(r => {
+    if (r.hcp_idx != null && !isNaN(r.hcp_idx)) {
+      points.push({ date: new Date(r.fecha || r.date), hcp: Number(r.hcp_idx), marker: 'round' });
+    }
+  });
+  if (inf.hcpFin && inf.hcpFin.hcp != null) {
+    // Solo a\u00f1adir punto final si es distinto del ultimo
+    const last = points[points.length - 1];
+    if (!last || Math.abs(last.hcp - inf.hcpFin.hcp) > 0.01) {
+      points.push({ date: inf.lastDay, hcp: inf.hcpFin.hcp, marker: 'end' });
+    }
+  }
+
+  if (points.length < 2) {
+    // Mostrar mensaje en canvas
+    requestAnimationFrame(() => {
+      const dpr = window.devicePixelRatio || 1;
+      const W = canvas.offsetWidth || 320;
+      const H = 120;
+      canvas.width = W * dpr; canvas.height = H * dpr;
+      canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
+      const ctx = canvas.getContext('2d');
+      ctx.scale(dpr, dpr);
+      ctx.clearRect(0, 0, W, H);
+      ctx.fillStyle = document.documentElement.classList.contains('light') ? 'rgba(0,0,0,0.4)' : 'rgba(255,255,255,0.4)';
+      ctx.font = '11px DM Mono,monospace';
+      ctx.textAlign = 'center';
+      ctx.fillText('—', W/2, H/2);
+    });
+    return;
+  }
+
+  const isLight = document.documentElement.classList.contains('light');
+  const C = isLight ? {
+    line: '#2e7d32', dot: '#2e7d32', text: 'rgba(46,125,50,0.9)',
+    fillFrom: 'rgba(46,125,50,0.22)', fillTo: 'rgba(46,125,50,0.02)',
+    axis: 'rgba(0,0,0,0.4)'
+  } : {
+    line: '#e8c96a', dot: '#e8c96a', text: 'rgba(232,201,106,0.85)',
+    fillFrom: 'rgba(201,168,76,0.28)', fillTo: 'rgba(201,168,76,0.02)',
+    axis: 'rgba(255,255,255,0.4)'
+  };
+
+  requestAnimationFrame(() => {
+    const dpr = window.devicePixelRatio || 1;
+    const W = canvas.offsetWidth || 320;
+    const H = 120;
+    canvas.width = W * dpr; canvas.height = H * dpr;
+    canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
+    const ctx = canvas.getContext('2d');
+    ctx.scale(dpr, dpr);
+    ctx.clearRect(0, 0, W, H);
+
+    const vals = points.map(p => p.hcp);
+    const minV = Math.floor(Math.min(...vals) * 10) / 10 - 0.3;
+    const maxV = Math.ceil(Math.max(...vals) * 10) / 10 + 0.3;
+    const range = (maxV - minV) || 1;
+    const padL = 28, padR = 10, padT = 18, padB = 22;
+    const cW = W - padL - padR, cH = H - padT - padB;
+
+    const minTime = points[0].date.getTime();
+    const maxTime = points[points.length - 1].date.getTime();
+    const timeRange = (maxTime - minTime) || 1;
+
+    const xPos = p => padL + ((p.date.getTime() - minTime) / timeRange) * cW;
+    const yPos = v => padT + cH - ((v - minV) / range) * cH;
+
+    // Y axis labels
+    ctx.fillStyle = C.axis;
+    ctx.font = '8px DM Mono,monospace';
+    ctx.textAlign = 'right';
+    ctx.fillText(maxV.toFixed(1), padL - 3, padT + 3);
+    ctx.fillText(minV.toFixed(1), padL - 3, padT + cH + 3);
+
+    // Grid horizontal
+    ctx.strokeStyle = isLight ? 'rgba(0,0,0,0.05)' : 'rgba(255,255,255,0.05)';
+    ctx.lineWidth = 1;
+    [minV, (minV+maxV)/2, maxV].forEach(v => {
+      const y = yPos(v);
+      ctx.beginPath(); ctx.moveTo(padL, y); ctx.lineTo(W - padR, y); ctx.stroke();
+    });
+
+    // Fill
+    const grad = ctx.createLinearGradient(0, padT, 0, padT + cH);
+    grad.addColorStop(0, C.fillFrom);
+    grad.addColorStop(1, C.fillTo);
+    ctx.beginPath();
+    points.forEach((p, i) => {
+      const x = xPos(p), y = yPos(p.hcp);
+      i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+    });
+    ctx.lineTo(xPos(points[points.length-1]), padT + cH);
+    ctx.lineTo(xPos(points[0]), padT + cH);
+    ctx.closePath();
+    ctx.fillStyle = grad; ctx.fill();
+
+    // Linea
+    ctx.strokeStyle = C.line; ctx.lineWidth = 2; ctx.lineJoin = 'round'; ctx.lineCap = 'round';
+    ctx.beginPath();
+    points.forEach((p, i) => {
+      const x = xPos(p), y = yPos(p.hcp);
+      i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+    });
+    ctx.stroke();
+
+    // Puntos
+    points.forEach(p => {
+      const x = xPos(p), y = yPos(p.hcp);
+      ctx.beginPath(); ctx.arc(x, y, 3, 0, Math.PI*2); ctx.fillStyle = C.dot; ctx.fill();
+    });
+
+    // Etiquetas: primer y ultimo punto
+    ctx.fillStyle = C.text;
+    ctx.font = '9px DM Mono,monospace';
+    const first = points[0], last = points[points.length-1];
+    ctx.textAlign = 'left';
+    ctx.fillText(first.hcp.toFixed(1), xPos(first) + 5, yPos(first.hcp) - 5);
+    ctx.textAlign = 'right';
+    ctx.fillText(last.hcp.toFixed(1), xPos(last) - 5, yPos(last.hcp) - 5);
+
+    // Etiquetas X: dia inicio y dia fin
+    ctx.fillStyle = C.axis;
+    ctx.font = '8px DM Mono,monospace';
+    const fmtDay = d => d.getDate() + '/' + (d.getMonth()+1);
+    ctx.textAlign = 'left';
+    ctx.fillText(fmtDay(first.date), padL, H - 6);
+    ctx.textAlign = 'right';
+    ctx.fillText(fmtDay(last.date), W - padR, H - 6);
+  });
+}
+
+// Navegacion
+function informePrev() {
+  let y = informeState.year, m = informeState.month;
+  m--;
+  if (m < 0) { m = 11; y--; }
+  informeState.year = y; informeState.month = m;
+  renderInforme();
+  // Scroll arriba al cambiar de mes
+  const page = document.getElementById('page-informe');
+  if (page) page.scrollTop = 0;
+  window.scrollTo(0, 0);
+}
+
+function informeNext() {
+  const now = new Date();
+  let y = informeState.year, m = informeState.month;
+  m++;
+  if (m > 11) { m = 0; y++; }
+  // No permitir ir a futuro (mes actual o posterior)
+  if (y > now.getFullYear() || (y === now.getFullYear() && m >= now.getMonth())) return;
+  informeState.year = y; informeState.month = m;
+  renderInforme();
+  const page = document.getElementById('page-informe');
+  if (page) page.scrollTop = 0;
+  window.scrollTo(0, 0);
+}
+
+// Abre informe del mes anterior y marca como visto
+function abrirInformeMensualUltimo() {
+  const now = new Date();
+  const prev = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+  informeState.year = prev.getFullYear();
+  informeState.month = prev.getMonth();
+  marcarInformeVisto(informeState.year, informeState.month);
+  goTo('informe', null);
+}
+
+// Click sobre el banner: abre el informe del mes que el banner indique
+// (Funcion eliminada en v1.31.075 — banner descartado en PWA, ver memoria #24)
+
+function marcarInformeVisto(year, month) {
+  // (Mantengo la marca en localStorage por compatibilidad con futura logica Capacitor)
+  try { localStorage.setItem('golf_informe_visto', year + '-' + month); } catch(e) {}
+}
+
+// checkInformeBanner eliminado en v1.31.075 — banner descartado en PWA (memoria #24)
+// En Capacitor F3-F4 se reintroduce via @capacitor/local-notifications (notificacion nativa)
+
+// Export PDF: dispara el dialogo de impresion del navegador (iOS Safari permite Guardar PDF)
+function exportarInformePDF() {
+  // Asegurar que estamos en la pagina del informe
+  const page = $('page-informe');
+  if (!page || !page.classList.contains('active')) return;
+  setTimeout(() => { try { window.print(); } catch(e) { console.error('print:', e); } }, 100);
+}
+
+// ─── Hooks ───
+// Render del informe al navegar a la pagina
+const __origGoTo_informe = window.goTo;
+// (El hook real esta en goTo() mas abajo via if (id === 'informe') renderInforme())
+
+
 // Para añadir contenido: editar GUIA_CONTENIDOS
 // Tipos: 'texto' | 'video' | 'pdf' | 'imagen'
 const GUIA_CONTENIDOS = [
