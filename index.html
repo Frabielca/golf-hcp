@@ -801,7 +801,7 @@ nav.nav-hidden{transform:translateY(100%)}
     <button class="auth-btn" id="btn-login" onclick="doLogin()" data-i18n="btn_entrar">Entrar</button>
     <div class="auth-link"><span data-i18n="sin_cuenta">¿Sin cuenta?</span> <span onclick="showAuth('register')" data-i18n="registrate">Regístrate</span></div>
     <div class="auth-link" style="margin-top:16px;font-size:10px;opacity:.6"><a href="privacy.html" target="_blank" style="color:var(--muted);text-decoration:none" data-i18n="politica_priv">Política de Privacidad</a></div>
-    <div style="text-align:center;margin-top:8px;font-size:9px;color:rgba(255,255,255,.2);letter-spacing:1px">v1.31.085</div>
+    <div style="text-align:center;margin-top:8px;font-size:9px;color:rgba(255,255,255,.2);letter-spacing:1px">v1.31.086</div>
   </div>
 </div>
 
@@ -1022,7 +1022,7 @@ nav.nav-hidden{transform:translateY(100%)}
       </div>
     </div>
   </div>
-  <div id="version-tap" style="text-align:center;padding:12px 0 4px;font-size:9px;letter-spacing:2px;color:rgba(255,255,255,.2);font-family:'DM Mono',monospace;cursor:pointer" class="version-label" onclick="adminGesto()">v1.31.085</div>
+  <div id="version-tap" style="text-align:center;padding:12px 0 4px;font-size:9px;letter-spacing:2px;color:rgba(255,255,255,.2);font-family:'DM Mono',monospace;cursor:pointer" class="version-label" onclick="adminGesto()">v1.31.086</div>
   <div class="card" style="margin-bottom:8px;padding:12px 14px;display:none" id="mini-chart-wrap">
     <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px"><span style="font-size:11px;letter-spacing:1.5px;color:var(--gold2)" data-i18n="evolucion_hcp">EVOLUCIÓN HCP</span><span style="font-size:9px;color:var(--muted);letter-spacing:.5px" data-i18n="ultimas_20">20 últimas rondas</span></div>
     <canvas id="mini-hcp-chart" height="100" style="width:100%;display:block"></canvas>
@@ -3456,7 +3456,8 @@ function renderPrivacidad() {
             dataRow('Rondas de golf', 'Cálculo del HCP Index, historial y estadísticas'),
             dataRow('Campos de golf', 'Gestión de campos (CR, Slope, par, barras)'),
             dataRow('Datos de sesión', 'Análisis interno de uso — Interés legítimo RGPD')
-          )
+          ) +
+          note('🍪 <strong style="color:var(--cream)">Golf HCP NO utiliza cookies.</strong> Para guardar tus preferencias de idioma, tema y mantener tu sesión iniciada usamos <strong>localStorage</strong> del propio dispositivo, exclusivamente con fines técnicos imprescindibles para el funcionamiento de la app. Estos datos no salen de tu dispositivo y no se comparten con terceros.')
         ],
         ['03','Finalidad',
           card(
@@ -3529,7 +3530,8 @@ function renderPrivacidad() {
             dataRow('Voltas de golfe', 'Cálculo do HCP Index, histórico e estatísticas'),
             dataRow('Campos de golfe', 'Gestão de campos (CR, Slope, par, saídas)'),
             dataRow('Dados de sessão', 'Análise interna de utilização — Interesse legítimo RGPD')
-          )
+          ) +
+          note('🍪 <strong style="color:var(--cream)">Golf HCP NÃO utiliza cookies.</strong> Para guardar as tuas preferências de idioma, tema e manter a tua sessão iniciada usamos <strong>localStorage</strong> do próprio dispositivo, exclusivamente para fins técnicos imprescindíveis para o funcionamento da app. Estes dados não saem do teu dispositivo e não são partilhados com terceiros.')
         ],
         ['03','Finalidade',
           card(
@@ -3602,7 +3604,8 @@ function renderPrivacidad() {
             dataRow('Parties de golf', 'Calcul du HCP Index, historique et statistiques'),
             dataRow('Parcours de golf', 'Gestion des parcours (CR, Slope, par, départs)'),
             dataRow('Données de session', 'Analyse interne d\'utilisation — Intérêt légitime RGPD')
-          )
+          ) +
+          note('🍪 <strong style="color:var(--cream)">Golf HCP N\'UTILISE PAS de cookies.</strong> Pour enregistrer vos préférences de langue, de thème et maintenir votre session active, nous utilisons le <strong>localStorage</strong> de votre propre appareil, exclusivement à des fins techniques indispensables au fonctionnement de l\'application. Ces données ne quittent pas votre appareil et ne sont pas partagées avec des tiers.')
         ],
         ['03','Finalité',
           card(
@@ -5211,8 +5214,8 @@ function contactarGolfHCP() {
   const ios = ua.match(/iPhone OS ([\d_]+)/);
   const android = ua.match(/Android ([\d.]+)/);
   const sys = ios ? 'iOS ' + ios[1].replace(/_/g,'.') : android ? 'Android ' + android[1] : 'Web';
-  const appVer = document.title.includes('HCP') ? 'v1.31.085' : 'Golf HCP';
-  const body = encodeURIComponent('Hola,\n\n[Escribe tu consulta aqui]\n\n\n-- \nGolf HCP v1.31.085\n' + sys);
+  const appVer = document.title.includes('HCP') ? 'v1.31.086' : 'Golf HCP';
+  const body = encodeURIComponent('Hola,\n\n[Escribe tu consulta aqui]\n\n\n-- \nGolf HCP v1.31.086\n' + sys);
   window.open('mailto:golf.hcp.webmaster@gmail.com?subject=Golf%20HCP%20App&body=' + body, '_blank');
 }
 
