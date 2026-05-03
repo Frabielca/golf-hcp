@@ -518,40 +518,9 @@ nav.nav-hidden{transform:translateY(100%)}
 .adm-empty{text-align:center;padding:40px 20px;color:var(--muted);font-family:'DM Mono',monospace;font-size:12px;line-height:1.6}
 
 /* ═════════════════════════════════════════════════════════════
- * v1.31.079 — X nativa para inputs type="search" + fix autofill
+ * v1.31.079 — Fix autofill login modo oscuro tras Salir
  * ═════════════════════════════════════════════════════════════ */
 
-/* Mostrar la X de borrar ("clear button") nativa de WebKit/Safari iOS
- * en TODOS los inputs type="search" (login, registro, reset, nombres campo,
- * busqueda historial, formularios admin guia).
- *
- * Por defecto Safari iOS PWA OCULTA esta X. Estos selectores la fuerzan. */
-input[type="search"]::-webkit-search-cancel-button,
-input[type="search"]::-webkit-search-decoration {
-  -webkit-appearance: searchfield-cancel-button;
-  appearance: searchfield-cancel-button;
-  display: block !important;
-  opacity: 1 !important;
-  margin-left: 6px;
-  cursor: pointer;
-}
-/* En modo oscuro, hacer la X mas visible (Safari por defecto la pone gris oscuro) */
-input[type="search"]::-webkit-search-cancel-button {
-  filter: brightness(2) opacity(0.7);
-}
-:root.light input[type="search"]::-webkit-search-cancel-button {
-  filter: none;
-  opacity: 0.5;
-}
-/* Quitar el icono lupa que algunos navegadores muestran a la izquierda en search */
-input[type="search"] {
-  -webkit-appearance: textfield;
-  appearance: textfield;
-}
-
-/* Fix bug "modo oscuro despues de Salir": forzar valores ABSOLUTOS
- * en el autofill del login para evitar la condicion de carrera donde
- * iOS Safari aplica autofill antes de que las variables CSS esten listas. */
 .auth-field input:-webkit-autofill,
 .auth-field input:-webkit-autofill:hover,
 .auth-field input:-webkit-autofill:focus,
@@ -571,8 +540,6 @@ input[type="search"] {
   caret-color: #000000 !important;
   border-color: rgba(0,0,0,0.2) !important;
 }
-/* Reforzar tambien el fondo del input cuando NO esta autofill (por si la
- * variable --input-bg se corrompe transitoriamente al cerrar sesion) */
 .auth-field input {
   background-color: rgba(255,255,255,0.07) !important;
   color: #ffffff !important;
@@ -582,6 +549,68 @@ input[type="search"] {
   background-color: #ffffff !important;
   color: #000000 !important;
   caret-color: #000000 !important;
+}
+
+/* ═════════════════════════════════════════════════════════════
+ * v1.31.080 — X custom unificada (data-clearable)
+ * ═════════════════════════════════════════════════════════════
+ * Reemplaza la X nativa de iOS (inconsistente entre WebKit/Safari
+ * versiones y modos claro/oscuro) por un boton custom controlado
+ * por JavaScript. Funciona en cualquier type= (text, search, email)
+ * y respeta los estilos de cada input.
+ *
+ * Uso:
+ *   <input data-clearable type="text" ...>
+ *   (el JS attachClearButtons() inyecta el wrapper + boton automaticamente)
+ */
+
+.clr-wrap {
+  position: relative;
+  display: block;
+  width: 100%;
+}
+.clr-wrap > input {
+  width: 100% !important;
+  padding-right: 36px !important;
+  box-sizing: border-box;
+}
+.clr-btn {
+  position: absolute;
+  top: 50%;
+  right: 8px;
+  transform: translateY(-50%);
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: rgba(201,168,76,0.85);
+  border: none;
+  color: #1a2f1a;
+  font-size: 11px;
+  line-height: 1;
+  font-weight: bold;
+  cursor: pointer;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  margin: 0;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  z-index: 5;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+}
+.clr-btn.visible { display: flex; }
+.clr-btn:active {
+  background: rgba(201,168,76,1);
+  transform: translateY(-50%) scale(0.92);
+}
+:root.light .clr-btn {
+  background: rgba(46,125,50,0.85);
+  color: #ffffff;
+}
+:root.light .clr-btn:active {
+  background: rgba(46,125,50,1);
 }
 
 </style>
@@ -705,7 +734,7 @@ input[type="search"] {
     <button class="auth-btn" id="btn-login" onclick="doLogin()" data-i18n="btn_entrar">Entrar</button>
     <div class="auth-link"><span data-i18n="sin_cuenta">¿Sin cuenta?</span> <span onclick="showAuth('register')" data-i18n="registrate">Regístrate</span></div>
     <div class="auth-link" style="margin-top:16px;font-size:10px;opacity:.6"><a href="privacy.html" target="_blank" style="color:var(--muted);text-decoration:none" data-i18n="politica_priv">Política de Privacidad</a></div>
-    <div style="text-align:center;margin-top:8px;font-size:9px;color:rgba(255,255,255,.2);letter-spacing:1px">v1.31.079</div>
+    <div style="text-align:center;margin-top:8px;font-size:9px;color:rgba(255,255,255,.2);letter-spacing:1px">v1.31.080</div>
   </div>
 </div>
 
@@ -717,8 +746,8 @@ input[type="search"] {
     <div class="auth-title" data-i18n="crear_cuenta">Crear Cuenta</div>
     <div class="auth-msg err" id="reg-err"></div>
     <div class="auth-msg ok" id="reg-ok"></div>
-    <div class="auth-field"><label data-i18n="nombre_label">Nombre</label><input id="reg-nombre" type="search" autocomplete="name" placeholder="Francisco"></div>
-    <div class="auth-field"><label data-i18n="email">Email</label><input id="reg-email" type="search" inputmode="email" autocomplete="email" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="tu@email.com"></div>
+    <div class="auth-field"><label data-i18n="nombre_label">Nombre</label><input id="reg-nombre" type="text" data-clearable autocomplete="name" placeholder="Francisco"></div>
+    <div class="auth-field"><label data-i18n="email">Email</label><input id="reg-email" type="email" data-clearable inputmode="email" autocomplete="email" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="tu@email.com"></div>
     <div class="auth-field"><label data-i18n="password">Contraseña</label><input id="reg-pass" type="password" autocomplete="new-password" placeholder="mínimo 6 caracteres"></div>
     <div class="auth-field"><label data-i18n="confirmar_label">Confirmar</label><input id="reg-pass2" type="password" autocomplete="new-password" placeholder="repite la contraseña"></div>
     <div class="auth-link" style="margin-bottom:10px;font-size:10px;line-height:1.5" data-i18n="acepta_privacidad">Al registrarte aceptas nuestra <a href="privacy.html" target="_blank" style="color:var(--gold2);text-decoration:underline">Política de Privacidad</a></div>
@@ -735,7 +764,7 @@ input[type="search"] {
     <div class="auth-title">Recuperar Contraseña</div>
     <div class="auth-msg err" id="reset-err"></div>
     <div class="auth-msg ok" id="reset-ok"></div>
-    <div class="auth-field"><label data-i18n="email">Email</label><input id="reset-email" type="search" inputmode="email" autocomplete="email" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="tu@email.com"></div>
+    <div class="auth-field"><label data-i18n="email">Email</label><input id="reset-email" type="email" data-clearable inputmode="email" autocomplete="email" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="tu@email.com"></div>
     <button class="auth-btn" id="btn-reset" onclick="doReset()" data-i18n="enviar_enlace">Enviar enlace</button>
     <div class="auth-link"><span onclick="showAuth('login')">← Volver</span></div>
   </div>
@@ -834,7 +863,7 @@ input[type="search"] {
     <div class="modal-title">Editar Campo</div>
     <input type="hidden" id="edit-c-id">
     <div class="modal-err" id="edit-c-err"></div>
-    <div class="field" style="gap:3px;margin-bottom:8px"><label data-i18n="nombre_campo" style="display:inline">Nombre del campo</label> <span style="color:var(--muted);font-weight:normal;font-size:9px;display:inline" data-i18n="max15">(máx. 15 caracteres)</span><input id="edit-c-nombre" type="search" placeholder="CLUB DE GOLF" maxlength="15" style="background:var(--input-bg);border:1px solid var(--border);border-radius:4px;color:var(--text);font-family:'DM Mono',monospace;font-size:13px;padding:5px 8px;width:100%;-webkit-appearance:none;outline:none;text-transform:uppercase;touch-action:manipulation" oninput="this.value=this.value.toUpperCase()"></div>
+    <div class="field" style="gap:3px;margin-bottom:8px"><label data-i18n="nombre_campo" style="display:inline">Nombre del campo</label> <span style="color:var(--muted);font-weight:normal;font-size:9px;display:inline" data-i18n="max15">(máx. 15 caracteres)</span><input id="edit-c-nombre" type="text" data-clearable placeholder="CLUB DE GOLF" maxlength="15" style="background:var(--input-bg);border:1px solid var(--border);border-radius:4px;color:var(--text);font-family:'DM Mono',monospace;font-size:13px;padding:5px 8px;width:100%;-webkit-appearance:none;outline:none;text-transform:uppercase;touch-action:manipulation" oninput="this.value=this.value.toUpperCase()"></div>
     <div class="section-title" data-i18n="barras_salida">Barras de Salida</div>
     <div id="edit-barras-wrap"></div>
     <div class="section-title" data-i18n="par_indice">Par e Índice por Hoyo</div>
@@ -926,7 +955,7 @@ input[type="search"] {
       </div>
     </div>
   </div>
-  <div id="version-tap" style="text-align:center;padding:12px 0 4px;font-size:9px;letter-spacing:2px;color:rgba(255,255,255,.2);font-family:'DM Mono',monospace;cursor:pointer" class="version-label" onclick="adminGesto()">v1.31.079</div>
+  <div id="version-tap" style="text-align:center;padding:12px 0 4px;font-size:9px;letter-spacing:2px;color:rgba(255,255,255,.2);font-family:'DM Mono',monospace;cursor:pointer" class="version-label" onclick="adminGesto()">v1.31.080</div>
   <div class="card" style="margin-bottom:8px;padding:12px 14px;display:none" id="mini-chart-wrap">
     <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px"><span style="font-size:11px;letter-spacing:1.5px;color:var(--gold2)" data-i18n="evolucion_hcp">EVOLUCIÓN HCP</span><span style="font-size:9px;color:var(--muted);letter-spacing:.5px" data-i18n="ultimas_20">20 últimas rondas</span></div>
     <canvas id="mini-hcp-chart" height="100" style="width:100%;display:block"></canvas>
@@ -1072,7 +1101,7 @@ input[type="search"] {
   </div>
   <div style="font-size:9px;letter-spacing:.5px;color:var(--muted);text-align:center;padding-bottom:10px" data-i18n="toca_ronda">Toca una ronda para más detalles</div>
   <div style="display:flex;gap:8px;align-items:center;margin-bottom:10px">
-    <input type="search" id="hist-search" placeholder="🔍 campo, mes/año (11/2025), día (25/04)…" oninput="onHistSearch(this.value)"
+    <input type="text" data-clearable id="hist-search" placeholder="🔍 campo, mes/año (11/2025), día (25/04)…" oninput="onHistSearch(this.value)"
       style="flex:1;background:var(--input-bg);border:1px solid var(--border);border-radius:6px;color:var(--text);font-family:'DM Mono',monospace;font-size:11px;padding:6px 10px;-webkit-appearance:none;outline:none">
     <div id="hist-counter" style="font-size:10px;color:var(--muted);font-family:'DM Mono',monospace;letter-spacing:.3px;white-space:nowrap"></div>
   </div>
@@ -1099,7 +1128,7 @@ input[type="search"] {
       </div>
       <div class="field" style="gap:3px;margin-bottom:8px">
         <label data-i18n="nombre_campo">Nombre del campo</label> <span style="color:var(--muted);font-weight:normal;font-size:9px" data-i18n="max15">(máx. 15 caracteres)</span>
-        <input id="nc-nombre" type="search" placeholder="CLUB DE GOLF" maxlength="15"
+        <input id="nc-nombre" type="text" data-clearable placeholder="CLUB DE GOLF" maxlength="15"
           style="background:var(--input-bg);border:1px solid var(--border);border-radius:4px;color:var(--text);font-family:'DM Mono',monospace;font-size:13px;padding:5px 8px;width:100%;-webkit-appearance:none;outline:none;text-transform:uppercase" oninput="this.value=this.value.toUpperCase()">
       </div>
       <div class="section-title" data-i18n="barras_salida">Barras de Salida</div>
@@ -4894,7 +4923,9 @@ function buildBarrasEditor(containerId, prefix, existingBarras = []) {
 function abrirNuevoCampo() {
   $('nuevo-campo-wrap').style.display = 'block';
   $('campos-lista-wrap').style.display = 'none';
-  $('nc-nombre').value = '';
+  const ncName = $('nc-nombre');
+  ncName.value = '';
+  ncName.dispatchEvent(new Event('input', { bubbles: true })); // ocultar X (v1.31.080)
   $('nc-err').classList.remove('show');
   buildBarrasEditor('nc-barras-wrap', 'nc-', []);
   buildHoyosEditor('nc-hoyos-wrap', 'nc-', []);
@@ -5105,8 +5136,8 @@ function contactarGolfHCP() {
   const ios = ua.match(/iPhone OS ([\d_]+)/);
   const android = ua.match(/Android ([\d.]+)/);
   const sys = ios ? 'iOS ' + ios[1].replace(/_/g,'.') : android ? 'Android ' + android[1] : 'Web';
-  const appVer = document.title.includes('HCP') ? 'v1.31.079' : 'Golf HCP';
-  const body = encodeURIComponent('Hola,\n\n[Escribe tu consulta aqui]\n\n\n-- \nGolf HCP v1.31.079\n' + sys);
+  const appVer = document.title.includes('HCP') ? 'v1.31.080' : 'Golf HCP';
+  const body = encodeURIComponent('Hola,\n\n[Escribe tu consulta aqui]\n\n\n-- \nGolf HCP v1.31.080\n' + sys);
   window.open('mailto:golf.hcp.webmaster@gmail.com?subject=Golf%20HCP%20App&body=' + body, '_blank');
 }
 
@@ -5179,6 +5210,7 @@ function abrirEditCampo(id) {
   if (!campo) { toast(t('t_campo_no_encontrado'), true); return; }
   $('edit-c-id').value = id;
   $('edit-c-nombre').value = campo.nombre;
+  $('edit-c-nombre').dispatchEvent(new Event('input', { bubbles: true })); // mostrar X (v1.31.080)
   $('edit-c-err').classList.remove('show');
   buildHoyosEditor('edit-hoyos-campo', 'edit-c-', campo.hoyos || []);
   const bw = $('edit-barras-wrap');
@@ -5449,10 +5481,77 @@ function maybeShowGuide() {
   }
 }
 
+// ═════════════════════════════════════════════════════════════════════
+// CLEAR BUTTONS (v1.31.080)
+// X custom unificada para inputs marcados con data-clearable
+// Funciona en cualquier type=, independiente del navegador, consistente
+// en modo claro y oscuro. Reemplaza la X nativa de iOS Safari (inconsistente).
+// ═════════════════════════════════════════════════════════════════════
+
+function attachClearButtons(root) {
+  root = root || document;
+  const inputs = root.querySelectorAll('input[data-clearable]:not([data-clr-attached])');
+  inputs.forEach(input => {
+    // Marcar como procesado para no duplicar
+    input.setAttribute('data-clr-attached', '1');
+
+    // Si el padre ya es un wrapper conocido (auth-input-wrap), no hacer nada
+    // (esos casos tienen su propio sistema con ojito)
+    if (input.parentElement && input.parentElement.classList.contains('auth-input-wrap')) {
+      return;
+    }
+
+    // Crear wrapper
+    const wrap = document.createElement('div');
+    wrap.className = 'clr-wrap';
+
+    // Si el input tiene estilos inline width:100%, los conservamos
+    // El wrapper se inserta en el sitio del input, y movemos el input dentro
+    const parent = input.parentNode;
+    parent.insertBefore(wrap, input);
+    wrap.appendChild(input);
+
+    // Crear boton X
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'clr-btn';
+    btn.tabIndex = -1;
+    btn.setAttribute('aria-label', 'Borrar');
+    btn.textContent = '✕';
+    if (input.value && input.value.length > 0) btn.classList.add('visible');
+    wrap.appendChild(btn);
+
+    // Click en el boton: limpia el input y dispara eventos para que la
+    // logica del input (oninput, onchange, search, etc) se entere
+    btn.addEventListener('click', e => {
+      e.preventDefault();
+      e.stopPropagation();
+      input.value = '';
+      btn.classList.remove('visible');
+      input.dispatchEvent(new Event('input', { bubbles: true }));
+      input.dispatchEvent(new Event('change', { bubbles: true }));
+      input.focus();
+    });
+
+    // Listener para mostrar/ocultar la X segun haya o no contenido
+    input.addEventListener('input', () => {
+      btn.classList.toggle('visible', input.value.length > 0);
+    });
+  });
+}
+
+// Helper: re-ejecutar para inputs que se inyectan dinamicamente despues
+// de cargar la pagina (por ejemplo el form del admin guia se renderiza
+// cuando el usuario pulsa "+ Nuevo")
+function refreshClearButtons() { attachClearButtons(); }
+
+
 async function init() {
   applyStoredTheme();
   // Aplicar idioma guardado
   applyLangDOM();
+  // X custom para inputs marcados con data-clearable (v1.31.080)
+  attachClearButtons();
   $('f-date').value = new Date().toISOString().split('T')[0];
 
   // Botones de la barra de usuario
@@ -5998,10 +6097,10 @@ function adminRenderForm() {
     + '</div>'
 
     + '<label class="adm-form-label">Titulo</label>'
-    + '<input type="search" class="adm-form-input" id="adm-f-titulo" value="' + escapeAttr(f.titulo) + '" maxlength="200" oninput="adminFormChange(\'titulo\', this.value)">'
+    + '<input type="text" data-clearable class="adm-form-input" id="adm-f-titulo" value="' + escapeAttr(f.titulo) + '" maxlength="200" oninput="adminFormChange(\'titulo\', this.value)">'
 
     + '<label class="adm-form-label">Subtitulo (opcional)</label>'
-    + '<input type="search" class="adm-form-input" id="adm-f-subtitulo" value="' + escapeAttr(f.subtitulo) + '" maxlength="200" placeholder="Ej: Lectura · 5 min" oninput="adminFormChange(\'subtitulo\', this.value)">'
+    + '<input type="text" data-clearable class="adm-form-input" id="adm-f-subtitulo" value="' + escapeAttr(f.subtitulo) + '" maxlength="200" placeholder="Ej: Lectura · 5 min" oninput="adminFormChange(\'subtitulo\', this.value)">'
 
     + uploadBlock
 
@@ -6028,6 +6127,8 @@ function adminRenderForm() {
 
   // Scroll arriba para ver el formulario completo
   setTimeout(() => { window.scrollTo(0, 0); }, 50);
+  // Re-attach X de borrar a los inputs dinamicos (v1.31.080)
+  refreshClearButtons();
 }
 
 function adminFormChange(field, val) {
