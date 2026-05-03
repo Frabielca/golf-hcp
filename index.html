@@ -9,6 +9,23 @@
 <title>Golf HCP</title>
 <link rel="manifest" href="./manifest.json">
 <link rel="apple-touch-icon" href="./icon-192.png">
+<script>
+// v1.31.084: aplicar tema ANTES de cualquier render para que el splash
+// salga en el color correcto (claro/oscuro) sin parpadeos ni inconsistencias.
+// Default: claro (igual que applyStoredTheme).
+(function(){
+  try {
+    var stored = localStorage.getItem('golf_theme');
+    if (stored !== 'dark') {
+      document.documentElement.classList.add('light');
+      // Tambien actualizar theme-color del navegador para que la barra de
+      // estado de iOS no parpadee al cambiar entre splash y app
+      var meta = document.querySelector('meta[name="theme-color"]');
+      if (meta) meta.setAttribute('content', '#f0f4f0');
+    }
+  } catch(e) {}
+})();
+</script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js" crossorigin="anonymous"></script>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
@@ -39,12 +56,41 @@
 html,body{background:var(--bg);color:var(--cream);font-family:'DM Mono',monospace;overflow-x:hidden}
 body{overflow-y:auto;-webkit-overflow-scrolling:touch;padding-top:env(safe-area-inset-top,0px)}
 
+/* ═════════════════════════════════════════════════════════════
+ * v1.31.083 — Banda opaca bajo la isla del iPhone (safe-area top)
+ * ═════════════════════════════════════════════════════════════
+ * Evita que el contenido scrollee visible bajo la Dynamic Island
+ * o el notch del iPhone. Color responde a modo claro/oscuro.
+ *
+ * Implementacion: posicion fixed cubriendo solo la zona safe-area-inset-top.
+ * Z-index alto pero por debajo del splash, modales y auth-screen. */
+#safe-area-cover {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: env(safe-area-inset-top, 0px);
+  background: var(--bg);
+  z-index: 8000;
+  pointer-events: none;
+}
+/* Ocultar la banda durante el splash — el splash ocupa toda la pantalla */
+body.splash-active #safe-area-cover {
+  display: none;
+}
+
 /* ── SPLASH ── */
+/* v1.31.084: splash adaptable a modo claro/oscuro */
 #splash{position:fixed;inset:0;background:#1a2f1a;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;transition:opacity .5s}
 #splash.hide{opacity:0;pointer-events:none}
-#splash-t{font-family:'Playfair Display',serif;font-size:42px;font-weight:900;color:var(--cream)}
+#splash-t{font-family:'Playfair Display',serif;font-size:42px;font-weight:900;color:#f5f0e8}
 #splash-t em{color:#c9a84c;font-style:italic}
 #splash-s{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:#7bc67a;opacity:.7}
+/* Modo claro: fondo claro + colores adaptados manteniendo identidad Golf HCP */
+:root.light #splash{background:#f0f4f0}
+:root.light #splash-t{color:#1a2f1a}
+:root.light #splash-t em{color:#7a5a10}
+:root.light #splash-s{color:#1a4a1a}
 
 /* ── AUTH SCREENS ── */
 .auth-screen{position:fixed;inset:0;background:var(--bg);z-index:8500;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 24px;overflow-y:auto}
@@ -626,7 +672,13 @@ nav.nav-hidden{transform:translateY(100%)}
 
 </style>
 </head>
-<body>
+<body class="splash-active">
+
+<!-- v1.31.083: Banda opaca bajo la isla del iPhone (safe-area top).
+     Evita que el contenido scrollee visible bajo la Dynamic Island / notch.
+     Color responde a modo claro/oscuro via var(--bg).
+     Se oculta solo durante el splash (clase .splash-active en body). -->
+<div id="safe-area-cover"></div>
 
 <!-- SPLASH -->
 
@@ -745,7 +797,7 @@ nav.nav-hidden{transform:translateY(100%)}
     <button class="auth-btn" id="btn-login" onclick="doLogin()" data-i18n="btn_entrar">Entrar</button>
     <div class="auth-link"><span data-i18n="sin_cuenta">¿Sin cuenta?</span> <span onclick="showAuth('register')" data-i18n="registrate">Regístrate</span></div>
     <div class="auth-link" style="margin-top:16px;font-size:10px;opacity:.6"><a href="privacy.html" target="_blank" style="color:var(--muted);text-decoration:none" data-i18n="politica_priv">Política de Privacidad</a></div>
-    <div style="text-align:center;margin-top:8px;font-size:9px;color:rgba(255,255,255,.2);letter-spacing:1px">v1.31.082</div>
+    <div style="text-align:center;margin-top:8px;font-size:9px;color:rgba(255,255,255,.2);letter-spacing:1px">v1.31.084</div>
   </div>
 </div>
 
@@ -966,7 +1018,7 @@ nav.nav-hidden{transform:translateY(100%)}
       </div>
     </div>
   </div>
-  <div id="version-tap" style="text-align:center;padding:12px 0 4px;font-size:9px;letter-spacing:2px;color:rgba(255,255,255,.2);font-family:'DM Mono',monospace;cursor:pointer" class="version-label" onclick="adminGesto()">v1.31.082</div>
+  <div id="version-tap" style="text-align:center;padding:12px 0 4px;font-size:9px;letter-spacing:2px;color:rgba(255,255,255,.2);font-family:'DM Mono',monospace;cursor:pointer" class="version-label" onclick="adminGesto()">v1.31.084</div>
   <div class="card" style="margin-bottom:8px;padding:12px 14px;display:none" id="mini-chart-wrap">
     <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px"><span style="font-size:11px;letter-spacing:1.5px;color:var(--gold2)" data-i18n="evolucion_hcp">EVOLUCIÓN HCP</span><span style="font-size:9px;color:var(--muted);letter-spacing:.5px" data-i18n="ultimas_20">20 últimas rondas</span></div>
     <canvas id="mini-hcp-chart" height="100" style="width:100%;display:block"></canvas>
@@ -5155,8 +5207,8 @@ function contactarGolfHCP() {
   const ios = ua.match(/iPhone OS ([\d_]+)/);
   const android = ua.match(/Android ([\d.]+)/);
   const sys = ios ? 'iOS ' + ios[1].replace(/_/g,'.') : android ? 'Android ' + android[1] : 'Web';
-  const appVer = document.title.includes('HCP') ? 'v1.31.082' : 'Golf HCP';
-  const body = encodeURIComponent('Hola,\n\n[Escribe tu consulta aqui]\n\n\n-- \nGolf HCP v1.31.082\n' + sys);
+  const appVer = document.title.includes('HCP') ? 'v1.31.084' : 'Golf HCP';
+  const body = encodeURIComponent('Hola,\n\n[Escribe tu consulta aqui]\n\n\n-- \nGolf HCP v1.31.084\n' + sys);
   window.open('mailto:golf.hcp.webmaster@gmail.com?subject=Golf%20HCP%20App&body=' + body, '_blank');
 }
 
@@ -5627,7 +5679,14 @@ async function init() {
   // Ocultar splash
   setTimeout(() => {
     const s = $('splash');
-    if (s) { s.classList.add('hide'); setTimeout(() => { s.remove(); maybeShowGuide(); }, 500); }
+    if (s) {
+      s.classList.add('hide');
+      setTimeout(() => {
+        s.remove();
+        document.body.classList.remove('splash-active'); // v1.31.083: revelar safe-area-cover
+        maybeShowGuide();
+      }, 500);
+    }
   }, 600);
 }
 
