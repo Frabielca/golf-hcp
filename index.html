@@ -452,6 +452,61 @@ nav.nav-hidden{transform:translateY(100%)}
   @page{margin:14mm}
 }
 .inf-print-header{display:none}
+
+/* ── ADMIN GUIA (v1.31.076) ── */
+.adm-list-item{background:var(--card-bg);border:1px solid var(--border);border-radius:10px;padding:12px;margin-bottom:8px;display:flex;align-items:center;gap:10px}
+.adm-list-icon{font-size:20px;width:32px;text-align:center;flex-shrink:0}
+.adm-list-meta{flex:1;min-width:0}
+.adm-list-title{font-size:13px;color:var(--cream);margin-bottom:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.adm-list-sub{font-size:9px;color:var(--muted);font-family:'DM Mono',monospace;letter-spacing:.3px;display:flex;gap:6px;flex-wrap:wrap}
+.adm-list-badge{padding:1px 5px;border-radius:8px;font-size:8px;letter-spacing:.5px;text-transform:uppercase}
+.adm-list-badge.act{background:rgba(123,198,122,.15);color:var(--green);border:1px solid rgba(123,198,122,.3)}
+.adm-list-badge.inact{background:rgba(224,85,85,.12);color:var(--red);border:1px solid rgba(224,85,85,.3)}
+.adm-list-badge.lang{background:rgba(201,168,76,.12);color:var(--gold2);border:1px solid rgba(201,168,76,.3)}
+.adm-list-actions{display:flex;gap:4px;flex-shrink:0}
+.adm-icon-btn{background:none;border:1px solid var(--border);border-radius:6px;color:var(--muted);cursor:pointer;width:30px;height:30px;display:flex;align-items:center;justify-content:center;padding:0;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.adm-icon-btn:active{background:rgba(255,255,255,.05)}
+.adm-icon-btn svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2}
+.adm-icon-btn.danger{color:var(--red);border-color:rgba(224,85,85,.3)}
+:root.light .adm-list-badge.act{background:rgba(46,125,50,.12);color:#1b5e20;border-color:rgba(46,125,50,.3)}
+
+.adm-toolbar{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap;align-items:center}
+.adm-toolbar .adm-filter{display:flex;background:var(--card-bg);border:1px solid var(--border);border-radius:8px;overflow:hidden}
+.adm-toolbar .adm-filter button{background:none;border:none;color:var(--muted);font-family:'DM Mono',monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase;padding:7px 10px;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.adm-toolbar .adm-filter button.active{background:rgba(201,168,76,.15);color:var(--gold2)}
+:root.light .adm-toolbar .adm-filter button.active{background:rgba(46,125,50,.12);color:#1b5e20}
+.adm-toolbar .adm-new-btn{margin-left:auto;background:rgba(201,168,76,.15);border:1px solid rgba(201,168,76,.4);color:var(--gold2);font-family:'DM Mono',monospace;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;padding:8px 12px;border-radius:8px;cursor:pointer;display:flex;align-items:center;gap:6px;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.adm-toolbar .adm-new-btn:active{background:rgba(201,168,76,.25)}
+:root.light .adm-toolbar .adm-new-btn{color:#1a4a1a;border-color:rgba(46,125,50,.4);background:rgba(46,125,50,.08)}
+
+.adm-form{background:var(--card-bg);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:12px}
+.adm-form-label{font-size:9px;letter-spacing:1.2px;text-transform:uppercase;color:var(--muted);font-family:'DM Mono',monospace;margin-bottom:5px;display:block}
+.adm-form-input,.adm-form-textarea,.adm-form-select{width:100%;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:6px;color:var(--cream);font-family:'DM Mono',monospace;font-size:13px;padding:8px 10px;margin-bottom:10px;outline:none;-webkit-appearance:none}
+.adm-form-input:focus,.adm-form-textarea:focus,.adm-form-select:focus{border-color:var(--gold)}
+.adm-form-textarea{min-height:120px;resize:vertical;font-family:'DM Mono',monospace}
+:root.light .adm-form-input,:root.light .adm-form-textarea,:root.light .adm-form-select{background:#fff;color:#1a2f1a}
+
+.adm-form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.adm-form-check{display:flex;align-items:center;gap:8px;margin-bottom:10px;cursor:pointer;touch-action:manipulation}
+.adm-form-check input{width:16px;height:16px;accent-color:var(--gold);cursor:pointer}
+.adm-form-check label{font-size:11px;color:var(--cream);cursor:pointer;letter-spacing:.5px}
+
+.adm-upload-zone{border:1px dashed var(--border);border-radius:8px;padding:20px;text-align:center;margin-bottom:10px;background:rgba(255,255,255,.02)}
+.adm-upload-zone.has-file{border-style:solid;border-color:rgba(123,198,122,.4);background:rgba(123,198,122,.05)}
+.adm-upload-info{font-size:10px;color:var(--muted);font-family:'DM Mono',monospace;line-height:1.5;margin-top:6px}
+.adm-upload-progress{height:6px;background:rgba(255,255,255,.08);border-radius:3px;margin-top:8px;overflow:hidden;display:none}
+.adm-upload-progress.show{display:block}
+.adm-upload-progress-bar{height:100%;background:var(--gold);width:0%;transition:width .2s}
+
+.adm-form-actions{display:flex;gap:8px;margin-top:12px}
+.adm-form-actions button{flex:1;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;padding:11px;border-radius:8px;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;border:none}
+.adm-btn-save{background:var(--gold);color:#1a2f1a;font-weight:500}
+.adm-btn-save:active{background:var(--gold2)}
+.adm-btn-cancel{background:rgba(255,255,255,.05);border:1px solid var(--border);color:var(--cream)}
+.adm-btn-cancel:active{background:rgba(255,255,255,.08)}
+
+.adm-empty{text-align:center;padding:40px 20px;color:var(--muted);font-family:'DM Mono',monospace;font-size:12px;line-height:1.6}
+
 </style>
 </head>
 <body>
@@ -573,7 +628,7 @@ nav.nav-hidden{transform:translateY(100%)}
     <button class="auth-btn" id="btn-login" onclick="doLogin()" data-i18n="btn_entrar">Entrar</button>
     <div class="auth-link"><span data-i18n="sin_cuenta">¿Sin cuenta?</span> <span onclick="showAuth('register')" data-i18n="registrate">Regístrate</span></div>
     <div class="auth-link" style="margin-top:16px;font-size:10px;opacity:.6"><a href="privacy.html" target="_blank" style="color:var(--muted);text-decoration:none" data-i18n="politica_priv">Política de Privacidad</a></div>
-    <div style="text-align:center;margin-top:8px;font-size:9px;color:rgba(255,255,255,.2);letter-spacing:1px">v1.31.075</div>
+    <div style="text-align:center;margin-top:8px;font-size:9px;color:rgba(255,255,255,.2);letter-spacing:1px">v1.31.076</div>
   </div>
 </div>
 
@@ -794,7 +849,7 @@ nav.nav-hidden{transform:translateY(100%)}
       </div>
     </div>
   </div>
-  <div style="text-align:center;padding:12px 0 4px;font-size:9px;letter-spacing:2px;color:rgba(255,255,255,.2);font-family:'DM Mono',monospace" class="version-label">v1.31.075</div>
+  <div id="version-tap" style="text-align:center;padding:12px 0 4px;font-size:9px;letter-spacing:2px;color:rgba(255,255,255,.2);font-family:'DM Mono',monospace;cursor:pointer" class="version-label" onclick="adminGesto()">v1.31.076</div>
   <div class="card" style="margin-bottom:8px;padding:12px 14px;display:none" id="mini-chart-wrap">
     <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px"><span style="font-size:11px;letter-spacing:1.5px;color:var(--gold2)" data-i18n="evolucion_hcp">EVOLUCIÓN HCP</span><span style="font-size:9px;color:var(--muted);letter-spacing:.5px" data-i18n="ultimas_20">20 últimas rondas</span></div>
     <canvas id="mini-hcp-chart" height="100" style="width:100%;display:block"></canvas>
@@ -1131,6 +1186,34 @@ nav.nav-hidden{transform:translateY(100%)}
       <span data-i18n="inf_descargar_pdf">Descargar PDF</span>
     </button>
   </div>
+</div>
+
+<!-- PAGE: ADMIN GUIA (v1.31.076) — solo accesible vía gesto secreto + is_admin -->
+<div class="page" id="page-admin-guia">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+    <button onclick="goTo('ajustes',$('nav-ajustes'))" style="background:none;border:none;color:var(--muted);font-family:'DM Mono',monospace;font-size:14px;cursor:pointer;padding:0;display:flex;align-items:center;gap:5px;height:40px">
+      <svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2"><polyline points="15 18 9 12 15 6"/></svg>
+      <span data-i18n="volver_btn">VOLVER</span>
+    </button>
+  </div>
+  <div style="font-size:20px;letter-spacing:2px;text-transform:uppercase;color:var(--gold2);padding:4px 2px 4px;font-family:'DM Mono',monospace;text-align:center">🔧 Admin · Guía</div>
+  <div style="text-align:center;font-size:9px;color:var(--muted);letter-spacing:1px;margin-bottom:16px;font-family:'DM Mono',monospace">Panel de administración</div>
+
+  <!-- Toolbar: filtro idioma + boton nuevo -->
+  <div class="adm-toolbar">
+    <div class="adm-filter">
+      <button id="adm-flt-es" class="active" onclick="adminFiltroLang('es')">ES</button>
+      <button id="adm-flt-pt" onclick="adminFiltroLang('pt')">PT</button>
+      <button id="adm-flt-fr" onclick="adminFiltroLang('fr')">FR</button>
+    </div>
+    <button class="adm-new-btn" onclick="adminNuevo()">+ Nuevo</button>
+  </div>
+
+  <!-- Lista (visible cuando NO se esta editando) -->
+  <div id="adm-lista-wrap"></div>
+
+  <!-- Formulario (visible al crear o editar) -->
+  <div id="adm-form-wrap" style="display:none"></div>
 </div>
 
 <!-- PAGE: AJUSTES -->
@@ -2193,13 +2276,14 @@ async function onLogin(user) {
 
   // 2. LUEGO: queries async (no bloquean la UI)
   try {
-    const { data } = await sb.from('profiles').select('nombre').eq('id', user.id).single();
+    const { data } = await sb.from('profiles').select('nombre,is_admin').eq('id', user.id).single();
     if (data?.nombre) {
       state.user.nombre = data.nombre;
       if ($('pb-name')) $('pb-name').textContent = data.nombre;
       if ($('p-name'))  $('p-name').value = data.nombre;
     }
-  } catch(e) {}
+    state.user.is_admin = !!data?.is_admin;
+  } catch(e) { state.user.is_admin = false; }
 
   try {
     await loadData();
@@ -4934,8 +5018,8 @@ function contactarGolfHCP() {
   const ios = ua.match(/iPhone OS ([\d_]+)/);
   const android = ua.match(/Android ([\d.]+)/);
   const sys = ios ? 'iOS ' + ios[1].replace(/_/g,'.') : android ? 'Android ' + android[1] : 'Web';
-  const appVer = document.title.includes('HCP') ? 'v1.31.075' : 'Golf HCP';
-  const body = encodeURIComponent('Hola,\n\n[Escribe tu consulta aqui]\n\n\n-- \nGolf HCP v1.31.075\n' + sys);
+  const appVer = document.title.includes('HCP') ? 'v1.31.076' : 'Golf HCP';
+  const body = encodeURIComponent('Hola,\n\n[Escribe tu consulta aqui]\n\n\n-- \nGolf HCP v1.31.076\n' + sys);
   window.open('mailto:golf.hcp.webmaster@gmail.com?subject=Golf%20HCP%20App&body=' + body, '_blank');
 }
 
@@ -5209,6 +5293,9 @@ function goTo(id, btn) {
   }
   if (id === 'informe') {
     try { renderInforme(); } catch(e) { console.error('renderInforme:', e); }
+  }
+  if (id === 'admin-guia') {
+    try { renderAdminGuia(); } catch(e) { console.error('renderAdminGuia:', e); }
   }
   if (id === 'nueva') {
     // Avisar si no hay campos creados
@@ -5539,7 +5626,436 @@ function renderStatsCharts() {
 }
 
 // ═════════════════════════════════════════════════════════════════════
-// INFORME MENSUAL (v1.31.074)
+// ADMIN GUIA DIDACTICA (v1.31.076)
+// - Acceso oculto: 5 taps en la version + state.user.is_admin
+// - CRUD completo de guia_contenidos
+// - Uploader a Supabase Storage bucket guia-archivos
+// - Filtro por idioma + duplicar para traducir
+// ═════════════════════════════════════════════════════════════════════
+
+// ── Estado del panel admin ──
+const adminState = {
+  langFiltro: 'es',
+  editando: null,       // null | id de fila en edicion | 'new' (creacion)
+  formData: {},         // {tipo, titulo, subtitulo, contenido, url, descargable, idioma, orden, activo}
+  uploadedFile: null,   // { url, mime, size } cuando se sube archivo
+  itemsCache: null,     // array de items del idioma activo
+};
+
+// ── Gesto secreto: 5 taps en menos de 3 segundos sobre version ──
+let _adminTaps = [];
+function adminGesto() {
+  const now = Date.now();
+  _adminTaps = _adminTaps.filter(t => now - t < 3000);
+  _adminTaps.push(now);
+  if (_adminTaps.length >= 5) {
+    _adminTaps = [];
+    if (!state.user) {
+      toast('Inicia sesion primero', true);
+      return;
+    }
+    if (!state.user.is_admin) {
+      // Silencio absoluto si no eres admin (no revelamos que existe el panel)
+      return;
+    }
+    toast('🔧 Panel admin desbloqueado');
+    setTimeout(() => goTo('admin-guia', null), 200);
+  }
+}
+
+// ── Cargar items para el panel admin (todos, incluso inactivos) ──
+async function adminLoadItems() {
+  try {
+    const { data, error } = await sb
+      .from('guia_contenidos')
+      .select('*')
+      .eq('idioma', adminState.langFiltro)
+      .order('orden', { ascending: true })
+      .order('id', { ascending: true });
+    if (error) throw error;
+    adminState.itemsCache = data || [];
+    return adminState.itemsCache;
+  } catch(e) {
+    console.error('adminLoadItems:', e);
+    toast('Error al cargar contenidos', true);
+    return [];
+  }
+}
+
+// ── Render principal del panel ──
+async function renderAdminGuia() {
+  // Comprobacion defensiva: si no es admin, fuera
+  if (!state.user?.is_admin) {
+    toast('Sin permisos', true);
+    goTo('ajustes', $('nav-ajustes'));
+    return;
+  }
+  // Reset estado de edicion al entrar
+  adminState.editando = null;
+  adminState.formData = {};
+  adminState.uploadedFile = null;
+  // Sincronizar botones de filtro
+  ['es','pt','fr'].forEach(l => {
+    const b = $('adm-flt-' + l);
+    if (b) b.classList.toggle('active', l === adminState.langFiltro);
+  });
+  await adminLoadItems();
+  adminRenderLista();
+  $('adm-form-wrap').style.display = 'none';
+  $('adm-lista-wrap').style.display = '';
+}
+
+function adminFiltroLang(l) {
+  adminState.langFiltro = l;
+  renderAdminGuia();
+}
+
+// ── Render de la lista de contenidos ──
+function adminRenderLista() {
+  const wrap = $('adm-lista-wrap');
+  if (!wrap) return;
+  const items = adminState.itemsCache || [];
+  if (!items.length) {
+    wrap.innerHTML = '<div class="adm-empty">📭<br><br>Sin contenidos en <b>' + adminState.langFiltro.toUpperCase() + '</b><br><br><span style="font-size:10px">Pulsa "+ Nuevo" para crear el primero</span></div>';
+    return;
+  }
+  const icons = { texto:'📄', video:'🎬', pdf:'📋', imagen:'🖼️' };
+  wrap.innerHTML = items.map(it => {
+    const badges = [
+      '<span class="adm-list-badge lang">' + it.idioma.toUpperCase() + '</span>',
+      it.activo
+        ? '<span class="adm-list-badge act">Activo</span>'
+        : '<span class="adm-list-badge inact">Oculto</span>',
+      '<span style="opacity:.6">orden: ' + (it.orden||0) + '</span>'
+    ].join('');
+    return '<div class="adm-list-item">'
+      +    '<div class="adm-list-icon">' + (icons[it.tipo]||'📄') + '</div>'
+      +    '<div class="adm-list-meta">'
+      +      '<div class="adm-list-title">' + escapeHtml(it.titulo) + '</div>'
+      +      '<div class="adm-list-sub">' + badges + '</div>'
+      +    '</div>'
+      +    '<div class="adm-list-actions">'
+      +      '<button class="adm-icon-btn" onclick="adminEditar(' + it.id + ')" aria-label="Editar" title="Editar">'
+      +        '<svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>'
+      +      '</button>'
+      +      '<button class="adm-icon-btn" onclick="adminToggleActivo(' + it.id + ')" aria-label="Activar/desactivar" title="Activar/Desactivar">'
+      +        (it.activo
+              ? '<svg viewBox="0 0 24 24"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>'
+              : '<svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>')
+      +      '</button>'
+      +      '<button class="adm-icon-btn" onclick="adminDuplicarParaTraducir(' + it.id + ')" aria-label="Duplicar para traducir" title="Duplicar para traducir">'
+      +        '<svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>'
+      +      '</button>'
+      +      '<button class="adm-icon-btn danger" onclick="adminBorrar(' + it.id + ')" aria-label="Borrar" title="Borrar">'
+      +        '<svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2"/></svg>'
+      +      '</button>'
+      +    '</div>'
+      +  '</div>';
+  }).join('');
+}
+
+// ── NUEVO ──
+function adminNuevo() {
+  adminState.editando = 'new';
+  adminState.uploadedFile = null;
+  adminState.formData = {
+    tipo: 'texto',
+    titulo: '',
+    subtitulo: '',
+    contenido: '',
+    url: '',
+    descargable: false,
+    idioma: adminState.langFiltro,
+    orden: (adminState.itemsCache?.length || 0) + 1,
+    activo: true
+  };
+  adminRenderForm();
+}
+
+// ── EDITAR ──
+function adminEditar(id) {
+  const it = adminState.itemsCache.find(x => x.id === id);
+  if (!it) { toast('No encontrado', true); return; }
+  adminState.editando = id;
+  adminState.uploadedFile = null;
+  adminState.formData = {
+    tipo: it.tipo,
+    titulo: it.titulo || '',
+    subtitulo: it.subtitulo || '',
+    contenido: it.contenido || '',
+    url: it.url || '',
+    descargable: !!it.descargable,
+    idioma: it.idioma,
+    orden: it.orden || 0,
+    activo: it.activo
+  };
+  adminRenderForm();
+}
+
+// ── DUPLICAR PARA TRADUCIR ──
+function adminDuplicarParaTraducir(id) {
+  const it = adminState.itemsCache.find(x => x.id === id);
+  if (!it) { toast('No encontrado', true); return; }
+  // Sugerir el siguiente idioma que no sea el actual
+  const otros = ['es','pt','fr'].filter(l => l !== it.idioma);
+  const sugerido = otros[0];
+  if (!confirm('¿Duplicar "' + it.titulo + '" para traducir a ' + sugerido.toUpperCase() + '?\n\nSe creara una copia activa que podras editar.')) return;
+  adminState.editando = 'new';
+  adminState.uploadedFile = null;
+  adminState.formData = {
+    tipo: it.tipo,
+    titulo: '[' + sugerido.toUpperCase() + '] ' + (it.titulo || ''),
+    subtitulo: it.subtitulo || '',
+    contenido: it.contenido || '',
+    url: it.url || '',           // mismo archivo, no se duplica fisicamente
+    descargable: !!it.descargable,
+    idioma: sugerido,
+    orden: it.orden || 0,
+    activo: false                // se crea oculto para que traduzcas tranquilo
+  };
+  adminRenderForm();
+  toast('Editando copia en ' + sugerido.toUpperCase() + ' (oculta hasta activar)');
+}
+
+// ── TOGGLE ACTIVO ──
+async function adminToggleActivo(id) {
+  const it = adminState.itemsCache.find(x => x.id === id);
+  if (!it) return;
+  try {
+    const { error } = await sb.from('guia_contenidos').update({ activo: !it.activo }).eq('id', id);
+    if (error) throw error;
+    _guiaCache.data = null; // invalidar cache publica
+    toast(it.activo ? 'Ocultado' : 'Activado');
+    await adminLoadItems();
+    adminRenderLista();
+  } catch(e) {
+    console.error('adminToggleActivo:', e);
+    toast('Error: ' + (e.message || 'desconocido'), true);
+  }
+}
+
+// ── BORRAR ──
+async function adminBorrar(id) {
+  const it = adminState.itemsCache.find(x => x.id === id);
+  if (!it) return;
+  if (!confirm('⚠️ ¿BORRAR PERMANENTEMENTE?\n\n"' + it.titulo + '" (' + it.idioma.toUpperCase() + ')\n\nEsta accion no se puede deshacer.')) return;
+  try {
+    const { error } = await sb.from('guia_contenidos').delete().eq('id', id);
+    if (error) throw error;
+    _guiaCache.data = null;
+    toast('Borrado');
+    await adminLoadItems();
+    adminRenderLista();
+  } catch(e) {
+    console.error('adminBorrar:', e);
+    toast('Error: ' + (e.message || 'desconocido'), true);
+  }
+}
+
+// ── CANCELAR formulario ──
+function adminCancelar() {
+  adminState.editando = null;
+  adminState.uploadedFile = null;
+  $('adm-form-wrap').style.display = 'none';
+  $('adm-lista-wrap').style.display = '';
+}
+
+// ── RENDER del formulario ──
+function adminRenderForm() {
+  const wrap = $('adm-form-wrap');
+  const lista = $('adm-lista-wrap');
+  if (!wrap || !lista) return;
+  lista.style.display = 'none';
+  wrap.style.display = '';
+  const f = adminState.formData;
+  const esNuevo = adminState.editando === 'new';
+  const tipoOptions = ['texto','imagen','video','pdf'].map(t =>
+    '<option value="' + t + '"' + (f.tipo===t?' selected':'') + '>' + t + '</option>'
+  ).join('');
+  const idiomaOptions = ['es','pt','fr'].map(l =>
+    '<option value="' + l + '"' + (f.idioma===l?' selected':'') + '>' + l.toUpperCase() + '</option>'
+  ).join('');
+
+  // Bloque uploader segun tipo
+  const necesitaArchivo = f.tipo !== 'texto';
+  let uploadBlock = '';
+  if (necesitaArchivo) {
+    const acceptMap = {
+      imagen: 'image/jpeg,image/png,image/webp,image/gif',
+      video:  'video/mp4,video/quicktime,video/webm',
+      pdf:    'application/pdf'
+    };
+    const fileNameLine = f.url
+      ? '<div style="margin-top:6px;font-size:10px;color:var(--green);font-family:DM Mono,monospace;word-break:break-all">✓ ' + escapeHtml(f.url.split('/').pop()) + '</div>'
+      : '';
+    uploadBlock = '<div class="adm-upload-zone' + (f.url?' has-file':'') + '" id="adm-upload-zone">'
+      + '<input type="file" id="adm-file-input" accept="' + acceptMap[f.tipo] + '" style="display:none" onchange="adminOnFileSelect(this)">'
+      + '<button class="adm-btn-cancel" style="background:rgba(201,168,76,.12);border-color:rgba(201,168,76,.4);color:var(--gold2);padding:8px 14px;font-size:10px;letter-spacing:1px" onclick="document.getElementById(\'adm-file-input\').click()">📎 Subir archivo</button>'
+      + fileNameLine
+      + '<div class="adm-upload-info">Tipo: ' + f.tipo + ' · Max 50 MB</div>'
+      + '<div class="adm-upload-progress" id="adm-upload-progress"><div class="adm-upload-progress-bar" id="adm-upload-progress-bar"></div></div>'
+      + '</div>';
+  }
+
+  wrap.innerHTML = '<div class="adm-form">'
+    + '<div style="font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold2);margin-bottom:14px;font-family:DM Mono,monospace">' + (esNuevo ? '+ Nuevo contenido' : '✎ Editar contenido') + '</div>'
+
+    + '<label class="adm-form-label">Tipo</label>'
+    + '<select class="adm-form-select" id="adm-f-tipo" onchange="adminFormChange(\'tipo\', this.value)">' + tipoOptions + '</select>'
+
+    + '<div class="adm-form-row">'
+    +   '<div><label class="adm-form-label">Idioma</label>'
+    +     '<select class="adm-form-select" id="adm-f-idioma" onchange="adminFormChange(\'idioma\', this.value)">' + idiomaOptions + '</select></div>'
+    +   '<div><label class="adm-form-label">Orden</label>'
+    +     '<input type="number" min="0" class="adm-form-input" id="adm-f-orden" value="' + (f.orden||0) + '" onchange="adminFormChange(\'orden\', parseInt(this.value)||0)"></div>'
+    + '</div>'
+
+    + '<label class="adm-form-label">Titulo</label>'
+    + '<input type="text" class="adm-form-input" id="adm-f-titulo" value="' + escapeAttr(f.titulo) + '" maxlength="200" oninput="adminFormChange(\'titulo\', this.value)">'
+
+    + '<label class="adm-form-label">Subtitulo (opcional)</label>'
+    + '<input type="text" class="adm-form-input" id="adm-f-subtitulo" value="' + escapeAttr(f.subtitulo) + '" maxlength="200" placeholder="Ej: Lectura · 5 min" oninput="adminFormChange(\'subtitulo\', this.value)">'
+
+    + uploadBlock
+
+    + '<label class="adm-form-label">Contenido (HTML permitido)</label>'
+    + '<textarea class="adm-form-textarea" id="adm-f-contenido" placeholder="<p>Texto del articulo...</p>" oninput="adminFormChange(\'contenido\', this.value)">' + escapeHtml(f.contenido) + '</textarea>'
+
+    + (f.tipo === 'pdf'
+        ? '<div class="adm-form-check"><input type="checkbox" id="adm-f-descargable"' + (f.descargable?' checked':'') + ' onchange="adminFormChange(\'descargable\', this.checked)"><label for="adm-f-descargable">Mostrar boton de descarga</label></div>'
+        : '')
+
+    + '<div class="adm-form-check"><input type="checkbox" id="adm-f-activo"' + (f.activo?' checked':'') + ' onchange="adminFormChange(\'activo\', this.checked)"><label for="adm-f-activo">Activo (visible para todos)</label></div>'
+
+    + '<div class="adm-form-actions">'
+    +   '<button class="adm-btn-cancel" onclick="adminCancelar()">Cancelar</button>'
+    +   '<button class="adm-btn-save" onclick="adminGuardar()">' + (esNuevo ? 'Crear' : 'Guardar') + '</button>'
+    + '</div>'
+    + '</div>';
+
+  // Scroll arriba para ver el formulario completo
+  setTimeout(() => { window.scrollTo(0, 0); }, 50);
+}
+
+function adminFormChange(field, val) {
+  adminState.formData[field] = val;
+  // Si se cambia el tipo, re-render para mostrar/ocultar uploader
+  if (field === 'tipo') {
+    // Conservar URL solo si tipo nuevo es de archivo
+    if (val === 'texto') adminState.formData.url = '';
+    adminRenderForm();
+  }
+}
+
+// ── SUBIDA DE ARCHIVO ──
+async function adminOnFileSelect(input) {
+  const file = input.files?.[0];
+  if (!file) return;
+  if (file.size > 52428800) {
+    toast('Archivo demasiado grande (max 50 MB)', true);
+    input.value = '';
+    return;
+  }
+  // Mapear tipo a carpeta
+  const folderMap = { imagen: 'imagenes', video: 'videos', pdf: 'pdfs' };
+  const folder = folderMap[adminState.formData.tipo];
+  if (!folder) { toast('Tipo no soporta archivo', true); return; }
+
+  // Sanitizar nombre y prefijar timestamp para evitar colisiones
+  const cleanName = file.name.toLowerCase()
+    .replace(/[^a-z0-9._-]+/g, '-')
+    .replace(/-+/g, '-')
+    .replace(/^-|-$/g, '');
+  const filePath = folder + '/' + Date.now() + '-' + cleanName;
+
+  const progressEl = $('adm-upload-progress');
+  const barEl = $('adm-upload-progress-bar');
+  if (progressEl) progressEl.classList.add('show');
+  if (barEl) barEl.style.width = '10%';
+
+  try {
+    // Simulacion de progreso (Supabase JS no expone progreso real en upload basico)
+    let prog = 10;
+    const progTimer = setInterval(() => {
+      prog = Math.min(prog + 5, 85);
+      if (barEl) barEl.style.width = prog + '%';
+    }, 300);
+
+    const { data, error } = await sb.storage
+      .from('guia-archivos')
+      .upload(filePath, file, {
+        cacheControl: '3600',
+        upsert: false,
+        contentType: file.type
+      });
+    clearInterval(progTimer);
+
+    if (error) throw error;
+
+    // Obtener URL publica
+    const { data: pubData } = sb.storage.from('guia-archivos').getPublicUrl(filePath);
+    if (!pubData?.publicUrl) throw new Error('No se pudo obtener URL publica');
+
+    if (barEl) barEl.style.width = '100%';
+    setTimeout(() => { if (progressEl) progressEl.classList.remove('show'); }, 600);
+
+    // Actualizar formulario
+    adminState.formData.url = pubData.publicUrl;
+    adminState.uploadedFile = { url: pubData.publicUrl, mime: file.type, size: file.size };
+    toast('✓ Archivo subido');
+    adminRenderForm();
+  } catch(e) {
+    console.error('upload error:', e);
+    toast('Error subida: ' + (e.message || 'desconocido'), true);
+    if (progressEl) progressEl.classList.remove('show');
+    if (barEl) barEl.style.width = '0%';
+    input.value = '';
+  }
+}
+
+// ── GUARDAR (insert o update) ──
+async function adminGuardar() {
+  const f = adminState.formData;
+  if (!f.titulo?.trim()) { toast('Falta el titulo', true); return; }
+  if (f.tipo !== 'texto' && !f.url) { toast('Falta el archivo', true); return; }
+
+  const payload = {
+    tipo: f.tipo,
+    titulo: f.titulo.trim(),
+    subtitulo: (f.subtitulo || '').trim() || null,
+    contenido: (f.contenido || '').trim() || null,
+    url: f.url || null,
+    descargable: !!f.descargable,
+    idioma: f.idioma,
+    orden: f.orden || 0,
+    activo: !!f.activo
+  };
+
+  try {
+    if (adminState.editando === 'new') {
+      payload.created_by = state.user.id;
+      const { error } = await sb.from('guia_contenidos').insert(payload);
+      if (error) throw error;
+      toast('✓ Creado');
+    } else {
+      const { error } = await sb.from('guia_contenidos').update(payload).eq('id', adminState.editando);
+      if (error) throw error;
+      toast('✓ Guardado');
+    }
+    _guiaCache.data = null; // invalidar cache publica
+    // Si el contenido era de otro idioma, cambiar el filtro a ese idioma
+    if (f.idioma !== adminState.langFiltro) {
+      adminState.langFiltro = f.idioma;
+    }
+    adminCancelar();
+    await renderAdminGuia();
+  } catch(e) {
+    console.error('adminGuardar:', e);
+    toast('Error: ' + (e.message || 'desconocido'), true);
+  }
+}
+
+
 // - Vista de resumen del mes anterior con 12 metricas
 // - Banner en Inicio el dia 1 de mes nuevo (persiste hasta consultar)
 // - Navegacion entre meses (prev / next) limitada al rango con datos
@@ -6015,34 +6531,74 @@ const __origGoTo_informe = window.goTo;
 
 // Para añadir contenido: editar GUIA_CONTENIDOS
 // Tipos: 'texto' | 'video' | 'pdf' | 'imagen'
-const GUIA_CONTENIDOS = [
-  // Ejemplo descomentado cuando haya contenido:
-  // { id:1, tipo:'texto', titulo:'Cómo funciona el WHS', subtitulo:'Lectura · 5 min',
-  //   contenido:'<p>El World Handicap System...</p>', descargable:false },
-  // { id:2, tipo:'video', titulo:'Tutorial: primera ronda', subtitulo:'Vídeo · 3 min',
-  //   url:'https://www.youtube.com/embed/XXXX', descargable:false },
-  // { id:3, tipo:'pdf', titulo:'Guía WHS 2024', subtitulo:'PDF · Descargable',
-  //   url:'https://example.com/guia.pdf', descargable:true }
-];
+const GUIA_CONTENIDOS = []; // (LEGACY) Ya no se usa — se carga de Supabase tabla guia_contenidos
 
-function loadGuiaDidactica() {
+// Cache simple en memoria (evita refetch al alternar pantallas en la misma sesion)
+let _guiaCache = { data: null, ts: 0 };
+
+async function fetchGuiaContenidos(forceReload) {
+  // Cache 60 segundos para evitar refetch agresivo
+  if (!forceReload && _guiaCache.data && (Date.now() - _guiaCache.ts) < 60000) {
+    return _guiaCache.data;
+  }
+  try {
+    let q = sb.from('guia_contenidos')
+      .select('*')
+      .eq('idioma', lang)
+      .order('orden', { ascending: true })
+      .order('id', { ascending: true });
+    // Para usuarios normales solo se ve activo=true (filtrado por RLS)
+    // Los admins reciben todo automaticamente; el panel admin filtra aparte
+    if (!state.user?.is_admin) {
+      q = q.eq('activo', true);
+    } else {
+      q = q.eq('activo', true); // En la pantalla publica solo activos, incluso para admin
+    }
+    const { data, error } = await q;
+    if (error) throw error;
+    _guiaCache.data = data || [];
+    _guiaCache.ts = Date.now();
+    return _guiaCache.data;
+  } catch(e) {
+    console.error('fetchGuiaContenidos:', e);
+    return [];
+  }
+}
+
+async function loadGuiaDidactica() {
   const el = document.getElementById('guia-content');
   if (!el) return;
   const lbl = (es, pt, fr) => lang === 'fr' ? (fr||es) : lang === 'pt' ? pt : es;
-  if (!GUIA_CONTENIDOS.length) {
-    el.innerHTML = '<div style="padding:40px 0;text-align:center"><div style="font-size:28px;margin-bottom:12px">📚</div><div style="font-size:11px;color:var(--muted);letter-spacing:1px">' + lbl('Contenidos próximamente', 'Conteúdos em breve') + '</div></div>';
+
+  // Loading
+  el.innerHTML = '<div style="padding:30px 0;text-align:center;color:var(--muted);font-size:11px">' + lbl('Cargando…', 'A carregar…', 'Chargement…') + '</div>';
+
+  const items = await fetchGuiaContenidos();
+
+  if (!items.length) {
+    el.innerHTML = '<div style="padding:40px 0;text-align:center"><div style="font-size:28px;margin-bottom:12px">📚</div><div style="font-size:11px;color:var(--muted);letter-spacing:1px">' + lbl('Contenidos próximamente', 'Conteúdos em breve', 'Contenus à venir') + '</div></div>';
     return;
   }
   const icons = { texto:'📄', video:'🎬', pdf:'📋', imagen:'🖼️' };
-  el.innerHTML = GUIA_CONTENIDOS.map(function(a) {
+  el.innerHTML = items.map(function(a) {
     let body = '';
-    if (a.tipo === 'video' && a.url) body += '<div style="position:relative;padding-bottom:56.25%;height:0;border-radius:8px;overflow:hidden;margin-bottom:10px"><iframe src="' + a.url + '" style="position:absolute;inset:0;width:100%;height:100%;border:none" allowfullscreen></iframe></div>';
-    if (a.tipo === 'imagen' && a.url) body += '<img src="' + a.url + '" class="guia-card-media" alt="' + a.titulo + '">';
+    if (a.tipo === 'video' && a.url) {
+      // Video MP4/MOV en Supabase Storage — usar player nativo HTML5
+      body += '<video controls preload="metadata" playsinline style="width:100%;border-radius:8px;margin-bottom:10px;background:#000" src="' + escapeAttr(a.url) + '"></video>';
+    }
+    if (a.tipo === 'imagen' && a.url) body += '<img src="' + escapeAttr(a.url) + '" class="guia-card-media" alt="' + escapeAttr(a.titulo) + '">';
     if (a.contenido) body += '<div>' + a.contenido + '</div>';
-    if (a.descargable && a.url) body += '<div class="guia-card-actions"><a href="' + a.url + '" target="_blank" download class="guia-btn-dl">⬇ ' + lbl('Descargar', 'Descarregar') + '</a></div>';
-    return '<div class="guia-card"><div class="guia-card-header" onclick="toggleGuiaCard(' + a.id + ')"><div class="guia-card-icon">' + (icons[a.tipo]||'📄') + '</div><div class="guia-card-meta"><div class="guia-card-title">' + a.titulo + '</div><div class="guia-card-type">' + (a.subtitulo||a.tipo) + '</div></div><svg id="guia-chev-' + a.id + '" viewBox="0 0 24 24" style="width:14px;height:14px;stroke:var(--muted);fill:none;stroke-width:2;flex-shrink:0;transition:transform .2s"><polyline points="9 18 15 12 9 6"/></svg></div><div class="guia-card-body" id="guia-body-' + a.id + '">' + body + '</div></div>';
+    if (a.descargable && a.url) body += '<div class="guia-card-actions"><a href="' + escapeAttr(a.url) + '" target="_blank" rel="noopener" download class="guia-btn-dl">⬇ ' + lbl('Descargar', 'Descarregar', 'Télécharger') + '</a></div>';
+    return '<div class="guia-card"><div class="guia-card-header" onclick="toggleGuiaCard(' + a.id + ')"><div class="guia-card-icon">' + (icons[a.tipo]||'📄') + '</div><div class="guia-card-meta"><div class="guia-card-title">' + escapeHtml(a.titulo) + '</div><div class="guia-card-type">' + escapeHtml(a.subtitulo||a.tipo) + '</div></div><svg id="guia-chev-' + a.id + '" viewBox="0 0 24 24" style="width:14px;height:14px;stroke:var(--muted);fill:none;stroke-width:2;flex-shrink:0;transition:transform .2s"><polyline points="9 18 15 12 9 6"/></svg></div><div class="guia-card-body" id="guia-body-' + a.id + '">' + body + '</div></div>';
   }).join('');
 }
+
+// Helpers de escape para evitar XSS desde la base de datos
+function escapeHtml(s) {
+  if (s == null) return '';
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+function escapeAttr(s) { return escapeHtml(s); }
 
 function toggleGuiaCard(id) {
   var body = document.getElementById('guia-body-' + id);
