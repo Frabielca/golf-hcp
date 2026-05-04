@@ -812,7 +812,7 @@ nav.nav-hidden{transform:translateY(100%)}
     <button class="auth-btn" id="btn-login" onclick="doLogin()" data-i18n="btn_entrar">Entrar</button>
     <div class="auth-link"><span data-i18n="sin_cuenta">¿Sin cuenta?</span> <span onclick="showAuth('register')" data-i18n="registrate">Regístrate</span></div>
     <div class="auth-link" style="margin-top:16px;font-size:10px;opacity:.6"><a href="privacy.html" target="_blank" style="color:var(--muted);text-decoration:none" data-i18n="politica_priv">Política de Privacidad</a></div>
-    <div style="text-align:center;margin-top:8px;font-size:9px;color:rgba(255,255,255,.2);letter-spacing:1px">v1.31.093</div>
+    <div style="text-align:center;margin-top:8px;font-size:9px;color:rgba(255,255,255,.2);letter-spacing:1px">v1.31.094</div>
   </div>
 </div>
 
@@ -1036,7 +1036,7 @@ nav.nav-hidden{transform:translateY(100%)}
       </div>
     </div>
   </div>
-  <div id="version-tap" style="text-align:center;padding:12px 0 4px;font-size:9px;letter-spacing:2px;color:rgba(255,255,255,.2);font-family:'DM Mono',monospace;cursor:pointer" class="version-label" onclick="adminGesto()">v1.31.093</div>
+  <div id="version-tap" style="text-align:center;padding:12px 0 4px;font-size:9px;letter-spacing:2px;color:rgba(255,255,255,.2);font-family:'DM Mono',monospace;cursor:pointer" class="version-label" onclick="adminGesto()">v1.31.094</div>
   <div class="card" style="margin-bottom:8px;padding:12px 14px;display:none" id="mini-chart-wrap">
     <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px"><span style="font-size:11px;letter-spacing:1.5px;color:var(--gold2)" data-i18n="evolucion_hcp">EVOLUCIÓN HCP</span><span style="font-size:9px;color:var(--muted);letter-spacing:.5px" data-i18n="ultimas_20">20 últimas rondas</span></div>
     <canvas id="mini-hcp-chart" height="100" style="width:100%;display:block"></canvas>
@@ -1420,6 +1420,87 @@ nav.nav-hidden{transform:translateY(100%)}
   <div id="adm-form-wrap" style="display:none"></div>
 </div>
 
+<!-- PAGE: ADMIN USO (v1.31.094) — Panel de tracking, solo ES, accesible solo si is_admin -->
+<div class="page" id="page-admin-uso">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+    <button onclick="goTo('ajustes',$('nav-ajustes'))" style="background:none;border:none;color:var(--muted);font-family:'DM Mono',monospace;font-size:14px;cursor:pointer;padding:0;display:flex;align-items:center;gap:5px;height:40px">
+      <svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2"><polyline points="15 18 9 12 15 6"/></svg>
+      <span>VOLVER</span>
+    </button>
+  </div>
+  <div style="font-size:20px;letter-spacing:2px;text-transform:uppercase;color:var(--gold2);padding:4px 2px 4px;font-family:'DM Mono',monospace;text-align:center">📊 Panel de Uso</div>
+  <div style="text-align:center;font-size:9px;color:var(--muted);letter-spacing:1px;margin-bottom:20px;font-family:'DM Mono',monospace">Estadísticas internas de actividad</div>
+
+  <!-- Loading indicator -->
+  <div id="uso-loading" style="text-align:center;padding:30px;color:var(--muted);font-family:'DM Mono',monospace;font-size:11px">Cargando datos...</div>
+
+  <!-- Contenido (relleno por JS) -->
+  <div id="uso-content" style="display:none">
+
+    <!-- SECCIÓN 1: Tarjetas resumen -->
+    <div style="font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);padding:0 4px 6px;font-family:'DM Mono',monospace">USUARIOS ACTIVOS</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:18px">
+      <div style="background:var(--card-bg);border:1px solid var(--border);border-radius:10px;padding:12px;text-align:center">
+        <div style="font-size:9px;letter-spacing:1px;color:var(--muted);font-family:'DM Mono',monospace;margin-bottom:4px">HOY</div>
+        <div id="uso-act-hoy" style="font-size:24px;color:var(--gold2);font-family:'DM Mono',monospace;font-weight:600">—</div>
+      </div>
+      <div style="background:var(--card-bg);border:1px solid var(--border);border-radius:10px;padding:12px;text-align:center">
+        <div style="font-size:9px;letter-spacing:1px;color:var(--muted);font-family:'DM Mono',monospace;margin-bottom:4px">SEMANA</div>
+        <div id="uso-act-semana" style="font-size:24px;color:var(--gold2);font-family:'DM Mono',monospace;font-weight:600">—</div>
+      </div>
+      <div style="background:var(--card-bg);border:1px solid var(--border);border-radius:10px;padding:12px;text-align:center">
+        <div style="font-size:9px;letter-spacing:1px;color:var(--muted);font-family:'DM Mono',monospace;margin-bottom:4px">MES</div>
+        <div id="uso-act-mes" style="font-size:24px;color:var(--gold2);font-family:'DM Mono',monospace;font-weight:600">—</div>
+      </div>
+      <div style="background:var(--card-bg);border:1px solid var(--border);border-radius:10px;padding:12px;text-align:center">
+        <div style="font-size:9px;letter-spacing:1px;color:var(--muted);font-family:'DM Mono',monospace;margin-bottom:4px">TOTAL USERS</div>
+        <div id="uso-total-users" style="font-size:24px;color:var(--gold2);font-family:'DM Mono',monospace;font-weight:600">—</div>
+      </div>
+    </div>
+
+    <!-- SECCIÓN 2: Distribución dispositivos -->
+    <div style="font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);padding:0 4px 6px;font-family:'DM Mono',monospace">DISPOSITIVOS</div>
+    <div id="uso-dispositivos" style="background:var(--card-bg);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:18px;font-family:'DM Mono',monospace;font-size:11px;color:var(--cream)"></div>
+
+    <!-- SECCIÓN 3: Métricas retención -->
+    <div style="font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);padding:0 4px 6px;font-family:'DM Mono',monospace">RETENCIÓN</div>
+    <div style="background:var(--card-bg);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:18px">
+      <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-family:'DM Mono',monospace;font-size:11px">
+        <span style="color:var(--muted)">USUARIOS QUE VUELVEN</span>
+        <span id="uso-ret-vuelven" style="color:var(--cream)">—</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-family:'DM Mono',monospace;font-size:11px">
+        <span style="color:var(--muted)">SESIONES / USUARIO MES</span>
+        <span id="uso-ret-sesiones-mes" style="color:var(--cream)">—</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-family:'DM Mono',monospace;font-size:11px">
+        <span style="color:var(--muted)">TIEMPO MEDIO SESIÓN</span>
+        <span id="uso-ret-tiempo" style="color:var(--cream)">—</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;padding:6px 0;font-family:'DM Mono',monospace;font-size:11px">
+        <span style="color:var(--muted)">ABANDONO 30 DÍAS</span>
+        <span id="uso-ret-abandono" style="color:var(--cream)">—</span>
+      </div>
+    </div>
+
+    <!-- SECCIÓN 4: Actividad reciente -->
+    <div style="font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);padding:0 4px 6px;font-family:'DM Mono',monospace">ACTIVIDAD RECIENTE (50 ÚLT.)</div>
+    <div id="uso-actividad" style="background:var(--card-bg);border:1px solid var(--border);border-radius:10px;padding:8px;margin-bottom:18px;max-height:300px;overflow-y:auto;font-family:'DM Mono',monospace;font-size:10px"></div>
+
+    <!-- SECCIÓN 5: Tendencias -->
+    <div style="font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);padding:0 4px 6px;font-family:'DM Mono',monospace">TENDENCIAS · 30 DÍAS</div>
+    <div style="background:var(--card-bg);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:18px">
+      <div style="font-size:10px;letter-spacing:1px;color:var(--muted);font-family:'DM Mono',monospace;margin-bottom:6px">EVENTOS POR DÍA</div>
+      <canvas id="uso-chart-dias" style="width:100%;height:80px;display:block"></canvas>
+      <div style="font-size:10px;letter-spacing:1px;color:var(--muted);font-family:'DM Mono',monospace;margin:14px 0 6px">DÍA DE LA SEMANA</div>
+      <div id="uso-chart-semana" style="font-family:'DM Mono',monospace;font-size:10px;color:var(--cream)"></div>
+      <div style="font-size:10px;letter-spacing:1px;color:var(--muted);font-family:'DM Mono',monospace;margin:14px 0 6px">HORA DEL DÍA</div>
+      <div id="uso-chart-hora" style="font-family:'DM Mono',monospace;font-size:10px;color:var(--cream)"></div>
+    </div>
+
+  </div>
+</div>
+
 <!-- PAGE: AJUSTES -->
 <div class="page" id="page-ajustes">
 
@@ -1479,6 +1560,24 @@ nav.nav-hidden{transform:translateY(100%)}
       <div class="ajuste-text"><div style="color:var(--red)" data-i18n="menu_eliminar_cuenta">Eliminar cuenta</div><div class="ajuste-sub" data-i18n="sub_eliminar_cuenta">Borrar cuenta y todos tus datos</div></div>
       <svg class="ajuste-chevron" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
     </button>
+  </div>
+
+  <!-- SECTION: Admin (v1.31.094) — visible solo si state.user.is_admin -->
+  <div id="admin-section-wrap" style="display:none">
+    <div style="font-size:13px;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold2);padding:0 4px 6px">🔧 Administración</div>
+    <div style="background:var(--card-bg);border-radius:14px;overflow:hidden;margin-bottom:18px;border:1px solid var(--gold2)">
+      <button class="ajuste-btn" onclick="goTo('admin-guia',null)">
+        <div class="ajuste-icon" style="color:var(--gold2)"><svg viewBox="0 0 24 24" style="stroke:currentColor;fill:none;stroke-width:2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></div>
+        <div class="ajuste-text"><div style="color:var(--gold2)">Aula Didáctica</div><div class="ajuste-sub">Gestionar contenidos del Aula</div></div>
+        <svg class="ajuste-chevron" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+      </button>
+      <div class="ajuste-sep"></div>
+      <button class="ajuste-btn" onclick="goTo('admin-uso',null)">
+        <div class="ajuste-icon" style="color:var(--gold2)"><svg viewBox="0 0 24 24" style="stroke:currentColor;fill:none;stroke-width:2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></div>
+        <div class="ajuste-text"><div style="color:var(--gold2)">Panel de Uso</div><div class="ajuste-sub">Estadísticas internas de actividad</div></div>
+        <svg class="ajuste-chevron" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+      </button>
+    </div>
   </div>
 
   <!-- SECTION: Estilo App -->
@@ -2477,6 +2576,9 @@ function doLogout() {
   logSession('salida');
   stopHeartbeat();
   state.user = null; state.rounds = []; state.campos = [];
+  // v1.31.094: ocultar sección admin al salir
+  const adminWrap = $('admin-section-wrap');
+  if (adminWrap) adminWrap.style.display = 'none';
   renderAll(); renderCampos(); renderSelectorCampos();
   $('player-bar').classList.add('hidden');
   $('main-nav').style.display = 'none';
@@ -2528,6 +2630,10 @@ async function onLogin(user) {
     }
     state.user.is_admin = !!data?.is_admin;
   } catch(e) { state.user.is_admin = false; }
+
+  // v1.31.094: mostrar sección admin en Ajustes solo si es admin
+  const adminWrap = $('admin-section-wrap');
+  if (adminWrap) adminWrap.style.display = state.user.is_admin ? 'block' : 'none';
 
   try {
     await loadData();
@@ -5323,8 +5429,8 @@ function contactarGolfHCP() {
   const ios = ua.match(/iPhone OS ([\d_]+)/);
   const android = ua.match(/Android ([\d.]+)/);
   const sys = ios ? 'iOS ' + ios[1].replace(/_/g,'.') : android ? 'Android ' + android[1] : 'Web';
-  const appVer = document.title.includes('HCP') ? 'v1.31.093' : 'Golf HCP';
-  const body = encodeURIComponent('Hola,\n\n[Escribe tu consulta aqui]\n\n\n-- \nGolf HCP v1.31.093\n' + sys);
+  const appVer = document.title.includes('HCP') ? 'v1.31.094' : 'Golf HCP';
+  const body = encodeURIComponent('Hola,\n\n[Escribe tu consulta aqui]\n\n\n-- \nGolf HCP v1.31.094\n' + sys);
   window.open('mailto:golf.hcp.webmaster@gmail.com?subject=Golf%20HCP%20App&body=' + body, '_blank');
 }
 
@@ -5596,6 +5702,10 @@ function goTo(id, btn) {
   }
   if (id === 'admin-guia') {
     try { renderAdminGuia(); } catch(e) { console.error('renderAdminGuia:', e); }
+  }
+  // v1.31.094: panel de uso admin
+  if (id === 'admin-uso') {
+    try { renderAdminUso(); } catch(e) { console.error('renderAdminUso:', e); }
   }
   if (id === 'nueva') {
     // Avisar si no hay campos creados
@@ -6446,6 +6556,289 @@ async function adminGuardar() {
   }
 }
 
+// ═════════════════════════════════════════════════════════════════════
+// PANEL DE USO (v1.31.094) — Estadísticas internas de tracking
+// Solo accesible si state.user.is_admin === true
+// Lee de la tabla 'sesiones' (columna 'timestamp' guarda la hora del evento)
+// Solo idioma ES (interno admin, no traducido)
+// ═════════════════════════════════════════════════════════════════════
+async function renderAdminUso() {
+  if (!state.user?.is_admin) {
+    toast('Sin permisos', true);
+    goTo('ajustes', $('nav-ajustes'));
+    return;
+  }
+  // Mostrar loading, ocultar contenido
+  $('uso-loading').style.display = 'block';
+  $('uso-content').style.display = 'none';
+  try {
+    // Cargar todos los datos en paralelo
+    const [sesiones, usuarios] = await Promise.all([
+      sb.from('sesiones').select('user_id,tipo,dispositivo,timestamp').order('timestamp', { ascending: false }).limit(5000),
+      sb.from('profiles').select('id,nombre').limit(1000)
+    ]);
+    if (sesiones.error) throw sesiones.error;
+    if (usuarios.error) throw usuarios.error;
+    const allEvents = sesiones.data || [];
+    const allUsers  = usuarios.data || [];
+    // Construir mapa user_id -> nombre (para mostrar en actividad reciente)
+    const userMap = {};
+    allUsers.forEach(u => { userMap[u.id] = u.nombre || '(sin nombre)'; });
+
+    // Calcular y renderizar todas las secciones
+    renderUsoResumen(allEvents, allUsers);
+    renderUsoDispositivos(allEvents);
+    renderUsoRetencion(allEvents, allUsers);
+    renderUsoActividad(allEvents, userMap);
+    renderUsoTendencias(allEvents);
+
+    $('uso-loading').style.display = 'none';
+    $('uso-content').style.display = 'block';
+  } catch(e) {
+    console.error('renderAdminUso:', e);
+    $('uso-loading').textContent = 'Error al cargar datos: ' + (e.message || 'desconocido');
+  }
+}
+
+// Sección 1: tarjetas resumen
+function renderUsoResumen(events, users) {
+  const now = Date.now();
+  const ms24h = 24 * 60 * 60 * 1000;
+  const ms7d  = 7  * ms24h;
+  const ms30d = 30 * ms24h;
+  const activeIn = (windowMs) => {
+    const cutoff = now - windowMs;
+    const userSet = new Set();
+    events.forEach(e => {
+      const ts = new Date(e.timestamp).getTime();
+      if (ts >= cutoff) userSet.add(e.user_id);
+    });
+    return userSet.size;
+  };
+  $('uso-act-hoy').textContent     = activeIn(ms24h);
+  $('uso-act-semana').textContent  = activeIn(ms7d);
+  $('uso-act-mes').textContent     = activeIn(ms30d);
+  $('uso-total-users').textContent = users.length;
+}
+
+// Sección 2: distribución dispositivos (basado en eventos únicos por usuario+dispositivo)
+function renderUsoDispositivos(events) {
+  // Cuento usuarios distintos por dispositivo (último dispositivo usado por cada user)
+  const userLastDevice = {};
+  events.forEach(e => {
+    if (!userLastDevice[e.user_id]) {
+      userLastDevice[e.user_id] = e.dispositivo || 'desconocido';
+    }
+  });
+  const counts = {};
+  Object.values(userLastDevice).forEach(d => {
+    counts[d] = (counts[d] || 0) + 1;
+  });
+  const total = Object.values(counts).reduce((a,b) => a+b, 0) || 1;
+  const sorted = Object.entries(counts).sort((a,b) => b[1] - a[1]);
+  const colors = { iOS:'#7bc67a', Android:'#3b82f6', macOS:'#e8c96a', Windows:'#a78bfa', Linux:'#f97316' };
+  let html = '';
+  sorted.forEach(([device, count]) => {
+    const pct = (count / total * 100);
+    const color = colors[device] || '#888';
+    const barW = Math.max(pct, 2);
+    html += `<div style="margin-bottom:8px">
+      <div style="display:flex;justify-content:space-between;font-size:10px;margin-bottom:2px">
+        <span style="color:var(--cream)">${device}</span>
+        <span style="color:var(--muted)">${count} (${pct.toFixed(0)}%)</span>
+      </div>
+      <div style="background:var(--input-bg);border-radius:3px;height:6px;overflow:hidden">
+        <div style="background:${color};width:${barW}%;height:100%"></div>
+      </div>
+    </div>`;
+  });
+  $('uso-dispositivos').innerHTML = html || '<div style="color:var(--muted);text-align:center">Sin datos</div>';
+}
+
+// Sección 3: métricas de retención
+function renderUsoRetencion(events, users) {
+  const now = Date.now();
+  const ms30d = 30 * 24 * 60 * 60 * 1000;
+  // Usuarios que vuelven: ≥2 logins distintos
+  const loginsByUser = {};
+  events.forEach(e => {
+    if (e.tipo === 'login') {
+      loginsByUser[e.user_id] = (loginsByUser[e.user_id] || 0) + 1;
+    }
+  });
+  const usersWithLogins = Object.keys(loginsByUser).length;
+  const usersReturning = Object.values(loginsByUser).filter(n => n >= 2).length;
+  const pctReturn = usersWithLogins > 0 ? (usersReturning / usersWithLogins * 100).toFixed(0) : 0;
+  $('uso-ret-vuelven').textContent = usersReturning + ' de ' + usersWithLogins + ' (' + pctReturn + '%)';
+
+  // Sesiones por usuario / mes (eventos visita+login del último mes / usuarios activos)
+  const cutoff30 = now - ms30d;
+  const eventsLast30 = events.filter(e => new Date(e.timestamp).getTime() >= cutoff30 && (e.tipo === 'login' || e.tipo === 'visita'));
+  const usersLast30 = new Set(eventsLast30.map(e => e.user_id));
+  const sesionesPorUser = usersLast30.size > 0 ? (eventsLast30.length / usersLast30.size).toFixed(1) : '—';
+  $('uso-ret-sesiones-mes').textContent = sesionesPorUser;
+
+  // Tiempo medio sesión: heartbeats consecutivos por usuario, ~5 min cada uno
+  // Agrupo heartbeats en sesiones (gap > 10 min = nueva sesión)
+  const heartbeatsByUser = {};
+  events.forEach(e => {
+    if (e.tipo === 'heartbeat' || e.tipo === 'visita' || e.tipo === 'login') {
+      if (!heartbeatsByUser[e.user_id]) heartbeatsByUser[e.user_id] = [];
+      heartbeatsByUser[e.user_id].push(new Date(e.timestamp).getTime());
+    }
+  });
+  let totalSessionMs = 0;
+  let sessionCount = 0;
+  Object.values(heartbeatsByUser).forEach(timestamps => {
+    timestamps.sort((a,b) => a-b);
+    if (timestamps.length === 0) return;
+    let sessStart = timestamps[0];
+    let sessEnd = timestamps[0];
+    for (let i = 1; i < timestamps.length; i++) {
+      if (timestamps[i] - sessEnd > 10 * 60 * 1000) {
+        // Nueva sesión
+        totalSessionMs += (sessEnd - sessStart);
+        sessionCount++;
+        sessStart = timestamps[i];
+      }
+      sessEnd = timestamps[i];
+    }
+    totalSessionMs += (sessEnd - sessStart);
+    sessionCount++;
+  });
+  const avgMin = sessionCount > 0 ? Math.round(totalSessionMs / sessionCount / 60000) : 0;
+  $('uso-ret-tiempo').textContent = avgMin + ' min';
+
+  // Abandono 30 días: usuarios con >0 eventos pero NO en últimos 30 días
+  const allActiveUsers = new Set(events.map(e => e.user_id));
+  const recentUsers = new Set(events.filter(e => new Date(e.timestamp).getTime() >= cutoff30).map(e => e.user_id));
+  const abandono = allActiveUsers.size - recentUsers.size;
+  const pctAband = allActiveUsers.size > 0 ? (abandono / allActiveUsers.size * 100).toFixed(0) : 0;
+  $('uso-ret-abandono').textContent = abandono + ' (' + pctAband + '%)';
+}
+
+// Sección 4: actividad reciente (últimos 50 eventos)
+function renderUsoActividad(events, userMap) {
+  const recent = events.slice(0, 50);
+  const tipoIcon = { login:'🔵', visita:'🟢', salida:'🔴', heartbeat:'💗' };
+  const tipoColor = { login:'#3b82f6', visita:'#7bc67a', salida:'#e05555', heartbeat:'#a78bfa' };
+  let html = '';
+  recent.forEach(e => {
+    const d = new Date(e.timestamp);
+    const fecha = String(d.getDate()).padStart(2,'0') + '/' + String(d.getMonth()+1).padStart(2,'0');
+    const hora = String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0');
+    const nombre = userMap[e.user_id] || e.user_id.substring(0, 8);
+    const tipo = e.tipo || '?';
+    const dev = e.dispositivo || '?';
+    html += `<div style="display:grid;grid-template-columns:48px 1fr 60px 60px;gap:6px;padding:4px 6px;border-bottom:1px solid var(--border);align-items:center">
+      <span style="color:var(--muted);font-size:9px">${fecha} ${hora}</span>
+      <span style="color:var(--cream);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${nombre}</span>
+      <span style="color:${tipoColor[tipo]||'#888'};font-size:9px">${tipoIcon[tipo]||''} ${tipo}</span>
+      <span style="color:var(--muted);font-size:9px;text-align:right">${dev}</span>
+    </div>`;
+  });
+  $('uso-actividad').innerHTML = html || '<div style="color:var(--muted);text-align:center;padding:14px">Sin actividad</div>';
+}
+
+// Sección 5: tendencias (eventos por día / día semana / hora)
+function renderUsoTendencias(events) {
+  const now = Date.now();
+  const ms30d = 30 * 24 * 60 * 60 * 1000;
+  const cutoff = now - ms30d;
+  const recent = events.filter(e => new Date(e.timestamp).getTime() >= cutoff);
+
+  // 5a. Eventos por día (gráfica canvas)
+  const eventsByDay = {};
+  for (let i = 29; i >= 0; i--) {
+    const d = new Date(now - i * 24 * 60 * 60 * 1000);
+    const k = d.toISOString().slice(0,10);
+    eventsByDay[k] = 0;
+  }
+  recent.forEach(e => {
+    const k = new Date(e.timestamp).toISOString().slice(0,10);
+    if (k in eventsByDay) eventsByDay[k]++;
+  });
+  drawUsoTrendChart(Object.values(eventsByDay));
+
+  // 5b. Día de la semana (lunes-domingo)
+  const dayNames = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+  const byWeekday = [0,0,0,0,0,0,0];
+  recent.forEach(e => {
+    const d = new Date(e.timestamp);
+    byWeekday[d.getDay()]++;
+  });
+  const maxWd = Math.max(...byWeekday, 1);
+  // Reordenar Lun-Dom para visualización
+  const order = [1,2,3,4,5,6,0];
+  let htmlWd = '';
+  order.forEach(idx => {
+    const v = byWeekday[idx];
+    const w = (v / maxWd * 100);
+    htmlWd += `<div style="display:flex;align-items:center;gap:8px;margin-bottom:3px">
+      <span style="width:30px;color:var(--muted);font-size:9px">${dayNames[idx]}</span>
+      <div style="flex:1;background:var(--input-bg);border-radius:2px;height:5px;overflow:hidden">
+        <div style="background:#7bc67a;width:${Math.max(w,1)}%;height:100%"></div>
+      </div>
+      <span style="width:24px;text-align:right;font-size:9px">${v}</span>
+    </div>`;
+  });
+  $('uso-chart-semana').innerHTML = htmlWd;
+
+  // 5c. Hora del día (0-23)
+  const byHour = new Array(24).fill(0);
+  recent.forEach(e => {
+    byHour[new Date(e.timestamp).getHours()]++;
+  });
+  const maxH = Math.max(...byHour, 1);
+  let htmlH = '<div style="display:flex;align-items:flex-end;gap:1px;height:50px;border-bottom:1px solid var(--border);padding-bottom:2px">';
+  for (let h = 0; h < 24; h++) {
+    const w = (byHour[h] / maxH * 100);
+    htmlH += `<div title="${h}h: ${byHour[h]}" style="flex:1;background:#3b82f6;height:${Math.max(w,2)}%;min-height:2px"></div>`;
+  }
+  htmlH += '</div>';
+  htmlH += '<div style="display:flex;justify-content:space-between;color:var(--muted);font-size:8px;margin-top:3px">';
+  htmlH += '<span>0h</span><span>6h</span><span>12h</span><span>18h</span><span>23h</span>';
+  htmlH += '</div>';
+  $('uso-chart-hora').innerHTML = htmlH;
+}
+
+// Helper: dibuja gráfica de líneas en canvas (eventos/día últimos 30 días)
+function drawUsoTrendChart(values) {
+  const c = $('uso-chart-dias');
+  if (!c) return;
+  const dpr = window.devicePixelRatio || 1;
+  const cssW = c.clientWidth || 300;
+  const cssH = 80;
+  c.width = cssW * dpr;
+  c.height = cssH * dpr;
+  c.style.height = cssH + 'px';
+  const ctx = c.getContext('2d');
+  ctx.scale(dpr, dpr);
+  ctx.clearRect(0, 0, cssW, cssH);
+  if (values.length === 0) return;
+  const maxV = Math.max(...values, 1);
+  const padX = 4, padY = 6;
+  const w = cssW - 2*padX;
+  const h = cssH - 2*padY;
+  const stepX = w / (values.length - 1 || 1);
+  // Línea
+  ctx.beginPath();
+  values.forEach((v, i) => {
+    const x = padX + i * stepX;
+    const y = padY + h - (v / maxV) * h;
+    if (i === 0) ctx.moveTo(x, y);
+    else         ctx.lineTo(x, y);
+  });
+  ctx.strokeStyle = '#7bc67a';
+  ctx.lineWidth = 1.5;
+  ctx.stroke();
+  // Área debajo
+  ctx.lineTo(padX + (values.length-1) * stepX, padY + h);
+  ctx.lineTo(padX, padY + h);
+  ctx.closePath();
+  ctx.fillStyle = 'rgba(123,198,122,.15)';
+  ctx.fill();
+}
 
 // - Vista de resumen del mes anterior con 12 metricas
 // - Banner en Inicio el dia 1 de mes nuevo (persiste hasta consultar)
