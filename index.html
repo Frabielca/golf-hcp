@@ -821,7 +821,7 @@ nav.nav-hidden{transform:translateY(100%)}
     <button class="auth-btn" id="btn-login" onclick="doLogin()" data-i18n="btn_entrar">Entrar</button>
     <div class="auth-link"><span data-i18n="sin_cuenta">¿Sin cuenta?</span> <span onclick="showAuth('register')" data-i18n="registrate">Regístrate</span></div>
     <div class="auth-link" style="margin-top:16px;font-size:10px;opacity:.6"><a href="privacy.html" target="_blank" style="color:var(--muted);text-decoration:none" data-i18n="politica_priv">Política de Privacidad</a></div>
-    <div style="text-align:center;margin-top:8px;font-size:9px;color:rgba(255,255,255,.2);letter-spacing:1px">v1.31.098</div>
+    <div style="text-align:center;margin-top:8px;font-size:9px;color:rgba(255,255,255,.2);letter-spacing:1px">v1.31.099</div>
   </div>
 </div>
 
@@ -1045,7 +1045,7 @@ nav.nav-hidden{transform:translateY(100%)}
       </div>
     </div>
   </div>
-  <div id="version-tap" style="text-align:center;padding:12px 0 4px;font-size:9px;letter-spacing:2px;color:rgba(255,255,255,.2);font-family:'DM Mono',monospace;cursor:pointer" class="version-label" onclick="adminGesto()">v1.31.098</div>
+  <div id="version-tap" style="text-align:center;padding:12px 0 4px;font-size:9px;letter-spacing:2px;color:rgba(255,255,255,.2);font-family:'DM Mono',monospace;cursor:pointer" class="version-label" onclick="adminGesto()">v1.31.099</div>
   <div class="card" style="margin-bottom:8px;padding:12px 14px;display:none" id="mini-chart-wrap">
     <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px"><span style="font-size:11px;letter-spacing:1.5px;color:var(--gold2)" data-i18n="evolucion_hcp">EVOLUCIÓN HCP</span><span style="font-size:9px;color:var(--muted);letter-spacing:.5px" data-i18n="ultimas_20">20 últimas rondas</span></div>
     <canvas id="mini-hcp-chart" height="100" style="width:100%;display:block"></canvas>
@@ -1506,6 +1506,124 @@ nav.nav-hidden{transform:translateY(100%)}
       <div id="uso-chart-semana" style="font-family:'DM Mono',monospace;font-size:10px;color:var(--cream)"></div>
       <div style="font-size:10px;letter-spacing:1px;color:var(--muted);font-family:'DM Mono',monospace;margin:14px 0 6px">HORA DEL DÍA</div>
       <div id="uso-chart-hora" style="font-family:'DM Mono',monospace;font-size:10px;color:var(--cream)"></div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════ -->
+    <!-- v1.31.099 — 10 SECCIONES NUEVAS                             -->
+    <!-- Fase 1: engagement (5) + Fase 2: golf-específico (5)        -->
+    <!-- ═══════════════════════════════════════════════════════════ -->
+
+    <!-- SECCIÓN 6: Engagement DAU/WAU/MAU + Stickiness -->
+    <div style="font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);padding:0 4px 6px;font-family:'DM Mono',monospace">⚡ ENGAGEMENT</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:6px;margin-bottom:18px">
+      <div style="background:var(--card-bg);border:1px solid var(--border);border-radius:10px;padding:10px 6px;text-align:center">
+        <div style="font-size:9px;letter-spacing:1px;color:var(--muted);font-family:'DM Mono',monospace;margin-bottom:4px">DAU</div>
+        <div id="uso-eng-dau" style="font-size:20px;color:var(--gold2);font-family:'DM Mono',monospace;font-weight:600">—</div>
+      </div>
+      <div style="background:var(--card-bg);border:1px solid var(--border);border-radius:10px;padding:10px 6px;text-align:center">
+        <div style="font-size:9px;letter-spacing:1px;color:var(--muted);font-family:'DM Mono',monospace;margin-bottom:4px">WAU</div>
+        <div id="uso-eng-wau" style="font-size:20px;color:var(--gold2);font-family:'DM Mono',monospace;font-weight:600">—</div>
+      </div>
+      <div style="background:var(--card-bg);border:1px solid var(--border);border-radius:10px;padding:10px 6px;text-align:center">
+        <div style="font-size:9px;letter-spacing:1px;color:var(--muted);font-family:'DM Mono',monospace;margin-bottom:4px">MAU</div>
+        <div id="uso-eng-mau" style="font-size:20px;color:var(--gold2);font-family:'DM Mono',monospace;font-weight:600">—</div>
+      </div>
+      <div style="background:var(--card-bg);border:1px solid var(--border);border-radius:10px;padding:10px 6px;text-align:center">
+        <div style="font-size:9px;letter-spacing:1px;color:var(--muted);font-family:'DM Mono',monospace;margin-bottom:4px">STICKY</div>
+        <div id="uso-eng-sticky" style="font-size:20px;color:var(--gold2);font-family:'DM Mono',monospace;font-weight:600">—</div>
+      </div>
+    </div>
+
+    <!-- SECCIÓN 7: Heatmap horario × día semana -->
+    <div style="font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);padding:0 4px 6px;font-family:'DM Mono',monospace">🕐 PATRÓN · HORA × DÍA</div>
+    <div style="background:var(--card-bg);border:1px solid var(--border);border-radius:10px;padding:12px 10px;margin-bottom:18px">
+      <div id="uso-heatmap"></div>
+      <div style="text-align:center;font-size:8px;color:var(--muted);margin-top:6px;font-family:'DM Mono',monospace">Más oscuro = más actividad · L-D · 0-23h</div>
+    </div>
+
+    <!-- SECCIÓN 8: Funnel registro → rondas -->
+    <div style="font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);padding:0 4px 6px;font-family:'DM Mono',monospace">🎯 FUNNEL REGISTRO → RONDAS</div>
+    <div id="uso-funnel" style="background:var(--card-bg);border:1px solid var(--border);border-radius:10px;padding:10px 14px;margin-bottom:18px"></div>
+
+    <!-- SECCIÓN 9: Cadencia de juego -->
+    <div style="font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);padding:0 4px 6px;font-family:'DM Mono',monospace">⏱️ CADENCIA DE JUEGO</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:18px">
+      <div style="background:var(--card-bg);border:1px solid var(--border);border-radius:10px;padding:10px 6px;text-align:center">
+        <div id="uso-cadencia-dias" style="font-size:20px;color:var(--gold2);font-family:'DM Mono',monospace;font-weight:600">—</div>
+        <div style="font-size:8px;letter-spacing:0.5px;color:var(--muted);font-family:'DM Mono',monospace;margin-top:4px">DÍAS ENTRE RONDAS</div>
+      </div>
+      <div style="background:var(--card-bg);border:1px solid var(--border);border-radius:10px;padding:10px 6px;text-align:center">
+        <div id="uso-cadencia-mes" style="font-size:20px;color:var(--gold2);font-family:'DM Mono',monospace;font-weight:600">—</div>
+        <div style="font-size:8px;letter-spacing:0.5px;color:var(--muted);font-family:'DM Mono',monospace;margin-top:4px">RONDAS / MES</div>
+      </div>
+      <div style="background:var(--card-bg);border:1px solid var(--border);border-radius:10px;padding:10px 6px;text-align:center">
+        <div id="uso-cadencia-ultima" style="font-size:20px;color:var(--gold2);font-family:'DM Mono',monospace;font-weight:600">—</div>
+        <div style="font-size:8px;letter-spacing:0.5px;color:var(--muted);font-family:'DM Mono',monospace;margin-top:4px">DÍAS DESDE ÚLTIMA</div>
+      </div>
+    </div>
+
+    <!-- SECCIÓN 10: Top usuarios + Embajadores -->
+    <div style="font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);padding:0 4px 6px;font-family:'DM Mono',monospace">🏆 TOP USUARIOS</div>
+    <div id="uso-top-users" style="background:var(--card-bg);border:1px solid var(--border);border-radius:10px;padding:6px 14px;margin-bottom:6px"></div>
+    <div style="text-align:center;font-size:8px;color:var(--muted);margin-bottom:18px;font-family:'DM Mono',monospace">⭐ Embajador = 5+ rondas + activo última semana</div>
+
+    <!-- SECCIÓN 11: Distribución handicaps -->
+    <div style="font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);padding:0 4px 6px;font-family:'DM Mono',monospace">⛳ DISTRIBUCIÓN HANDICAPS</div>
+    <div style="background:var(--card-bg);border:1px solid var(--border);border-radius:10px;padding:18px 12px 12px;margin-bottom:6px">
+      <div id="uso-handicaps-histo"></div>
+    </div>
+    <div style="text-align:center;font-size:9px;color:var(--muted);margin-bottom:18px;font-family:'DM Mono',monospace">HCP medio de la base: <span id="uso-handicaps-medio" style="color:var(--gold2);font-weight:600">—</span></div>
+
+    <!-- SECCIÓN 12: Niveles de jugador -->
+    <div style="font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);padding:0 4px 6px;font-family:'DM Mono',monospace">🎓 NIVELES DE JUGADOR</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:18px">
+      <div style="background:var(--card-bg);border:1px solid var(--border);border-radius:10px;padding:10px 6px;text-align:center">
+        <div style="font-size:8px;letter-spacing:0.5px;color:var(--muted);font-family:'DM Mono',monospace;text-transform:uppercase">INICIADO</div>
+        <div id="uso-nivel-iniciado-n" style="font-size:22px;color:var(--gold2);font-family:'DM Mono',monospace;font-weight:600;margin-top:4px">—</div>
+        <div style="font-size:9px;color:var(--muted);font-family:'DM Mono',monospace;margin-top:2px"><span id="uso-nivel-iniciado-p">—</span> · &gt;30</div>
+      </div>
+      <div style="background:var(--card-bg);border:1px solid var(--border);border-radius:10px;padding:10px 6px;text-align:center">
+        <div style="font-size:8px;letter-spacing:0.5px;color:var(--muted);font-family:'DM Mono',monospace;text-transform:uppercase">MEDIO</div>
+        <div id="uso-nivel-medio-n" style="font-size:22px;color:var(--gold2);font-family:'DM Mono',monospace;font-weight:600;margin-top:4px">—</div>
+        <div style="font-size:9px;color:var(--muted);font-family:'DM Mono',monospace;margin-top:2px"><span id="uso-nivel-medio-p">—</span> · 15-30</div>
+      </div>
+      <div style="background:var(--card-bg);border:1px solid var(--border);border-radius:10px;padding:10px 6px;text-align:center">
+        <div style="font-size:8px;letter-spacing:0.5px;color:var(--muted);font-family:'DM Mono',monospace;text-transform:uppercase">AVANZADO</div>
+        <div id="uso-nivel-avanzado-n" style="font-size:22px;color:var(--gold2);font-family:'DM Mono',monospace;font-weight:600;margin-top:4px">—</div>
+        <div style="font-size:9px;color:var(--muted);font-family:'DM Mono',monospace;margin-top:2px"><span id="uso-nivel-avanzado-p">—</span> · ≤15</div>
+      </div>
+    </div>
+
+    <!-- SECCIÓN 13: Campos más jugados -->
+    <div style="font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);padding:0 4px 6px;font-family:'DM Mono',monospace">🏌️ CAMPOS MÁS JUGADOS</div>
+    <div id="uso-campos-top" style="background:var(--card-bg);border:1px solid var(--border);border-radius:10px;padding:6px 14px;margin-bottom:18px"></div>
+
+    <!-- SECCIÓN 14: Barras preferidas -->
+    <div style="font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);padding:0 4px 6px;font-family:'DM Mono',monospace">🎨 BARRAS DE SALIDA</div>
+    <div style="background:var(--card-bg);border:1px solid var(--border);border-radius:10px;padding:8px 14px;margin-bottom:6px">
+      <div id="uso-barras-pref"></div>
+    </div>
+    <div id="uso-barras-vueltas" style="text-align:center;font-size:9px;color:var(--muted);margin-bottom:18px;font-family:'DM Mono',monospace"></div>
+
+    <!-- SECCIÓN 15: HCP medio + evolución -->
+    <div style="font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);padding:0 4px 6px;font-family:'DM Mono',monospace">📈 HCP MEDIO · EVOLUCIÓN</div>
+    <div style="background:var(--card-bg);border:1px solid var(--border);border-radius:10px;padding:14px 12px;margin-bottom:18px">
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:10px">
+        <div style="text-align:center">
+          <div id="uso-hcp-actual" style="font-size:18px;color:var(--gold2);font-family:'DM Mono',monospace;font-weight:600">—</div>
+          <div style="font-size:8px;color:var(--muted);font-family:'DM Mono',monospace;margin-top:3px;letter-spacing:0.5px">ACTUAL</div>
+        </div>
+        <div style="text-align:center">
+          <div id="uso-hcp-anterior" style="font-size:18px;color:var(--gold2);font-family:'DM Mono',monospace;font-weight:600">—</div>
+          <div style="font-size:8px;color:var(--muted);font-family:'DM Mono',monospace;margin-top:3px;letter-spacing:0.5px">HACE 30D</div>
+        </div>
+        <div style="text-align:center">
+          <div id="uso-hcp-delta" style="font-size:18px;color:var(--gold2);font-family:'DM Mono',monospace;font-weight:600">—</div>
+          <div style="font-size:8px;color:var(--muted);font-family:'DM Mono',monospace;margin-top:3px;letter-spacing:0.5px">DELTA</div>
+        </div>
+      </div>
+      <canvas id="uso-hcp-chart" style="width:100%;height:60px;display:block"></canvas>
+      <div id="uso-hcp-mejorando" style="text-align:center;font-size:9px;color:var(--muted);margin-top:8px;font-family:'DM Mono',monospace"></div>
     </div>
 
   </div>
@@ -5465,8 +5583,8 @@ function contactarGolfHCP() {
   const ios = ua.match(/iPhone OS ([\d_]+)/);
   const android = ua.match(/Android ([\d.]+)/);
   const sys = ios ? 'iOS ' + ios[1].replace(/_/g,'.') : android ? 'Android ' + android[1] : 'Web';
-  const appVer = document.title.includes('HCP') ? 'v1.31.098' : 'Golf HCP';
-  const body = encodeURIComponent('Hola,\n\n[Escribe tu consulta aqui]\n\n\n-- \nGolf HCP v1.31.098\n' + sys);
+  const appVer = document.title.includes('HCP') ? 'v1.31.099' : 'Golf HCP';
+  const body = encodeURIComponent('Hola,\n\n[Escribe tu consulta aqui]\n\n\n-- \nGolf HCP v1.31.099\n' + sys);
   window.open('mailto:golf.hcp.webmaster@gmail.com?subject=Golf%20HCP%20App&body=' + body, '_blank');
 }
 
@@ -6608,13 +6726,22 @@ async function renderAdminUso() {
   $('uso-loading').style.display = 'block';
   $('uso-content').style.display = 'none';
   try {
-    // Cargar todos los datos en paralelo
-    const [sesiones, usuarios] = await Promise.all([
+    // v1.31.099: cargar también rondas y campos para las nuevas 10 secciones
+    const [sesiones, usuarios, rondas, campos] = await Promise.all([
       sb.from('sesiones').select('user_id,tipo,dispositivo,timestamp').order('timestamp', { ascending: false }).limit(5000),
-      sb.from('profiles').select('id,nombre,is_admin').limit(1000)
+      sb.from('profiles').select('id,nombre,is_admin').limit(1000),
+      sb.from('rondas').select('user_id,fecha,diferencial,stableford,hcp_idx,campo_id,nombre_campo,barra_color,num_hoyos,gross,created_at').order('fecha', { ascending: false }).limit(5000),
+      sb.from('campos').select('id,nombre,user_id').limit(2000)
     ]);
     if (sesiones.error) throw sesiones.error;
     if (usuarios.error) throw usuarios.error;
+    // Rondas/campos: si fallan por RLS, los dejamos vacíos y mostramos aviso
+    const rondasData = rondas.error ? [] : (rondas.data || []);
+    const camposData = campos.error ? [] : (campos.data || []);
+    if (rondas.error || campos.error) {
+      console.warn('Sin acceso a rondas/campos como admin (¿faltan RLS policies?)', rondas.error || campos.error);
+    }
+
     const allUsers  = usuarios.data || [];
     // v1.31.098: construir set de admins a EXCLUIR de las métricas
     // Los admins (Francisco y futuros) son testers que contaminan las estadísticas
@@ -6623,16 +6750,35 @@ async function renderAdminUso() {
     const allEvents = (sesiones.data || []).filter(e => !adminIds.has(e.user_id));
     // Filtrar usuarios "reales" (no admins)
     const realUsers = allUsers.filter(u => !u.is_admin);
-    // Construir mapa user_id -> nombre (solo usuarios reales para mostrar en actividad)
+    // Filtrar rondas y campos de admins
+    const realRondas = rondasData.filter(r => !adminIds.has(r.user_id));
+    const realCampos = camposData.filter(c => !adminIds.has(c.user_id));
+    // Construir mapas
     const userMap = {};
     realUsers.forEach(u => { userMap[u.id] = u.nombre || '(sin nombre)'; });
+    const campoMap = {};
+    realCampos.forEach(c => { campoMap[c.id] = c.nombre || '(sin nombre)'; });
 
-    // Calcular y renderizar todas las secciones (sin admins)
+    // ── 5 secciones originales ────────────────────────────────────
     renderUsoResumen(allEvents, realUsers);
     renderUsoDispositivos(allEvents);
     renderUsoRetencion(allEvents, realUsers);
     renderUsoActividad(allEvents, userMap);
     renderUsoTendencias(allEvents);
+
+    // ── 5 secciones nuevas Fase 1 (engagement) ────────────────────
+    renderUsoEngagement(allEvents, realUsers);
+    renderUsoHeatmap(allEvents);
+    renderUsoFunnel(realUsers, realRondas);
+    renderUsoCadencia(realRondas);
+    renderUsoTopUsers(realRondas, allEvents, userMap);
+
+    // ── 5 secciones nuevas Fase 2 (golf-específico) ───────────────
+    renderUsoHandicaps(realRondas, realUsers);
+    renderUsoNiveles(realRondas, realUsers);
+    renderUsoCamposTop(realRondas, campoMap);
+    renderUsoBarrasPref(realRondas);
+    renderUsoHcpEvol(realRondas, realUsers);
 
     $('uso-loading').style.display = 'none';
     $('uso-content').style.display = 'block';
@@ -6880,6 +7026,468 @@ function drawUsoTrendChart(values) {
   ctx.closePath();
   ctx.fillStyle = 'rgba(123,198,122,.15)';
   ctx.fill();
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// v1.31.099 — 10 NUEVAS SECCIONES PANEL ADMIN
+// Fase 1: engagement (5) + Fase 2: golf-específico (5)
+// ═══════════════════════════════════════════════════════════════════════
+
+// Helper: obtiene HCP Index actual de cada usuario (último hcp_idx no NULL)
+function getUserCurrentHcp(rondas) {
+  const map = {};
+  // rondas viene ordenada por fecha DESC, así que la primera vista es la más reciente
+  rondas.forEach(r => {
+    if (!(r.user_id in map) && r.hcp_idx != null) {
+      map[r.user_id] = Number(r.hcp_idx);
+    }
+  });
+  return map;
+}
+
+// ── SECCIÓN 6 (Fase 1.1): Engagement DAU/WAU/MAU + Stickiness ─────
+function renderUsoEngagement(events, users) {
+  const now = Date.now();
+  const ms24h = 24 * 60 * 60 * 1000;
+  const ms7d  = 7  * ms24h;
+  const ms30d = 30 * ms24h;
+  const activeIn = (windowMs) => {
+    const cutoff = now - windowMs;
+    const userSet = new Set();
+    events.forEach(e => {
+      if (e.tipo !== 'login' && e.tipo !== 'visita') return;
+      const ts = new Date(e.timestamp).getTime();
+      if (ts >= cutoff) userSet.add(e.user_id);
+    });
+    return userSet.size;
+  };
+  const dau = activeIn(ms24h);
+  const wau = activeIn(ms7d);
+  const mau = activeIn(ms30d);
+  const sticky = mau > 0 ? Math.round(dau / mau * 100) : 0;
+  $('uso-eng-dau').textContent    = dau;
+  $('uso-eng-wau').textContent    = wau;
+  $('uso-eng-mau').textContent    = mau;
+  $('uso-eng-sticky').textContent = sticky + '%';
+}
+
+// ── SECCIÓN 7 (Fase 1.2): Heatmap horario × día semana ────────────
+function renderUsoHeatmap(events) {
+  // Matriz [día (0=Dom...6=Sáb)] [hora (0-23)] = nº eventos
+  const matrix = Array.from({length: 7}, () => new Array(24).fill(0));
+  events.forEach(e => {
+    if (e.tipo !== 'login' && e.tipo !== 'visita') return;
+    const d = new Date(e.timestamp);
+    matrix[d.getDay()][d.getHours()]++;
+  });
+  // Encontrar el máximo para normalizar
+  let max = 0;
+  matrix.forEach(row => row.forEach(v => { if (v > max) max = v; }));
+  if (max === 0) max = 1;
+  // Reordenar Lun-Dom
+  const order = [1,2,3,4,5,6,0];
+  const dayNames = ['D','L','M','X','J','V','S'];
+  let html = '<div style="display:grid;grid-template-columns:18px repeat(24,1fr);gap:2px;font-family:\'DM Mono\',monospace">';
+  order.forEach(idx => {
+    html += `<div style="font-size:8px;color:var(--muted);display:flex;align-items:center;justify-content:flex-end;padding-right:3px">${dayNames[idx]}</div>`;
+    for (let h = 0; h < 24; h++) {
+      const v = matrix[idx][h];
+      const intensity = v === 0 ? 0 : 0.15 + (v / max) * 0.85;
+      const bg = intensity === 0 ? 'rgba(201,168,76,0.05)' : `rgba(201,168,76,${intensity})`;
+      html += `<div title="${dayNames[idx]} ${h}h: ${v}" style="aspect-ratio:1;background:${bg};border-radius:2px"></div>`;
+    }
+  });
+  html += '</div>';
+  // Leyenda de horas (cada 3h)
+  html += '<div style="display:grid;grid-template-columns:18px repeat(24,1fr);gap:2px;margin-top:3px;font-family:\'DM Mono\',monospace">';
+  html += '<div></div>';
+  for (let h = 0; h < 24; h++) {
+    html += `<div style="font-size:7px;color:var(--muted);text-align:center">${h%3===0?h:''}</div>`;
+  }
+  html += '</div>';
+  $('uso-heatmap').innerHTML = html;
+}
+
+// ── SECCIÓN 8 (Fase 1.3): Funnel registro → rondas ────────────────
+function renderUsoFunnel(users, rondas) {
+  const total = users.length;
+  if (total === 0) {
+    $('uso-funnel').innerHTML = '<div style="color:var(--muted);text-align:center;padding:14px">Sin datos</div>';
+    return;
+  }
+  // Contar rondas por usuario
+  const byUser = {};
+  rondas.forEach(r => { byUser[r.user_id] = (byUser[r.user_id] || 0) + 1; });
+  const counts = {
+    registrados: total,
+    una: Object.values(byUser).filter(n => n >= 1).length,
+    cinco: Object.values(byUser).filter(n => n >= 5).length,
+    diez: Object.values(byUser).filter(n => n >= 10).length,
+    veinte: Object.values(byUser).filter(n => n >= 20).length
+  };
+  const labels = [
+    ['Registrados', counts.registrados],
+    ['1ª ronda',    counts.una],
+    ['5+ rondas',   counts.cinco],
+    ['10+ rondas',  counts.diez],
+    ['20+ rondas',  counts.veinte]
+  ];
+  let html = '';
+  labels.forEach(([lbl, n]) => {
+    const pct = total > 0 ? (n / total * 100) : 0;
+    html += `<div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid var(--border);font-family:'DM Mono',monospace;font-size:10px">
+      <div style="flex:0 0 80px;color:var(--cream)">${lbl}</div>
+      <div style="flex:1;background:var(--input-bg);border-radius:3px;height:14px;overflow:hidden">
+        <div style="background:linear-gradient(90deg,var(--gold),var(--gold2));width:${pct}%;height:100%"></div>
+      </div>
+      <div style="flex:0 0 60px;text-align:right;color:var(--gold2);font-weight:600">${n} · ${pct.toFixed(0)}%</div>
+    </div>`;
+  });
+  $('uso-funnel').innerHTML = html;
+}
+
+// ── SECCIÓN 9 (Fase 1.4): Cadencia de juego ───────────────────────
+function renderUsoCadencia(rondas) {
+  if (rondas.length === 0) {
+    $('uso-cadencia-dias').textContent   = '—';
+    $('uso-cadencia-mes').textContent    = '—';
+    $('uso-cadencia-ultima').textContent = '—';
+    return;
+  }
+  // Días promedio entre rondas (por usuario, luego promedio global)
+  const byUser = {};
+  rondas.forEach(r => {
+    if (!byUser[r.user_id]) byUser[r.user_id] = [];
+    byUser[r.user_id].push(new Date(r.fecha).getTime());
+  });
+  let totalGapDays = 0, gapCount = 0;
+  Object.values(byUser).forEach(timestamps => {
+    if (timestamps.length < 2) return;
+    timestamps.sort((a,b) => a-b);
+    for (let i = 1; i < timestamps.length; i++) {
+      totalGapDays += (timestamps[i] - timestamps[i-1]) / (24*60*60*1000);
+      gapCount++;
+    }
+  });
+  const avgGap = gapCount > 0 ? Math.round(totalGapDays / gapCount) : '—';
+  // Rondas/mes promedio (rondas últimos 30 días / usuarios con rondas en ese período)
+  const cutoff30 = Date.now() - 30 * 24 * 60 * 60 * 1000;
+  const recent = rondas.filter(r => new Date(r.fecha).getTime() >= cutoff30);
+  const usersRecent = new Set(recent.map(r => r.user_id));
+  const rondasMes = usersRecent.size > 0 ? (recent.length / usersRecent.size).toFixed(1) : '—';
+  // Días desde última ronda global
+  const ultimaTs = Math.max(...rondas.map(r => new Date(r.fecha).getTime()));
+  const diasUlt = Math.floor((Date.now() - ultimaTs) / (24*60*60*1000));
+  $('uso-cadencia-dias').textContent   = avgGap;
+  $('uso-cadencia-mes').textContent    = rondasMes;
+  $('uso-cadencia-ultima').textContent = diasUlt;
+}
+
+// ── SECCIÓN 10 (Fase 1.5): Top usuarios + Embajadores ─────────────
+function renderUsoTopUsers(rondas, events, userMap) {
+  // Contar rondas por usuario
+  const rondasByUser = {};
+  rondas.forEach(r => { rondasByUser[r.user_id] = (rondasByUser[r.user_id] || 0) + 1; });
+  // Última actividad (login/visita) por usuario
+  const lastActiveByUser = {};
+  events.forEach(e => {
+    if (e.tipo !== 'login' && e.tipo !== 'visita') return;
+    const ts = new Date(e.timestamp).getTime();
+    if (!lastActiveByUser[e.user_id] || ts > lastActiveByUser[e.user_id]) {
+      lastActiveByUser[e.user_id] = ts;
+    }
+  });
+  // Combinar lista de usuarios reales (los que tienen al menos rondas o actividad)
+  const allUserIds = new Set([...Object.keys(rondasByUser), ...Object.keys(lastActiveByUser)]);
+  const cutoff7d = Date.now() - 7 * 24 * 60 * 60 * 1000;
+  const list = Array.from(allUserIds).map(uid => ({
+    uid,
+    nombre: userMap[uid] || uid.substring(0,8),
+    rondas: rondasByUser[uid] || 0,
+    activo: (lastActiveByUser[uid] || 0) >= cutoff7d
+  })).sort((a,b) => b.rondas - a.rondas).slice(0, 10);
+  if (list.length === 0) {
+    $('uso-top-users').innerHTML = '<div style="color:var(--muted);text-align:center;padding:14px">Sin datos</div>';
+    return;
+  }
+  let html = '';
+  list.forEach((u, i) => {
+    const isEmb = u.rondas >= 5 && u.activo;
+    const rankBg = i === 0 ? 'var(--gold2)' : 'var(--input-bg)';
+    const rankColor = i === 0 ? 'var(--card-bg)' : 'var(--gold2)';
+    html += `<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border);font-family:'DM Mono',monospace;font-size:10px">
+      <div style="width:20px;height:20px;background:${rankBg};color:${rankColor};border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:600;flex-shrink:0">${i+1}</div>
+      <div style="flex:1;color:var(--cream);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${u.nombre}</div>
+      ${isEmb ? '<div style="font-size:9px;padding:2px 6px;background:rgba(201,168,76,0.15);border-radius:8px;color:var(--gold2)">⭐ Embajador</div>' : ''}
+      <div style="color:var(--gold2);font-weight:600;min-width:30px;text-align:right">${u.rondas}r</div>
+    </div>`;
+  });
+  $('uso-top-users').innerHTML = html;
+}
+
+// ── SECCIÓN 11 (Fase 2.1): Distribución de handicaps ──────────────
+function renderUsoHandicaps(rondas, users) {
+  const hcpByUser = getUserCurrentHcp(rondas);
+  const hcps = Object.values(hcpByUser);
+  if (hcps.length === 0) {
+    $('uso-handicaps-histo').innerHTML = '<div style="color:var(--muted);text-align:center;padding:14px">Sin datos de HCP</div>';
+    $('uso-handicaps-medio').textContent = '—';
+    return;
+  }
+  // Buckets: 0-9, 10-15, 16-20, 21-25, 26-30, 31-40, 41+
+  const buckets = [0,0,0,0,0,0,0];
+  const labels = ['0-9','10-15','16-20','21-25','26-30','31-40','41+'];
+  hcps.forEach(h => {
+    if      (h <= 9)  buckets[0]++;
+    else if (h <= 15) buckets[1]++;
+    else if (h <= 20) buckets[2]++;
+    else if (h <= 25) buckets[3]++;
+    else if (h <= 30) buckets[4]++;
+    else if (h <= 40) buckets[5]++;
+    else              buckets[6]++;
+  });
+  const max = Math.max(...buckets, 1);
+  let html = '<div style="display:flex;align-items:flex-end;gap:4px;height:80px;padding:0 4px">';
+  buckets.forEach(v => {
+    const h = (v / max * 100);
+    html += `<div title="${v} usuarios" style="flex:1;background:var(--gold2);border-radius:3px 3px 0 0;height:${Math.max(h,4)}%;min-height:4px;position:relative">
+      ${v > 0 ? `<div style="position:absolute;top:-14px;left:0;right:0;text-align:center;font-size:9px;color:var(--cream);font-family:\'DM Mono\',monospace">${v}</div>` : ''}
+    </div>`;
+  });
+  html += '</div>';
+  html += '<div style="display:flex;gap:4px;padding:0 4px;margin-top:4px">';
+  labels.forEach(l => {
+    html += `<div style="flex:1;text-align:center;font-size:8px;color:var(--muted);font-family:'DM Mono',monospace">${l}</div>`;
+  });
+  html += '</div>';
+  $('uso-handicaps-histo').innerHTML = html;
+  // Media
+  const sum = hcps.reduce((a,b) => a+b, 0);
+  $('uso-handicaps-medio').textContent = (sum / hcps.length).toFixed(1);
+}
+
+// ── SECCIÓN 12 (Fase 2.2): Niveles de jugador ─────────────────────
+function renderUsoNiveles(rondas, users) {
+  const hcpByUser = getUserCurrentHcp(rondas);
+  const hcps = Object.values(hcpByUser);
+  let avanzado = 0, medio = 0, iniciado = 0;
+  hcps.forEach(h => {
+    if      (h <= 15) avanzado++;
+    else if (h <= 30) medio++;
+    else              iniciado++;
+  });
+  const total = hcps.length || 1;
+  $('uso-nivel-iniciado-n').textContent  = iniciado;
+  $('uso-nivel-iniciado-p').textContent  = (iniciado/total*100).toFixed(0) + '%';
+  $('uso-nivel-medio-n').textContent     = medio;
+  $('uso-nivel-medio-p').textContent     = (medio/total*100).toFixed(0) + '%';
+  $('uso-nivel-avanzado-n').textContent  = avanzado;
+  $('uso-nivel-avanzado-p').textContent  = (avanzado/total*100).toFixed(0) + '%';
+}
+
+// ── SECCIÓN 13 (Fase 2.3): Campos más jugados ────────────────────
+function renderUsoCamposTop(rondas, campoMap) {
+  // Agrupar rondas por nombre de campo (preferir nombre_campo de la ronda; fallback al map)
+  const counts = {};
+  rondas.forEach(r => {
+    const nombre = r.nombre_campo || campoMap[r.campo_id] || '(desconocido)';
+    counts[nombre] = (counts[nombre] || 0) + 1;
+  });
+  const sorted = Object.entries(counts).sort((a,b) => b[1] - a[1]).slice(0, 8);
+  if (sorted.length === 0) {
+    $('uso-campos-top').innerHTML = '<div style="color:var(--muted);text-align:center;padding:14px">Sin rondas registradas</div>';
+    return;
+  }
+  const max = sorted[0][1];
+  let html = '';
+  sorted.forEach(([nombre, count]) => {
+    const w = (count / max * 100);
+    html += `<div style="display:flex;align-items:center;gap:8px;padding:5px 0;font-family:'DM Mono',monospace;font-size:10px">
+      <div style="flex:0 0 100px;color:var(--cream);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${nombre}</div>
+      <div style="flex:1;background:var(--input-bg);border-radius:3px;height:12px;overflow:hidden">
+        <div style="background:var(--gold2);width:${w}%;height:100%"></div>
+      </div>
+      <div style="flex:0 0 30px;text-align:right;color:var(--gold2);font-weight:600">${count}</div>
+    </div>`;
+  });
+  $('uso-campos-top').innerHTML = html;
+}
+
+// ── SECCIÓN 14 (Fase 2.4): Barras de salida preferidas ────────────
+function renderUsoBarrasPref(rondas) {
+  const counts = {};
+  let total18 = 0, total9 = 0;
+  rondas.forEach(r => {
+    const c = (r.barra_color || 'desconocida').toLowerCase();
+    counts[c] = (counts[c] || 0) + 1;
+    if (r.num_hoyos === 9) total9++;
+    else                   total18++;
+  });
+  const total = Object.values(counts).reduce((a,b) => a+b, 0);
+  if (total === 0) {
+    $('uso-barras-pref').innerHTML = '<div style="color:var(--muted);text-align:center;padding:14px">Sin rondas registradas</div>';
+    $('uso-barras-vueltas').textContent = '';
+    return;
+  }
+  // Mapeo de colores a hex visual
+  const colorMap = {
+    amarilla:   { hex:'#e8c96a', label:'Amarilla' },
+    yellow:     { hex:'#e8c96a', label:'Amarilla' },
+    blanca:     { hex:'#ffffff', label:'Blanca' },
+    white:      { hex:'#ffffff', label:'Blanca' },
+    azul:       { hex:'#3b82f6', label:'Azul' },
+    blue:       { hex:'#3b82f6', label:'Azul' },
+    roja:       { hex:'#e57373', label:'Roja' },
+    red:        { hex:'#e57373', label:'Roja' },
+    negra:      { hex:'#333333', label:'Negra' },
+    black:      { hex:'#333333', label:'Negra' },
+    naranja:    { hex:'#ffb74d', label:'Naranja' },
+    orange:     { hex:'#ffb74d', label:'Naranja' },
+    verde:      { hex:'#7bc67a', label:'Verde' },
+    green:      { hex:'#7bc67a', label:'Verde' }
+  };
+  const sorted = Object.entries(counts).sort((a,b) => b[1] - a[1]);
+  let html = '';
+  sorted.forEach(([color, count]) => {
+    const info = colorMap[color] || { hex:'#888', label: color.charAt(0).toUpperCase()+color.slice(1) };
+    const pct = (count / total * 100).toFixed(0);
+    const border = info.hex === '#ffffff' ? 'border:1px solid var(--muted)' : '';
+    html += `<div style="display:flex;align-items:center;gap:8px;padding:4px 0;font-family:'DM Mono',monospace;font-size:10px">
+      <div style="width:10px;height:10px;border-radius:50%;background:${info.hex};${border};flex-shrink:0"></div>
+      <div style="flex:1;color:var(--cream)">${info.label}</div>
+      <div style="color:var(--gold2);font-weight:600">${count} · ${pct}%</div>
+    </div>`;
+  });
+  $('uso-barras-pref').innerHTML = html;
+  const totalAll = total18 + total9;
+  if (totalAll > 0) {
+    const p18 = (total18/totalAll*100).toFixed(0);
+    const p9  = (total9/totalAll*100).toFixed(0);
+    $('uso-barras-vueltas').textContent = `18H: ${total18} (${p18}%) · 9H: ${total9} (${p9}%)`;
+  }
+}
+
+// ── SECCIÓN 15 (Fase 2.5): HCP medio + evolución ──────────────────
+function renderUsoHcpEvol(rondas, users) {
+  const hcpByUser = getUserCurrentHcp(rondas);
+  const hcpsActual = Object.values(hcpByUser);
+  if (hcpsActual.length === 0) {
+    $('uso-hcp-actual').textContent    = '—';
+    $('uso-hcp-anterior').textContent  = '—';
+    $('uso-hcp-delta').textContent     = '—';
+    $('uso-hcp-mejorando').textContent = '';
+    return;
+  }
+  const mediaActual = hcpsActual.reduce((a,b) => a+b, 0) / hcpsActual.length;
+
+  // HCP de hace 30 días: para cada usuario, último hcp_idx en ronda con fecha <= hoy-30d
+  const cutoff30 = Date.now() - 30 * 24 * 60 * 60 * 1000;
+  const hcpAnteriorByUser = {};
+  // rondas viene ordenada DESC, así que para cada usuario buscamos la primera con fecha <= cutoff30
+  rondas.forEach(r => {
+    if (r.hcp_idx == null) return;
+    if (new Date(r.fecha).getTime() > cutoff30) return;
+    if (!(r.user_id in hcpAnteriorByUser)) {
+      hcpAnteriorByUser[r.user_id] = Number(r.hcp_idx);
+    }
+  });
+  const hcpsAnt = Object.values(hcpAnteriorByUser);
+  const mediaAnterior = hcpsAnt.length > 0 ? hcpsAnt.reduce((a,b) => a+b, 0) / hcpsAnt.length : null;
+
+  $('uso-hcp-actual').textContent = mediaActual.toFixed(1);
+  if (mediaAnterior !== null) {
+    $('uso-hcp-anterior').textContent = mediaAnterior.toFixed(1);
+    const delta = mediaActual - mediaAnterior;
+    const deltaEl = $('uso-hcp-delta');
+    deltaEl.textContent = (delta >= 0 ? '+' : '') + delta.toFixed(1);
+    deltaEl.style.color = delta < 0 ? '#7bc67a' : (delta > 0 ? '#e57373' : 'var(--gold2)');
+  } else {
+    $('uso-hcp-anterior').textContent = '—';
+    $('uso-hcp-delta').textContent    = '—';
+  }
+
+  // Mejorando vs empeorando (delta usuario por usuario)
+  let mejorando = 0, empeorando = 0, estable = 0;
+  Object.keys(hcpByUser).forEach(uid => {
+    if (!(uid in hcpAnteriorByUser)) return;
+    const d = hcpByUser[uid] - hcpAnteriorByUser[uid];
+    if      (d < -0.3) mejorando++;
+    else if (d >  0.3) empeorando++;
+    else               estable++;
+  });
+  $('uso-hcp-mejorando').textContent =
+    `Mejorando: ${mejorando} · Empeorando: ${empeorando} · Estable: ${estable}`;
+
+  // Mini chart evolución (últimos 30 días, media móvil simple)
+  drawHcpEvolChart(rondas);
+}
+
+// Dibuja chart de evolución HCP medio últimos 30 días
+function drawHcpEvolChart(rondas) {
+  const c = $('uso-hcp-chart');
+  if (!c) return;
+  const dpr = window.devicePixelRatio || 1;
+  const cssW = c.clientWidth || 300;
+  const cssH = 60;
+  c.width = cssW * dpr;
+  c.height = cssH * dpr;
+  c.style.height = cssH + 'px';
+  const ctx = c.getContext('2d');
+  ctx.scale(dpr, dpr);
+  ctx.clearRect(0, 0, cssW, cssH);
+
+  // Calcular HCP medio para cada uno de los últimos 30 días
+  const now = Date.now();
+  const ms24h = 24*60*60*1000;
+  const values = [];
+  for (let i = 29; i >= 0; i--) {
+    const dayCutoff = now - i * ms24h;
+    // Para cada usuario, último hcp_idx en ronda con fecha <= dayCutoff
+    const hcpMap = {};
+    rondas.forEach(r => {
+      if (r.hcp_idx == null) return;
+      if (new Date(r.fecha).getTime() > dayCutoff) return;
+      if (!(r.user_id in hcpMap)) hcpMap[r.user_id] = Number(r.hcp_idx);
+    });
+    const hcps = Object.values(hcpMap);
+    if (hcps.length === 0) values.push(null);
+    else values.push(hcps.reduce((a,b)=>a+b,0)/hcps.length);
+  }
+  const numericValues = values.filter(v => v !== null);
+  if (numericValues.length < 2) return;
+  const minV = Math.min(...numericValues);
+  const maxV = Math.max(...numericValues);
+  const rangeV = (maxV - minV) || 1;
+  const padX = 4, padY = 8;
+  const w = cssW - 2*padX;
+  const h = cssH - 2*padY;
+  const stepX = w / (values.length - 1);
+  // Línea
+  ctx.beginPath();
+  let started = false;
+  values.forEach((v, i) => {
+    if (v === null) return;
+    const x = padX + i * stepX;
+    const y = padY + h - ((v - minV) / rangeV) * h;
+    if (!started) { ctx.moveTo(x, y); started = true; }
+    else          ctx.lineTo(x, y);
+  });
+  ctx.strokeStyle = '#c9a84c';
+  ctx.lineWidth = 1.8;
+  ctx.stroke();
+  // Punto inicial y final
+  const firstIdx = values.findIndex(v => v !== null);
+  const lastIdx  = values.length - 1 - [...values].reverse().findIndex(v => v !== null);
+  if (firstIdx >= 0 && lastIdx >= 0) {
+    const v0 = values[firstIdx], v1 = values[lastIdx];
+    const x0 = padX + firstIdx * stepX;
+    const y0 = padY + h - ((v0 - minV) / rangeV) * h;
+    const x1 = padX + lastIdx * stepX;
+    const y1 = padY + h - ((v1 - minV) / rangeV) * h;
+    ctx.fillStyle = '#c9a84c';
+    ctx.beginPath(); ctx.arc(x0, y0, 2.5, 0, Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(x1, y1, 2.5, 0, Math.PI*2); ctx.fill();
+  }
 }
 
 // - Vista de resumen del mes anterior con 12 metricas
