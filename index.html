@@ -274,6 +274,8 @@ select option{background:var(--bg)}
 
 /* ── TOAST ── */
 .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(16px);background:rgba(26,47,26,.97);border:1px solid rgba(123,198,122,.3);color:#e8e4da;font-size:11px;letter-spacing:1px;padding:10px 16px;border-radius:16px;opacity:0;transition:all .3s;pointer-events:none;white-space:normal;word-break:break-word;z-index:1000;max-width:88vw;text-align:center}
+.toast-r{position:fixed;top:35vh;left:50%;transform:translate(-50%,-10px);background:rgba(255,220,220,.96);border:2px solid var(--red-intenso);color:#8b0000;font-size:13px;font-weight:500;line-height:1.4;text-align:center;padding:14px 20px;border-radius:6px;box-shadow:0 6px 24px rgba(204,0,0,.3);opacity:0;pointer-events:none;transition:opacity .2s ease,transform .2s ease;z-index:10000;max-width:80vw}
+.toast-r.show{opacity:1;transform:translate(-50%,0)}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 .toast.err{border-color:rgba(224,85,85,.6);color:#ff9999}
 html.light .toast{background:rgba(220,240,220,.97);border-color:rgba(60,140,60,.4);color:#1a3a1a}
@@ -829,7 +831,7 @@ nav.nav-hidden{transform:translateY(100%)}
     <button class="auth-btn" id="btn-login" onclick="doLogin()" data-i18n="btn_entrar">Entrar</button>
     <div class="auth-link"><span data-i18n="sin_cuenta">¿Sin cuenta?</span> <span onclick="showAuth('register')" data-i18n="registrate">Regístrate</span></div>
     <div class="auth-link" style="margin-top:16px;font-size:10px;opacity:.6"><a href="privacy.html" target="_blank" style="color:var(--muted);text-decoration:none" data-i18n="politica_priv">Política de Privacidad</a></div>
-    <div style="text-align:center;margin-top:8px;font-size:9px;color:rgba(255,255,255,.2);letter-spacing:1px">v1.33.005</div>
+    <div style="text-align:center;margin-top:8px;font-size:9px;color:rgba(255,255,255,.2);letter-spacing:1px">v1.33.006</div>
   </div>
 </div>
 
@@ -1055,7 +1057,7 @@ nav.nav-hidden{transform:translateY(100%)}
       </div>
     </div>
   </div>
-  <div id="version-tap" style="text-align:center;padding:12px 0 4px;font-size:9px;letter-spacing:2px;color:rgba(255,255,255,.2);font-family:'DM Mono',monospace;cursor:pointer" class="version-label" onclick="adminGesto()">v1.33.005</div>
+  <div id="version-tap" style="text-align:center;padding:12px 0 4px;font-size:9px;letter-spacing:2px;color:rgba(255,255,255,.2);font-family:'DM Mono',monospace;cursor:pointer" class="version-label" onclick="adminGesto()">v1.33.006</div>
   <div class="card" style="margin-bottom:8px;padding:12px 14px;display:none" id="mini-chart-wrap">
     <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px"><span style="font-size:11px;letter-spacing:1.5px;color:var(--gold2)" data-i18n="evolucion_hcp">EVOLUCIÓN HCP</span><span style="font-size:9px;color:var(--muted);letter-spacing:.5px" data-i18n="ultimas_20">20 últimas rondas</span></div>
     <canvas id="mini-hcp-chart" height="100" style="width:100%;display:block"></canvas>
@@ -2554,6 +2556,26 @@ function calcNDBForHole(hoyo, playingHCP) {
   return (hoyo.par || 4) + 2 + ex1 + ex2;
 }
 
+// v1.33.006: Toast dedicado para el modo Bola Retirada — colores rojos translúcidos
+// y posición centrada en zona intermedia de la pantalla (no toca el toast() global).
+let _toastRTimer = null;
+function showToastR(msg) {
+  let el = document.getElementById('toast-r');
+  if (!el) {
+    el = document.createElement('div');
+    el.id = 'toast-r';
+    el.className = 'toast-r';
+    document.body.appendChild(el);
+  }
+  el.textContent = msg;
+  // Forzar reflow para que la transición se aplique aunque ya estuviera 'show'
+  el.classList.remove('show');
+  void el.offsetWidth;
+  el.classList.add('show');
+  clearTimeout(_toastRTimer);
+  _toastRTimer = setTimeout(() => el.classList.remove('show'), 3000);
+}
+
 // v1.33.004: Modo "Marcar Bola Retirada" — botón que pone los inputs de hoyos
 // en readonly y, al tocar uno, lo marca/desmarca como R y sale del modo.
 // Resuelve el problema de iOS donde el teclado numérico no permite teclear letras.
@@ -2577,8 +2599,8 @@ function applyModoRUI(scope, active) {
     const lbl = btn.querySelector('.btn-modor-label');
     if (lbl) lbl.textContent = active ? t('leyenda_retirada') : t('btn_marcar_r');
   }
-  // v1.33.005: aviso flotante en lugar de banner fijo (no desplaza pantalla)
-  if (active) toast(t('r_banner'));
+  // v1.33.006: aviso flotante rojo dedicado en zona intermedia de la pantalla
+  if (active) showToastR(t('r_banner'));
 }
 function checkModoRClick(input, scope) {
   const isActive = scope === 'nueva' ? modoR_nueva : modoR_edit;
@@ -5813,8 +5835,8 @@ function contactarGolfHCP() {
   const ios = ua.match(/iPhone OS ([\d_]+)/);
   const android = ua.match(/Android ([\d.]+)/);
   const sys = ios ? 'iOS ' + ios[1].replace(/_/g,'.') : android ? 'Android ' + android[1] : 'Web';
-  const appVer = document.title.includes('HCP') ? 'v1.33.005' : 'Golf HCP';
-  const body = encodeURIComponent('Hola,\n\n[Escribe tu consulta aqui]\n\n\n-- \nGolf HCP v1.33.005\n' + sys);
+  const appVer = document.title.includes('HCP') ? 'v1.33.006' : 'Golf HCP';
+  const body = encodeURIComponent('Hola,\n\n[Escribe tu consulta aqui]\n\n\n-- \nGolf HCP v1.33.006\n' + sys);
   window.open('mailto:golf.hcp.webmaster@gmail.com?subject=Golf%20HCP%20App&body=' + body, '_blank');
 }
 
