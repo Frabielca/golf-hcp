@@ -386,13 +386,11 @@ nav.nav-hidden{transform:translateY(100%)}
 .s-doble{border-radius:50%!important;background:rgba(150,150,150,.4)!important;border:2px solid rgba(200,200,200,.8)!important;color:#fff!important;outline:2px solid rgba(200,200,200,.8)!important;outline-offset:3px!important}
 .s-peor{border-radius:3px!important;background:#000!important;border:2px solid rgba(255,255,255,.5)!important;color:#fff!important}
 .s-retirada{border-radius:3px!important;background:var(--red-intenso)!important;border:2px solid var(--red-intenso)!important;color:#fff!important;-webkit-text-fill-color:#fff!important;font-weight:bold!important}
-.btn-modor{display:inline-flex;align-items:center;padding:3px 8px;border-radius:3px;background:transparent;color:rgba(255,255,255,.55);border:1px solid var(--red-intenso);font-family:inherit;font-size:11px;cursor:pointer;line-height:1.2;transition:background .12s,color .12s}
+.btn-modor{display:inline-flex;align-items:center;padding:3px 8px;border-radius:3px;background:transparent;color:rgba(255,255,255,.55);border:1px solid var(--red-intenso);font-family:inherit;font-size:9px;cursor:pointer;line-height:1.2;transition:background .12s,color .12s}
 .btn-modor.active{background:var(--red-intenso);color:#fff}
-.btn-modor-icon{display:inline-flex;align-items:center;justify-content:center;width:11px;height:11px;background:var(--red-intenso);color:#fff;border-radius:2px;font-weight:500;font-size:8px;font-family:'DM Mono',monospace;margin-right:5px}
+.btn-modor-icon{display:inline-flex;align-items:center;justify-content:center;width:10px;height:10px;background:var(--red-intenso);color:#fff;border-radius:2px;font-weight:500;font-size:7px;font-family:'DM Mono',monospace;margin-right:4px}
 .btn-modor.active .btn-modor-icon{background:#fff;color:var(--red-intenso)}
-.banner-r{background:rgba(204,0,0,.10);border-left:2px solid var(--red-intenso);padding:6px 10px;margin-bottom:10px;font-size:11px;color:var(--cream);line-height:1.4}
 :root.light .btn-modor{color:rgba(0,0,0,.55)}
-:root.light .banner-r{color:var(--text)}
 
 #nav-menu-wrap{position:relative;flex:1}
 #nav-menu-btn{width:100%;background:none;border:none;color:var(--muted);padding:9px 2px 7px;font-size:8px;letter-spacing:1px;text-transform:uppercase;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;font-family:'DM Mono',monospace;min-height:52px}
@@ -831,7 +829,7 @@ nav.nav-hidden{transform:translateY(100%)}
     <button class="auth-btn" id="btn-login" onclick="doLogin()" data-i18n="btn_entrar">Entrar</button>
     <div class="auth-link"><span data-i18n="sin_cuenta">¿Sin cuenta?</span> <span onclick="showAuth('register')" data-i18n="registrate">Regístrate</span></div>
     <div class="auth-link" style="margin-top:16px;font-size:10px;opacity:.6"><a href="privacy.html" target="_blank" style="color:var(--muted);text-decoration:none" data-i18n="politica_priv">Política de Privacidad</a></div>
-    <div style="text-align:center;margin-top:8px;font-size:9px;color:rgba(255,255,255,.2);letter-spacing:1px">v1.33.004</div>
+    <div style="text-align:center;margin-top:8px;font-size:9px;color:rgba(255,255,255,.2);letter-spacing:1px">v1.33.005</div>
   </div>
 </div>
 
@@ -940,11 +938,12 @@ nav.nav-hidden{transform:translateY(100%)}
     </div>
     <div id="edit-hoyos-wrap" style="display:none">
       <div style="font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin:10px 0 8px" data-i18n="golpes_hoyo">Golpes por hoyo</div>
-      <div id="banner-r-edit" class="banner-r" style="display:none" data-i18n="r_banner">Toca un hoyo para marcar/desmarcar como bola retirada</div>
       <div style="font-size:10px;color:var(--muted);margin-bottom:6px">Total: <strong id="edit-total" style="color:var(--cream)">—</strong> · Stableford: <strong id="edit-stbl-prev" style="color:var(--gold2)">—</strong></div>
       <div style="display:flex;gap:14px;margin-top:6px;font-size:9px;color:var(--muted);flex-wrap:wrap">
         <span><span class="red-dot" style="display:inline-block;width:6px;height:6px;border-radius:50%;background:#e05555;margin-right:4px;vertical-align:middle"></span><span data-i18n="golpe_ventaja">Golpe de ventaja (HCP campo)</span></span>
         <span><span class="stbl-dot" style="display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--gold);margin-right:4px;vertical-align:middle"></span><span data-i18n="punto_stbl">Punto Stableford</span></span>
+      </div>
+      <div style="display:flex;justify-content:center;margin-top:10px">
         <button type="button" id="btn-modor-edit" class="btn-modor" onclick="toggleModoR('edit')"><span class="btn-modor-icon">R</span><span class="btn-modor-label" data-i18n="btn_marcar_r">Marcar bola retirada</span></button>
       </div>
       <div class="hoyo-section"><div class="hoyo-label">Salida 1–9</div><div class="hoyo-grid" id="edit-grid-out"></div></div>
@@ -1056,7 +1055,7 @@ nav.nav-hidden{transform:translateY(100%)}
       </div>
     </div>
   </div>
-  <div id="version-tap" style="text-align:center;padding:12px 0 4px;font-size:9px;letter-spacing:2px;color:rgba(255,255,255,.2);font-family:'DM Mono',monospace;cursor:pointer" class="version-label" onclick="adminGesto()">v1.33.004</div>
+  <div id="version-tap" style="text-align:center;padding:12px 0 4px;font-size:9px;letter-spacing:2px;color:rgba(255,255,255,.2);font-family:'DM Mono',monospace;cursor:pointer" class="version-label" onclick="adminGesto()">v1.33.005</div>
   <div class="card" style="margin-bottom:8px;padding:12px 14px;display:none" id="mini-chart-wrap">
     <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px"><span style="font-size:11px;letter-spacing:1.5px;color:var(--gold2)" data-i18n="evolucion_hcp">EVOLUCIÓN HCP</span><span style="font-size:9px;color:var(--muted);letter-spacing:.5px" data-i18n="ultimas_20">20 últimas rondas</span></div>
     <canvas id="mini-hcp-chart" height="100" style="width:100%;display:block"></canvas>
@@ -1172,7 +1171,6 @@ nav.nav-hidden{transform:translateY(100%)}
     </div>
     <div id="hoyos-wrap" style="display:none;margin-bottom:12px">
       <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:12px" data-i18n="golpes_hoyo">Golpes por hoyo</div>
-      <div id="banner-r-nueva" class="banner-r" style="display:none" data-i18n="r_banner">Toca un hoyo para marcar/desmarcar como bola retirada</div>
       <div class="hoyo-section"><div class="hoyo-label" id="grid-out-label" data-i18n="salida_19">Salida 1–9</div><div class="hoyo-grid" id="grid-out"></div></div>
       <div class="hoyo-separator"></div>
       <div class="hoyo-section"><div class="hoyo-label" id="grid-in-label" data-i18n="vuelta_1018">Vuelta 10–18</div><div class="hoyo-grid" id="grid-in"></div></div>
@@ -1183,6 +1181,8 @@ nav.nav-hidden{transform:translateY(100%)}
       <div style="display:flex;gap:14px;margin-top:6px;font-size:9px;color:var(--muted);flex-wrap:wrap">
         <span><span class="red-dot" style="display:inline-block;width:6px;height:6px;border-radius:50%;background:#e05555;margin-right:4px;vertical-align:middle"></span><span data-i18n="golpe_ventaja">Golpe de ventaja (HCP campo)</span></span>
         <span><span class="stbl-dot" style="display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--gold);margin-right:4px;vertical-align:middle"></span><span data-i18n="punto_stbl">Punto Stableford</span></span>
+      </div>
+      <div style="display:flex;justify-content:center;margin-top:10px">
         <button type="button" id="btn-modor-nueva" class="btn-modor" onclick="toggleModoR('nueva')"><span class="btn-modor-icon">R</span><span class="btn-modor-label" data-i18n="btn_marcar_r">Marcar bola retirada</span></button>
       </div>
     </div>
@@ -2566,9 +2566,7 @@ function toggleModoR(scope) {
 function applyModoRUI(scope, active) {
   const inputPrefix = scope === 'nueva' ? 'gh-' : 'edit-gh-';
   const btnId    = scope === 'nueva' ? 'btn-modor-nueva' : 'btn-modor-edit';
-  const bannerId = scope === 'nueva' ? 'banner-r-nueva' : 'banner-r-edit';
   const btn = document.getElementById(btnId);
-  const banner = document.getElementById(bannerId);
   // Toggle readonly en todos los inputs de hoyos del scope
   document.querySelectorAll('input[id^="' + inputPrefix + '"]').forEach(el => {
     if (active) { el.setAttribute('readonly',''); el.style.cursor = 'pointer'; }
@@ -2579,7 +2577,8 @@ function applyModoRUI(scope, active) {
     const lbl = btn.querySelector('.btn-modor-label');
     if (lbl) lbl.textContent = active ? t('leyenda_retirada') : t('btn_marcar_r');
   }
-  if (banner) banner.style.display = active ? 'block' : 'none';
+  // v1.33.005: aviso flotante en lugar de banner fijo (no desplaza pantalla)
+  if (active) toast(t('r_banner'));
 }
 function checkModoRClick(input, scope) {
   const isActive = scope === 'nueva' ? modoR_nueva : modoR_edit;
@@ -5814,8 +5813,8 @@ function contactarGolfHCP() {
   const ios = ua.match(/iPhone OS ([\d_]+)/);
   const android = ua.match(/Android ([\d.]+)/);
   const sys = ios ? 'iOS ' + ios[1].replace(/_/g,'.') : android ? 'Android ' + android[1] : 'Web';
-  const appVer = document.title.includes('HCP') ? 'v1.33.004' : 'Golf HCP';
-  const body = encodeURIComponent('Hola,\n\n[Escribe tu consulta aqui]\n\n\n-- \nGolf HCP v1.33.004\n' + sys);
+  const appVer = document.title.includes('HCP') ? 'v1.33.005' : 'Golf HCP';
+  const body = encodeURIComponent('Hola,\n\n[Escribe tu consulta aqui]\n\n\n-- \nGolf HCP v1.33.005\n' + sys);
   window.open('mailto:golf.hcp.webmaster@gmail.com?subject=Golf%20HCP%20App&body=' + body, '_blank');
 }
 
