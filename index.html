@@ -821,7 +821,7 @@ nav.nav-hidden{transform:translateY(100%)}
     <button class="auth-btn" id="btn-login" onclick="doLogin()" data-i18n="btn_entrar">Entrar</button>
     <div class="auth-link"><span data-i18n="sin_cuenta">¿Sin cuenta?</span> <span onclick="showAuth('register')" data-i18n="registrate">Regístrate</span></div>
     <div class="auth-link" style="margin-top:16px;font-size:10px;opacity:.6"><a href="privacy.html" target="_blank" style="color:var(--muted);text-decoration:none" data-i18n="politica_priv">Política de Privacidad</a></div>
-    <div style="text-align:center;margin-top:8px;font-size:9px;color:rgba(255,255,255,.2);letter-spacing:1px">v1.31.097</div>
+    <div style="text-align:center;margin-top:8px;font-size:9px;color:rgba(255,255,255,.2);letter-spacing:1px">v1.31.098</div>
   </div>
 </div>
 
@@ -1045,7 +1045,7 @@ nav.nav-hidden{transform:translateY(100%)}
       </div>
     </div>
   </div>
-  <div id="version-tap" style="text-align:center;padding:12px 0 4px;font-size:9px;letter-spacing:2px;color:rgba(255,255,255,.2);font-family:'DM Mono',monospace;cursor:pointer" class="version-label" onclick="adminGesto()">v1.31.097</div>
+  <div id="version-tap" style="text-align:center;padding:12px 0 4px;font-size:9px;letter-spacing:2px;color:rgba(255,255,255,.2);font-family:'DM Mono',monospace;cursor:pointer" class="version-label" onclick="adminGesto()">v1.31.098</div>
   <div class="card" style="margin-bottom:8px;padding:12px 14px;display:none" id="mini-chart-wrap">
     <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px"><span style="font-size:11px;letter-spacing:1.5px;color:var(--gold2)" data-i18n="evolucion_hcp">EVOLUCIÓN HCP</span><span style="font-size:9px;color:var(--muted);letter-spacing:.5px" data-i18n="ultimas_20">20 últimas rondas</span></div>
     <canvas id="mini-hcp-chart" height="100" style="width:100%;display:block"></canvas>
@@ -1438,7 +1438,8 @@ nav.nav-hidden{transform:translateY(100%)}
     </button>
   </div>
   <div style="font-size:20px;letter-spacing:2px;text-transform:uppercase;color:var(--gold2);padding:4px 2px 4px;font-family:'DM Mono',monospace;text-align:center">📊 Panel de Uso</div>
-  <div style="text-align:center;font-size:9px;color:var(--muted);letter-spacing:1px;margin-bottom:20px;font-family:'DM Mono',monospace">Estadísticas internas de actividad</div>
+  <div style="text-align:center;font-size:9px;color:var(--muted);letter-spacing:1px;margin-bottom:6px;font-family:'DM Mono',monospace">Estadísticas internas de actividad</div>
+  <div style="text-align:center;font-size:9px;color:var(--gold2);letter-spacing:0.5px;margin-bottom:14px;font-family:'DM Mono',monospace;font-style:italic">Admins excluidos · solo usuarios reales</div>
 
   <!-- Loading indicator -->
   <div id="uso-loading" style="text-align:center;padding:30px;color:var(--muted);font-family:'DM Mono',monospace;font-size:11px">Cargando datos...</div>
@@ -5464,8 +5465,8 @@ function contactarGolfHCP() {
   const ios = ua.match(/iPhone OS ([\d_]+)/);
   const android = ua.match(/Android ([\d.]+)/);
   const sys = ios ? 'iOS ' + ios[1].replace(/_/g,'.') : android ? 'Android ' + android[1] : 'Web';
-  const appVer = document.title.includes('HCP') ? 'v1.31.097' : 'Golf HCP';
-  const body = encodeURIComponent('Hola,\n\n[Escribe tu consulta aqui]\n\n\n-- \nGolf HCP v1.31.097\n' + sys);
+  const appVer = document.title.includes('HCP') ? 'v1.31.098' : 'Golf HCP';
+  const body = encodeURIComponent('Hola,\n\n[Escribe tu consulta aqui]\n\n\n-- \nGolf HCP v1.31.098\n' + sys);
   window.open('mailto:golf.hcp.webmaster@gmail.com?subject=Golf%20HCP%20App&body=' + body, '_blank');
 }
 
@@ -6610,20 +6611,26 @@ async function renderAdminUso() {
     // Cargar todos los datos en paralelo
     const [sesiones, usuarios] = await Promise.all([
       sb.from('sesiones').select('user_id,tipo,dispositivo,timestamp').order('timestamp', { ascending: false }).limit(5000),
-      sb.from('profiles').select('id,nombre').limit(1000)
+      sb.from('profiles').select('id,nombre,is_admin').limit(1000)
     ]);
     if (sesiones.error) throw sesiones.error;
     if (usuarios.error) throw usuarios.error;
-    const allEvents = sesiones.data || [];
     const allUsers  = usuarios.data || [];
-    // Construir mapa user_id -> nombre (para mostrar en actividad reciente)
+    // v1.31.098: construir set de admins a EXCLUIR de las métricas
+    // Los admins (Francisco y futuros) son testers que contaminan las estadísticas
+    const adminIds = new Set(allUsers.filter(u => u.is_admin).map(u => u.id));
+    // Filtrar eventos de admins
+    const allEvents = (sesiones.data || []).filter(e => !adminIds.has(e.user_id));
+    // Filtrar usuarios "reales" (no admins)
+    const realUsers = allUsers.filter(u => !u.is_admin);
+    // Construir mapa user_id -> nombre (solo usuarios reales para mostrar en actividad)
     const userMap = {};
-    allUsers.forEach(u => { userMap[u.id] = u.nombre || '(sin nombre)'; });
+    realUsers.forEach(u => { userMap[u.id] = u.nombre || '(sin nombre)'; });
 
-    // Calcular y renderizar todas las secciones
-    renderUsoResumen(allEvents, allUsers);
+    // Calcular y renderizar todas las secciones (sin admins)
+    renderUsoResumen(allEvents, realUsers);
     renderUsoDispositivos(allEvents);
-    renderUsoRetencion(allEvents, allUsers);
+    renderUsoRetencion(allEvents, realUsers);
     renderUsoActividad(allEvents, userMap);
     renderUsoTendencias(allEvents);
 
