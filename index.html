@@ -274,7 +274,7 @@ select option{background:var(--bg)}
 
 /* ── TOAST ── */
 .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(16px);background:rgba(26,47,26,.97);border:1px solid rgba(123,198,122,.3);color:#e8e4da;font-size:11px;letter-spacing:1px;padding:10px 16px;border-radius:16px;opacity:0;transition:all .3s;pointer-events:none;white-space:normal;word-break:break-word;z-index:1000;max-width:88vw;text-align:center}
-.toast-r{position:fixed;top:35vh;left:50%;transform:translate(-50%,-10px);background:rgba(255,220,220,.96);border:2px solid var(--red-intenso);color:#8b0000;font-size:13px;font-weight:500;line-height:1.4;text-align:center;padding:14px 20px;border-radius:6px;box-shadow:0 6px 24px rgba(204,0,0,.3);opacity:0;pointer-events:none;transition:opacity .2s ease,transform .2s ease;z-index:10000;max-width:80vw}
+.toast-r{position:fixed;top:45vh;left:50%;transform:translate(-50%,-10px);background:rgba(255,220,220,.96);border:2px solid var(--red-intenso);color:#8b0000;font-size:13px;font-weight:500;line-height:1.4;text-align:center;padding:14px 20px;border-radius:6px;box-shadow:0 6px 24px rgba(204,0,0,.3);opacity:0;pointer-events:none;transition:opacity .2s ease,transform .2s ease;z-index:10000;max-width:80vw}
 .toast-r.show{opacity:1;transform:translate(-50%,0)}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 .toast.err{border-color:rgba(224,85,85,.6);color:#ff9999}
@@ -390,6 +390,7 @@ nav.nav-hidden{transform:translateY(100%)}
 .s-retirada{border-radius:3px!important;background:var(--red-intenso)!important;border:2px solid var(--red-intenso)!important;color:#fff!important;-webkit-text-fill-color:#fff!important;font-weight:bold!important}
 .btn-modor{display:inline-flex;align-items:center;padding:3px 8px;border-radius:3px;background:transparent;color:rgba(255,255,255,.55);border:1px solid var(--red-intenso);font-family:inherit;font-size:9px;cursor:pointer;line-height:1.2;transition:background .12s,color .12s}
 .btn-modor.active{background:var(--red-intenso);color:#fff}
+.btn-modor.active .btn-modor-label,.btn-modor.active{color:#fff!important;-webkit-text-fill-color:#fff!important}
 .btn-modor-icon{display:inline-flex;align-items:center;justify-content:center;width:10px;height:10px;background:var(--red-intenso);color:#fff;border-radius:2px;font-weight:500;font-size:7px;font-family:'DM Mono',monospace;margin-right:4px}
 .btn-modor.active .btn-modor-icon{background:#fff;color:var(--red-intenso)}
 :root.light .btn-modor{color:rgba(0,0,0,.55)}
@@ -831,7 +832,7 @@ nav.nav-hidden{transform:translateY(100%)}
     <button class="auth-btn" id="btn-login" onclick="doLogin()" data-i18n="btn_entrar">Entrar</button>
     <div class="auth-link"><span data-i18n="sin_cuenta">¿Sin cuenta?</span> <span onclick="showAuth('register')" data-i18n="registrate">Regístrate</span></div>
     <div class="auth-link" style="margin-top:16px;font-size:10px;opacity:.6"><a href="privacy.html" target="_blank" style="color:var(--muted);text-decoration:none" data-i18n="politica_priv">Política de Privacidad</a></div>
-    <div style="text-align:center;margin-top:8px;font-size:9px;color:rgba(255,255,255,.2);letter-spacing:1px">v1.33.006</div>
+    <div style="text-align:center;margin-top:8px;font-size:9px;color:rgba(255,255,255,.2);letter-spacing:1px">v1.33.007</div>
   </div>
 </div>
 
@@ -1057,7 +1058,7 @@ nav.nav-hidden{transform:translateY(100%)}
       </div>
     </div>
   </div>
-  <div id="version-tap" style="text-align:center;padding:12px 0 4px;font-size:9px;letter-spacing:2px;color:rgba(255,255,255,.2);font-family:'DM Mono',monospace;cursor:pointer" class="version-label" onclick="adminGesto()">v1.33.006</div>
+  <div id="version-tap" style="text-align:center;padding:12px 0 4px;font-size:9px;letter-spacing:2px;color:rgba(255,255,255,.2);font-family:'DM Mono',monospace;cursor:pointer" class="version-label" onclick="adminGesto()">v1.33.007</div>
   <div class="card" style="margin-bottom:8px;padding:12px 14px;display:none" id="mini-chart-wrap">
     <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px"><span style="font-size:11px;letter-spacing:1.5px;color:var(--gold2)" data-i18n="evolucion_hcp">EVOLUCIÓN HCP</span><span style="font-size:9px;color:var(--muted);letter-spacing:.5px" data-i18n="ultimas_20">20 últimas rondas</span></div>
     <canvas id="mini-hcp-chart" height="100" style="width:100%;display:block"></canvas>
@@ -5835,8 +5836,8 @@ function contactarGolfHCP() {
   const ios = ua.match(/iPhone OS ([\d_]+)/);
   const android = ua.match(/Android ([\d.]+)/);
   const sys = ios ? 'iOS ' + ios[1].replace(/_/g,'.') : android ? 'Android ' + android[1] : 'Web';
-  const appVer = document.title.includes('HCP') ? 'v1.33.006' : 'Golf HCP';
-  const body = encodeURIComponent('Hola,\n\n[Escribe tu consulta aqui]\n\n\n-- \nGolf HCP v1.33.006\n' + sys);
+  const appVer = document.title.includes('HCP') ? 'v1.33.007' : 'Golf HCP';
+  const body = encodeURIComponent('Hola,\n\n[Escribe tu consulta aqui]\n\n\n-- \nGolf HCP v1.33.007\n' + sys);
   window.open('mailto:golf.hcp.webmaster@gmail.com?subject=Golf%20HCP%20App&body=' + body, '_blank');
 }
 
