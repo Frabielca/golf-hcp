@@ -834,7 +834,7 @@ nav.nav-hidden{transform:translateY(100%)}
     <button class="auth-btn" id="btn-login" onclick="doLogin()" data-i18n="btn_entrar">Entrar</button>
     <div class="auth-link"><span data-i18n="sin_cuenta">¿Sin cuenta?</span> <span onclick="showAuth('register')" data-i18n="registrate">Regístrate</span></div>
     <div class="auth-link" style="margin-top:16px;font-size:10px;opacity:.6"><a href="privacy.html" target="_blank" style="color:var(--muted);text-decoration:none" data-i18n="politica_priv">Política de Privacidad</a></div>
-    <div style="text-align:center;margin-top:8px;font-size:9px;color:rgba(255,255,255,.2);letter-spacing:1px">v1.33.009</div>
+    <div style="text-align:center;margin-top:8px;font-size:9px;color:rgba(255,255,255,.2);letter-spacing:1px">v1.33.010</div>
   </div>
 </div>
 
@@ -1060,7 +1060,7 @@ nav.nav-hidden{transform:translateY(100%)}
       </div>
     </div>
   </div>
-  <div id="version-tap" style="text-align:center;padding:12px 0 4px;font-size:9px;letter-spacing:2px;color:rgba(255,255,255,.2);font-family:'DM Mono',monospace" class="version-label">v1.33.009</div>
+  <div id="version-tap" style="text-align:center;padding:12px 0 4px;font-size:9px;letter-spacing:2px;color:rgba(255,255,255,.2);font-family:'DM Mono',monospace" class="version-label">v1.33.010</div>
   <div class="card" style="margin-bottom:8px;padding:12px 14px;display:none" id="mini-chart-wrap">
     <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px"><span style="font-size:11px;letter-spacing:1.5px;color:var(--gold2)" data-i18n="evolucion_hcp">EVOLUCIÓN HCP</span><span style="font-size:9px;color:var(--muted);letter-spacing:.5px" data-i18n="ultimas_20">20 últimas rondas</span></div>
     <canvas id="mini-hcp-chart" height="100" style="width:100%;display:block"></canvas>
@@ -1471,7 +1471,7 @@ nav.nav-hidden{transform:translateY(100%)}
       <span>VOLVER</span>
     </button>
   </div>
-  <div style="font-size:20px;letter-spacing:2px;text-transform:uppercase;color:var(--gold2);padding:4px 2px 4px;font-family:'DM Mono',monospace;text-align:center">📊 Panel de Uso</div>
+  <div style="font-size:20px;letter-spacing:2px;text-transform:uppercase;color:var(--gold2);padding:4px 2px 4px;font-family:'DM Mono',monospace;text-align:center">📊 PANEL ADMIN</div>
   <div style="text-align:center;font-size:9px;color:var(--muted);letter-spacing:1px;margin-bottom:6px;font-family:'DM Mono',monospace">Estadísticas internas de actividad</div>
   <div style="text-align:center;font-size:9px;color:var(--gold2);letter-spacing:0.5px;margin-bottom:14px;font-family:'DM Mono',monospace;font-style:italic">Admins excluidos · solo usuarios reales</div>
 
@@ -1668,9 +1668,12 @@ nav.nav-hidden{transform:translateY(100%)}
       <div id="uso-hcp-mejorando" style="text-align:center;font-size:9px;color:var(--muted);margin-top:8px;font-family:'DM Mono',monospace"></div>
     </div>
 
-    <!-- v1.33.009: ZONA PELIGROSA — borrado de usuarios -->
-    <div style="font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--red-intenso);padding:0 4px 6px;font-family:'DM Mono',monospace;margin-top:24px">⚠️ ZONA PELIGROSA</div>
-    <div style="background:rgba(204,0,0,.05);border:1px solid var(--red-intenso);border-radius:10px;padding:14px 12px;margin-bottom:24px">
+    <!-- v1.33.010: BORRADOS ADMIN — sección plegable, oculta por defecto -->
+    <div onclick="toggleBorradosAdmin()" style="font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--red-intenso);padding:0 4px 6px;font-family:'DM Mono',monospace;margin-top:24px;cursor:pointer;display:flex;align-items:center;gap:6px;user-select:none">
+      <span id="borrados-admin-chevron" style="display:inline-block;transition:transform .2s">▶</span>
+      <span>⚠️ BORRADOS ADMIN</span>
+    </div>
+    <div id="borrados-admin-body" style="display:none;background:rgba(204,0,0,.05);border:1px solid var(--red-intenso);border-radius:10px;padding:14px 12px;margin-bottom:24px">
       <div style="font-size:10px;color:var(--cream);line-height:1.5;margin-bottom:14px;font-family:'DM Mono',monospace">
         Operaciones <strong style="color:var(--red-intenso)">irreversibles</strong> de borrado de usuarios. Los datos se eliminan de todas las tablas (rondas, campos, hoyos, barras, sesiones, profile y auth).
       </div>
@@ -1754,7 +1757,7 @@ nav.nav-hidden{transform:translateY(100%)}
       <div class="ajuste-sep"></div>
       <button class="ajuste-btn" onclick="goTo('admin-uso',null)">
         <div class="ajuste-icon" style="color:var(--gold2)"><svg viewBox="0 0 24 24" style="stroke:currentColor;fill:none;stroke-width:2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></div>
-        <div class="ajuste-text"><div style="color:var(--gold2)">Panel de Uso</div><div class="ajuste-sub">Estadísticas internas de actividad</div></div>
+        <div class="ajuste-text"><div style="color:var(--gold2)">PANEL ADMIN</div><div class="ajuste-sub">Estadísticas internas de actividad</div></div>
         <svg class="ajuste-chevron" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
       </button>
     </div>
@@ -5856,8 +5859,8 @@ function contactarGolfHCP() {
   const ios = ua.match(/iPhone OS ([\d_]+)/);
   const android = ua.match(/Android ([\d.]+)/);
   const sys = ios ? 'iOS ' + ios[1].replace(/_/g,'.') : android ? 'Android ' + android[1] : 'Web';
-  const appVer = document.title.includes('HCP') ? 'v1.33.009' : 'Golf HCP';
-  const body = encodeURIComponent('Hola,\n\n[Escribe tu consulta aqui]\n\n\n-- \nGolf HCP v1.33.009\n' + sys);
+  const appVer = document.title.includes('HCP') ? 'v1.33.010' : 'Golf HCP';
+  const body = encodeURIComponent('Hola,\n\n[Escribe tu consulta aqui]\n\n\n-- \nGolf HCP v1.33.010\n' + sys);
   window.open('mailto:golf.hcp.webmaster@gmail.com?subject=Golf%20HCP%20App&body=' + body, '_blank');
 }
 
@@ -7299,6 +7302,17 @@ function drawUsoTrendChart(values) {
 // Las funciones SQL admin_delete_user_by_email y admin_delete_all_non_admin
 // están definidas en el servidor con SECURITY DEFINER y verifican is_admin
 // del que llama, además de proteger UUID hardcodeado de Francisco.
+
+// v1.33.010: toggle del desplegable "BORRADOS ADMIN" — oculto por defecto
+// para evitar tap accidental.
+function toggleBorradosAdmin() {
+  const body = document.getElementById('borrados-admin-body');
+  const chev = document.getElementById('borrados-admin-chevron');
+  if (!body || !chev) return;
+  const opened = body.style.display !== 'none';
+  body.style.display = opened ? 'none' : 'block';
+  chev.style.transform = opened ? 'rotate(0deg)' : 'rotate(90deg)';
+}
 
 async function adminBorrarUsuarioPorEmail() {
   if (!state.user?.is_admin) { toast('Sin permisos', true); return; }
