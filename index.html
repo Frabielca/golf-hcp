@@ -834,7 +834,7 @@ nav.nav-hidden{transform:translateY(100%)}
     <button class="auth-btn" id="btn-login" onclick="doLogin()" data-i18n="btn_entrar">Entrar</button>
     <div class="auth-link"><span data-i18n="sin_cuenta">¿Sin cuenta?</span> <span onclick="showAuth('register')" data-i18n="registrate">Regístrate</span></div>
     <div class="auth-link" style="margin-top:16px;font-size:10px;opacity:.6"><a href="privacy.html" target="_blank" style="color:var(--muted);text-decoration:none" data-i18n="politica_priv">Política de Privacidad</a></div>
-    <div style="text-align:center;margin-top:8px;font-size:9px;color:rgba(255,255,255,.2);letter-spacing:1px">v1.33.008</div>
+    <div style="text-align:center;margin-top:8px;font-size:9px;color:rgba(255,255,255,.2);letter-spacing:1px">v1.33.009</div>
   </div>
 </div>
 
@@ -1060,7 +1060,7 @@ nav.nav-hidden{transform:translateY(100%)}
       </div>
     </div>
   </div>
-  <div id="version-tap" style="text-align:center;padding:12px 0 4px;font-size:9px;letter-spacing:2px;color:rgba(255,255,255,.2);font-family:'DM Mono',monospace;cursor:pointer" class="version-label" onclick="adminGesto()">v1.33.008</div>
+  <div id="version-tap" style="text-align:center;padding:12px 0 4px;font-size:9px;letter-spacing:2px;color:rgba(255,255,255,.2);font-family:'DM Mono',monospace" class="version-label">v1.33.009</div>
   <div class="card" style="margin-bottom:8px;padding:12px 14px;display:none" id="mini-chart-wrap">
     <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px"><span style="font-size:11px;letter-spacing:1.5px;color:var(--gold2)" data-i18n="evolucion_hcp">EVOLUCIÓN HCP</span><span style="font-size:9px;color:var(--muted);letter-spacing:.5px" data-i18n="ultimas_20">20 últimas rondas</span></div>
     <canvas id="mini-hcp-chart" height="100" style="width:100%;display:block"></canvas>
@@ -1666,6 +1666,16 @@ nav.nav-hidden{transform:translateY(100%)}
       </div>
       <canvas id="uso-hcp-chart" style="width:100%;height:60px;display:block"></canvas>
       <div id="uso-hcp-mejorando" style="text-align:center;font-size:9px;color:var(--muted);margin-top:8px;font-family:'DM Mono',monospace"></div>
+    </div>
+
+    <!-- v1.33.009: ZONA PELIGROSA — borrado de usuarios -->
+    <div style="font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--red-intenso);padding:0 4px 6px;font-family:'DM Mono',monospace;margin-top:24px">⚠️ ZONA PELIGROSA</div>
+    <div style="background:rgba(204,0,0,.05);border:1px solid var(--red-intenso);border-radius:10px;padding:14px 12px;margin-bottom:24px">
+      <div style="font-size:10px;color:var(--cream);line-height:1.5;margin-bottom:14px;font-family:'DM Mono',monospace">
+        Operaciones <strong style="color:var(--red-intenso)">irreversibles</strong> de borrado de usuarios. Los datos se eliminan de todas las tablas (rondas, campos, hoyos, barras, sesiones, profile y auth).
+      </div>
+      <button onclick="adminBorrarUsuarioPorEmail()" style="display:block;width:100%;background:transparent;color:var(--red-intenso);border:1px solid var(--red-intenso);border-radius:4px;padding:10px;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:1px;text-transform:uppercase;cursor:pointer;margin-bottom:8px">🗑️ Borrar usuario por email</button>
+      <button onclick="adminBorrarTodosNoAdmin()" style="display:block;width:100%;background:var(--red-intenso);color:#fff;border:1px solid var(--red-intenso);border-radius:4px;padding:10px;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:1px;text-transform:uppercase;cursor:pointer;font-weight:600">💀 Borrar TODOS los no-admin</button>
     </div>
 
   </div>
@@ -5846,8 +5856,8 @@ function contactarGolfHCP() {
   const ios = ua.match(/iPhone OS ([\d_]+)/);
   const android = ua.match(/Android ([\d.]+)/);
   const sys = ios ? 'iOS ' + ios[1].replace(/_/g,'.') : android ? 'Android ' + android[1] : 'Web';
-  const appVer = document.title.includes('HCP') ? 'v1.33.008' : 'Golf HCP';
-  const body = encodeURIComponent('Hola,\n\n[Escribe tu consulta aqui]\n\n\n-- \nGolf HCP v1.33.008\n' + sys);
+  const appVer = document.title.includes('HCP') ? 'v1.33.009' : 'Golf HCP';
+  const body = encodeURIComponent('Hola,\n\n[Escribe tu consulta aqui]\n\n\n-- \nGolf HCP v1.33.009\n' + sys);
   window.open('mailto:golf.hcp.webmaster@gmail.com?subject=Golf%20HCP%20App&body=' + body, '_blank');
 }
 
@@ -6550,26 +6560,8 @@ const adminState = {
   itemsCache: null,     // array de items del idioma activo
 };
 
-// ── Gesto secreto: 5 taps en menos de 3 segundos sobre version ──
-let _adminTaps = [];
-function adminGesto() {
-  const now = Date.now();
-  _adminTaps = _adminTaps.filter(t => now - t < 3000);
-  _adminTaps.push(now);
-  if (_adminTaps.length >= 5) {
-    _adminTaps = [];
-    if (!state.user) {
-      toast('Inicia sesion primero', true);
-      return;
-    }
-    if (!state.user.is_admin) {
-      // Silencio absoluto si no eres admin (no revelamos que existe el panel)
-      return;
-    }
-    toast('🔧 Panel admin desbloqueado');
-    setTimeout(() => goTo('admin-guia', null), 200);
-  }
-}
+// v1.33.009: gesto secreto de 5 taps eliminado. Acceso al panel admin
+// ahora directo desde Ajustes (botón visible solo para is_admin=true).
 
 // ── Cargar items para el panel admin (todos, incluso inactivos) ──
 async function adminLoadItems() {
@@ -7302,6 +7294,85 @@ function drawUsoTrendChart(values) {
 // v1.31.099 — 10 NUEVAS SECCIONES PANEL ADMIN
 // Fase 1: engagement (5) + Fase 2: golf-específico (5)
 // ═══════════════════════════════════════════════════════════════════════
+
+// v1.33.009: Funciones admin para borrado de usuarios — RPC a Supabase.
+// Las funciones SQL admin_delete_user_by_email y admin_delete_all_non_admin
+// están definidas en el servidor con SECURITY DEFINER y verifican is_admin
+// del que llama, además de proteger UUID hardcodeado de Francisco.
+
+async function adminBorrarUsuarioPorEmail() {
+  if (!state.user?.is_admin) { toast('Sin permisos', true); return; }
+
+  const email = prompt('Introduce el email del usuario a borrar:\n(case-insensitive, se ignoran espacios)');
+  if (!email || !email.trim()) return;
+
+  const emailLimpio = email.trim().toLowerCase();
+
+  if (!confirm(
+    '⚠️ CONFIRMAR BORRADO\n\n' +
+    'Email: ' + emailLimpio + '\n\n' +
+    'Esto borrará TODOS los datos del usuario:\n' +
+    '• Rondas\n' +
+    '• Campos / hoyos / barras\n' +
+    '• Sesiones\n' +
+    '• Perfil\n' +
+    '• Cuenta de Supabase Auth\n\n' +
+    'Acción IRREVERSIBLE. ¿Continuar?'
+  )) return;
+
+  try {
+    const { data, error } = await sb.rpc('admin_delete_user_by_email', { target_email: emailLimpio });
+    if (error) throw error;
+
+    if (data && data.ok) {
+      toast('✓ Usuario ' + emailLimpio + ' borrado correctamente');
+      // Refrescar panel para reflejar el cambio
+      setTimeout(() => renderAdminUso(), 500);
+    } else {
+      toast('No se pudo borrar: ' + (data?.error || 'desconocido'), true);
+    }
+  } catch (e) {
+    toast('Error al borrar usuario: ' + (e.message || e), true);
+  }
+}
+
+async function adminBorrarTodosNoAdmin() {
+  if (!state.user?.is_admin) { toast('Sin permisos', true); return; }
+
+  // Confirmación 1: aviso general
+  if (!confirm(
+    '💀 BORRADO MASIVO\n\n' +
+    'Vas a borrar TODOS los usuarios no-admin del sistema.\n\n' +
+    'Excluidos del borrado:\n' +
+    '• Todos los usuarios con is_admin = true\n' +
+    '• Francisco (UUID protegido por seguridad doble)\n\n' +
+    '¿Estás seguro de que quieres continuar?'
+  )) return;
+
+  // Confirmación 2: requiere escribir literalmente "BORRAR"
+  const confirmacion = prompt(
+    'Escribe BORRAR (en mayúsculas) para confirmar el borrado masivo de TODOS los usuarios no-admin:'
+  );
+  if (confirmacion !== 'BORRAR') {
+    toast('Cancelado: confirmación no coincide', true);
+    return;
+  }
+
+  try {
+    const { data, error } = await sb.rpc('admin_delete_all_non_admin');
+    if (error) throw error;
+
+    if (data && data.ok) {
+      const count = data.deleted_count || 0;
+      toast('✓ ' + count + ' usuario' + (count === 1 ? '' : 's') + ' borrado' + (count === 1 ? '' : 's'));
+      setTimeout(() => renderAdminUso(), 500);
+    } else {
+      toast('No se pudo completar el borrado masivo', true);
+    }
+  } catch (e) {
+    toast('Error en borrado masivo: ' + (e.message || e), true);
+  }
+}
 
 // Helper: obtiene HCP Index actual de cada usuario (último hcp_idx no NULL)
 function getUserCurrentHcp(rondas) {
