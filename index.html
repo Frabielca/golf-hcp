@@ -834,7 +834,7 @@ nav.nav-hidden{transform:translateY(100%)}
     <button class="auth-btn" id="btn-login" onclick="doLogin()" data-i18n="btn_entrar">Entrar</button>
     <div class="auth-link"><span data-i18n="sin_cuenta">¿Sin cuenta?</span> <span onclick="showAuth('register')" data-i18n="registrate">Regístrate</span></div>
     <div class="auth-link" style="margin-top:16px;font-size:10px;opacity:.6"><a href="privacy.html" target="_blank" style="color:var(--muted);text-decoration:none" data-i18n="politica_priv">Política de Privacidad</a></div>
-    <div style="text-align:center;margin-top:8px;font-size:9px;color:rgba(255,255,255,.2);letter-spacing:1px">v1.33.010</div>
+    <div style="text-align:center;margin-top:8px;font-size:9px;color:rgba(255,255,255,.2);letter-spacing:1px">v1.33.011</div>
   </div>
 </div>
 
@@ -1060,7 +1060,7 @@ nav.nav-hidden{transform:translateY(100%)}
       </div>
     </div>
   </div>
-  <div id="version-tap" style="text-align:center;padding:12px 0 4px;font-size:9px;letter-spacing:2px;color:rgba(255,255,255,.2);font-family:'DM Mono',monospace" class="version-label">v1.33.010</div>
+  <div id="version-tap" style="text-align:center;padding:12px 0 4px;font-size:9px;letter-spacing:2px;color:rgba(255,255,255,.2);font-family:'DM Mono',monospace" class="version-label">v1.33.011</div>
   <div class="card" style="margin-bottom:8px;padding:12px 14px;display:none" id="mini-chart-wrap">
     <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px"><span style="font-size:11px;letter-spacing:1.5px;color:var(--gold2)" data-i18n="evolucion_hcp">EVOLUCIÓN HCP</span><span style="font-size:9px;color:var(--muted);letter-spacing:.5px" data-i18n="ultimas_20">20 últimas rondas</span></div>
     <canvas id="mini-hcp-chart" height="100" style="width:100%;display:block"></canvas>
@@ -3497,15 +3497,24 @@ function renderStats() {
   }
   const fmtD = v => (v >= 0 ? '+' : '') + v.toFixed(1);
 
+  // v1.33.011: solo 18H reales para Media Stableford y Media últ. 5.
+  // Excluye 9H (sueltas y combinadas). El resto de métricas siguen usando "combined".
+  const only18 = (filteredRaw || []).filter(r => (r.num_hoyos || 18) === 18);
+  // Conteo real de rondas por tipo (no combinadas) para la tarjeta "Rondas jugadas"
+  const real18Count = only18.length;
+  const real9Count  = (filteredRaw || []).filter(r => r.num_hoyos === 9).length;
+
   // Calcular métricas
   const rounWithScore = combined.filter(r => r.gross > 0);
   const rounWithStbl  = combined.filter(r => r.stableford > 0);
+  // v1.33.011: avgStbl ahora se calcula solo con 18H reales
+  const stbl18 = only18.filter(r => r.stableford > 0);
   const bestDif    = combined.length ? Math.min(...combined.map(r => r.diff)) : null;
   const avgScore   = rounWithScore.length ? (rounWithScore.reduce((s,r)=>s+r.gross,0)/rounWithScore.length).toFixed(1) : '—';
   const bestScore  = rounWithScore.length ? Math.min(...rounWithScore.map(r=>r.gross)) : '—';
   const worstScore = rounWithScore.length ? Math.max(...rounWithScore.map(r=>r.gross)) : '—';
   const bestStbl   = rounWithStbl.length  ? Math.max(...rounWithStbl.map(r=>r.stableford)) + ' pts' : '—';
-  const avgStbl    = rounWithStbl.length  ? (rounWithStbl.reduce((s,r)=>s+r.stableford,0)/rounWithStbl.length).toFixed(1) + ' pts' : '—';
+  const avgStbl    = stbl18.length        ? (stbl18.reduce((s,r)=>s+r.stableford,0)/stbl18.length).toFixed(1) + ' pts' : '—';
 
   // Tendencia HCP (últimas 5 rondas)
   let tendencia = '→';
@@ -3552,9 +3561,11 @@ function renderStats() {
     daysSinceLast = diff;
   }
 
-  // Stableford medio ultimas 5 (de las filtradas que tengan stbl > 0)
+  // v1.33.011: Stableford medio últimas 5 — solo 18H reales (no 9H combinadas/sueltas)
   let avgStbl5 = '—';
-  const last5Stbl = sortedDesc.filter(r => r.stableford > 0).slice(0, 5);
+  const sortedAsc18 = [...only18].sort((a,b) => new Date(a.fecha||a.date) - new Date(b.fecha||b.date));
+  const sortedDesc18 = [...sortedAsc18].reverse();
+  const last5Stbl = sortedDesc18.filter(r => r.stableford > 0).slice(0, 5);
   if (last5Stbl.length > 0) {
     const sum = last5Stbl.reduce((s,r) => s + r.stableford, 0);
     avgStbl5 = (sum / last5Stbl.length).toFixed(1) + ' pts';
@@ -3616,6 +3627,21 @@ function renderStats() {
     </div>`;
   };
 
+  // v1.33.011: variante de card con nota explicativa (sobre uso de rondas 9H/18H)
+  const cardNote = (desc, val, note) => {
+    const sval = String(val);
+    let valSize = '15px';
+    if (sval.length > 15) valSize = '11px';
+    else if (sval.length > 12) valSize = '12px';
+    else if (sval.length > 8)  valSize = '13px';
+    return `
+    <div style="background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:12px;padding:8px 6px 10px;display:flex;flex-direction:column;align-items:center;gap:3px;min-height:62px;justify-content:center">
+      <div style="font-size:7px;letter-spacing:.3px;color:var(--gold2);text-align:center;line-height:1.1;font-style:italic;opacity:.85">${note}</div>
+      <div style="font-size:9px;letter-spacing:.5px;text-transform:uppercase;color:var(--muted);text-align:center;line-height:1.2">${desc}</div>
+      <div style="font-size:${valSize};color:var(--cream);font-family:'DM Mono',monospace;text-align:center;line-height:1.1;overflow-wrap:break-word;hyphens:none">${val}</div>
+    </div>`;
+  };
+
   // Cabecera de seccion (gold separator)
   const section = (titulo) => `
     <div style="grid-column:1/-1;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold2);margin:6px 0 -2px 2px;font-family:'DM Mono',monospace">${titulo}</div>`;
@@ -3661,7 +3687,7 @@ function renderStats() {
     </div>`}
     <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px">
     ${section(lbl('Rondas','Voltas','Parties'))}
-    ${card(lbl('Rondas jugadas','Voltas jogadas','Parties jouées'), combined.length)}
+    ${cardNote(lbl('Rondas jugadas','Voltas jogadas','Parties jouées'), real18Count + ' / ' + real9Count, lbl('18H / 9H','18B / 9B','18T / 9T'))}
     ${card(lbl('Mejor diferencial','Melhor diferencial','Meilleur différentiel'), bestDif !== null ? fmtD(bestDif) : '—')}
     ${card(lbl('Tendencia HCP','Tendência HCP','Tendance HCP'), tendencia)}
     ${card(lbl('Media golpes','Média pancadas','Moyenne coups'), avgScore)}
@@ -3669,11 +3695,11 @@ function renderStats() {
     ${card(lbl('Peor resultado','Pior resultado','Pire résultat'), worstScore)}
     ${section(lbl('Stableford','Stableford','Stableford'))}
     ${card(lbl('Mejor Stableford','Melhor Stableford','Meilleur Stableford'), bestStbl)}
-    ${card(lbl('Media Stableford','Média Stableford','Moyenne Stableford'), avgStbl)}
-    ${card(lbl('Media últ. 5','Média últ. 5','Moyenne 5 dern.'), avgStbl5)}
+    ${cardNote(lbl('Media Stableford','Média Stableford','Moyenne Stableford'), avgStbl, lbl('solo 18H','só 18B','seul. 18T'))}
+    ${cardNote(lbl('Media últ. 5','Média últ. 5','Moyenne 5 dern.'), avgStbl5, lbl('solo 18H','só 18B','seul. 18T'))}
     ${section(lbl('Actividad','Atividade','Activité'))}
     ${card(lbl('Rondas mes actual','Voltas mês atual','Parties mois en cours'), thisMon)}
-    ${card(lbl('Promedio rondas/mes','Média voltas/mês','Moyenne parties/mois'), avgRoundsPerMonth)}
+    ${cardNote(lbl('Promedio rondas/mes','Média voltas/mês','Moyenne parties/mois'), avgRoundsPerMonth, lbl('2×9H = 1','2×9B = 1','2×9T = 1'))}
     ${card(lbl('Días sin jugar','Dias sem jogar','Jours sans jouer'), daysSinceLast)}
     ${card(lbl('Campo favorito','Campo favorito','Parcours favori'), favCampo)}
     ${card(lbl('Racha mejorando','Sequência a melhorar','Série en amélioration'), streakImproving)}
@@ -5859,8 +5885,8 @@ function contactarGolfHCP() {
   const ios = ua.match(/iPhone OS ([\d_]+)/);
   const android = ua.match(/Android ([\d.]+)/);
   const sys = ios ? 'iOS ' + ios[1].replace(/_/g,'.') : android ? 'Android ' + android[1] : 'Web';
-  const appVer = document.title.includes('HCP') ? 'v1.33.010' : 'Golf HCP';
-  const body = encodeURIComponent('Hola,\n\n[Escribe tu consulta aqui]\n\n\n-- \nGolf HCP v1.33.010\n' + sys);
+  const appVer = document.title.includes('HCP') ? 'v1.33.011' : 'Golf HCP';
+  const body = encodeURIComponent('Hola,\n\n[Escribe tu consulta aqui]\n\n\n-- \nGolf HCP v1.33.011\n' + sys);
   window.open('mailto:golf.hcp.webmaster@gmail.com?subject=Golf%20HCP%20App&body=' + body, '_blank');
 }
 
