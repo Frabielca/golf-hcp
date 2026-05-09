@@ -1060,7 +1060,7 @@ nav.nav-hidden{transform:translateY(100%)}
       </div>
     </div>
   </div>
-  <div id="version-tap" style="text-align:center;padding:12px 0 4px;font-size:9px;letter-spacing:2px;color:rgba(255,255,255,.2);font-family:'DM Mono',monospace" class="version-label">v1.33.011</div>
+  <div id="version-tap" style="text-align:center;padding:12px 0 4px;font-size:9px;letter-spacing:2px;color:rgba(255,255,255,.2);font-family:'DM Mono',monospace" class="version-label">v1.34.000</div>
   <div class="card" style="margin-bottom:8px;padding:12px 14px;display:none" id="mini-chart-wrap">
     <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px"><span style="font-size:11px;letter-spacing:1.5px;color:var(--gold2)" data-i18n="evolucion_hcp">EVOLUCIÓN HCP</span><span style="font-size:9px;color:var(--muted);letter-spacing:.5px" data-i18n="ultimas_20">20 últimas rondas</span></div>
     <canvas id="mini-hcp-chart" height="100" style="width:100%;display:block"></canvas>
@@ -2401,6 +2401,161 @@ const statsFilterPending = {
   desde: null,
   hasta: null
 };
+
+//*************************************************************************************************
+// ═══════════════════════════════════════════════════════════════════════
+// GOLF HCP — Fase 2B: Capa de acceso a datos para campos_publicos
+// ═══════════════════════════════════════════════════════════════════════
+//
+// 3 funciones públicas + caché en memoria.
+//
+// Asume que existe la variable global `sb` con el cliente Supabase.
+//
+// USO desde la consola del navegador (F12 → Console):
+//   await listarTodosCamposPublicos()         → array de 415 campos
+//   await buscarCamposPublicos('aloha')       → array filtrado
+//   await obtenerCampoPublico(123)            → un campo o null
+//   limpiarCacheCamposPublicos()              → fuerza recarga
+//
+// ═══════════════════════════════════════════════════════════════════════
+
+// ── Caché en memoria (se invalida al cerrar sesión, al refrescar página
+//    o explícitamente con limpiarCacheCamposPublicos()) ────────────────
+let _cacheCamposPublicos = null;       // array completo cacheado
+let _cacheCamposPublicosTS = 0;        // timestamp de carga (ms)
+const _CACHE_TTL_MS = 60 * 60 * 1000;  // 1 hora
+
+
+// ─────────────────────────────────────────────────────────────────────
+// 1. listarTodosCamposPublicos()
+// Devuelve los 415 campos públicos completos, ordenados alfabéticamente.
+// Usa caché en memoria (1h TTL) para evitar requests repetidos.
+//
+// Devuelve: array de objetos { id, nombre, n_hoyos, par_total,
+//           distancias_jsonb, course_rating_jsonb, slope_rating_jsonb }
+// En caso de error de red: devuelve [] y muestra warning en consola.
+// ─────────────────────────────────────────────────────────────────────
+async function listarTodosCamposPublicos() {
+  // Comprobar caché válida
+  const ahora = Date.now();
+  if (_cacheCamposPublicos && (ahora - _cacheCamposPublicosTS) < _CACHE_TTL_MS) {
+    return _cacheCamposPublicos;
+  }
+
+  try {
+    const { data, error } = await sb
+      .from('campos_publicos')
+      .select('id, nombre, n_hoyos, par_total, distancias_jsonb, course_rating_jsonb, slope_rating_jsonb')
+      .eq('activo', true)
+      .order('nombre', { ascending: true });
+
+    if (error) {
+      console.warn('[campos_publicos] Error al cargar lista:', error.message);
+      return [];
+    }
+
+    // Guardar en caché
+    _cacheCamposPublicos = data || [];
+    _cacheCamposPublicosTS = ahora;
+    return _cacheCamposPublicos;
+  } catch (e) {
+    console.warn('[campos_publicos] Excepción al cargar lista:', e.message);
+    return [];
+  }
+}
+
+
+// ─────────────────────────────────────────────────────────────────────
+// 2. buscarCamposPublicos(query)
+// Filtra campos por nombre (case-insensitive, sin tildes).
+// Trabaja sobre la caché si está disponible (filtro en cliente, instantáneo).
+//
+// Parámetros:
+//   query: string — texto a buscar. Vacío o null devuelve la lista completa.
+//
+// Devuelve: array filtrado, ordenado alfabéticamente.
+// ─────────────────────────────────────────────────────────────────────
+async function buscarCamposPublicos(query) {
+  // Cargar lista completa (usa caché si existe)
+  const todos = await listarTodosCamposPublicos();
+
+  // Sin query → devolver todos
+  if (!query || !query.trim()) return todos;
+
+  // Normalizar query: minúsculas + sin tildes
+  const q = _normalizarTexto(query.trim());
+
+  // Filtrar por substring del nombre normalizado
+  return todos.filter(c => _normalizarTexto(c.nombre).includes(q));
+}
+
+
+// ─────────────────────────────────────────────────────────────────────
+// 3. obtenerCampoPublico(id)
+// Devuelve un campo público concreto por su ID.
+// Busca primero en la caché; si no está, hace una consulta directa.
+//
+// Parámetros:
+//   id: number — ID del campo público (bigserial de la tabla).
+//
+// Devuelve: objeto del campo o null si no existe.
+// ─────────────────────────────────────────────────────────────────────
+async function obtenerCampoPublico(id) {
+  if (!id || isNaN(parseInt(id))) return null;
+  const idNum = parseInt(id);
+
+  // Buscar en caché primero
+  if (_cacheCamposPublicos) {
+    const found = _cacheCamposPublicos.find(c => c.id === idNum);
+    if (found) return found;
+  }
+
+  // Si no está en caché, consulta directa
+  try {
+    const { data, error } = await sb
+      .from('campos_publicos')
+      .select('id, nombre, n_hoyos, par_total, distancias_jsonb, course_rating_jsonb, slope_rating_jsonb')
+      .eq('id', idNum)
+      .eq('activo', true)
+      .maybeSingle();
+
+    if (error) {
+      console.warn('[campos_publicos] Error al cargar campo', idNum, ':', error.message);
+      return null;
+    }
+    return data;
+  } catch (e) {
+    console.warn('[campos_publicos] Excepción al cargar campo', idNum, ':', e.message);
+    return null;
+  }
+}
+
+
+// ─────────────────────────────────────────────────────────────────────
+// 4. limpiarCacheCamposPublicos()
+// Invalida la caché. Llamar tras logout, o si se quiere forzar recarga.
+// ─────────────────────────────────────────────────────────────────────
+function limpiarCacheCamposPublicos() {
+  _cacheCamposPublicos = null;
+  _cacheCamposPublicosTS = 0;
+}
+
+
+// ─────────────────────────────────────────────────────────────────────
+// Helper interno: normaliza un texto para comparación robusta.
+// Quita tildes, ñ → n, pasa a minúsculas, colapsa espacios.
+// ─────────────────────────────────────────────────────────────────────
+function _normalizarTexto(s) {
+  if (!s) return '';
+  return s
+    .toLowerCase()
+    .normalize('NFD')                // descompone tildes
+    .replace(/[\u0300-\u036f]/g, '') // quita marcas diacríticas
+    .replace(/\s+/g, ' ')            // colapsa espacios múltiples
+    .trim();
+}
+
+//*************************************************************************************************
 
 // ── HELPERS ──────────────────────────────────────────────────────────────
 const $ = id => document.getElementById(id);
