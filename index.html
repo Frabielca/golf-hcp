@@ -1089,7 +1089,7 @@ nav.nav-hidden{transform:translateY(100%)}
       </div>
     </div>
   </div>
-  <div id="version-tap" style="text-align:center;padding:12px 0 4px;font-size:9px;letter-spacing:2px;color:rgba(255,255,255,.2);font-family:'DM Mono',monospace" class="version-label">v1.34.007</div>
+  <div id="version-tap" style="text-align:center;padding:12px 0 4px;font-size:9px;letter-spacing:2px;color:rgba(255,255,255,.2);font-family:'DM Mono',monospace" class="version-label">v1.34.008</div>
   <div class="card" style="margin-bottom:8px;padding:12px 14px;display:none" id="mini-chart-wrap">
     <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px"><span style="font-size:11px;letter-spacing:1.5px;color:var(--gold2)" data-i18n="evolucion_hcp">EVOLUCIÓN HCP</span><span style="font-size:9px;color:var(--muted);letter-spacing:.5px" data-i18n="ultimas_20">20 últimas rondas</span></div>
     <canvas id="mini-hcp-chart" height="100" style="width:100%;display:block"></canvas>
@@ -2510,7 +2510,7 @@ async function listarTodosCamposPublicos() {
   try {
     const { data, error } = await sb
       .from('campos_publicos')
-      .select('id, nombre, n_hoyos, par_total, distancias_jsonb, course_rating_jsonb, slope_rating_jsonb')
+      .select('id, nombre, n_hoyos, par_total, distancias_jsonb, course_rating_jsonb, slope_rating_jsonb, par_hoyos_jsonb, indice_hoyos_jsonb')
       .eq('activo', true)
       .order('nombre', { ascending: true });
 
@@ -2579,7 +2579,7 @@ async function obtenerCampoPublico(id) {
   try {
     const { data, error } = await sb
       .from('campos_publicos')
-      .select('id, nombre, n_hoyos, par_total, distancias_jsonb, course_rating_jsonb, slope_rating_jsonb')
+      .select('id, nombre, n_hoyos, par_total, distancias_jsonb, course_rating_jsonb, slope_rating_jsonb, par_hoyos_jsonb, indice_hoyos_jsonb')
       .eq('id', idNum)
       .eq('activo', true)
       .maybeSingle();
@@ -2842,6 +2842,14 @@ function _bcpAplicarCampoANuevoCampo(campo) {
   // 4. Reconstruir el editor de barras con los datos del catálogo
   buildBarrasEditor('nc-barras-wrap', 'nc-', barrasParaApp);
 
+  // 4b. Si el catálogo tiene par/índice por hoyo, reconstruir el editor
+  //     de hoyos con esos datos. Si no los tiene, el usuario los rellena
+  //     a mano como hasta ahora.
+  const hoyosParaApp = _bcpExtraerHoyosParaApp(campo);
+  if (hoyosParaApp.length > 0) {
+    buildHoyosEditor('nc-hoyos-wrap', 'nc-', hoyosParaApp);
+  }
+
   // 5. Hacer scroll al principio para que el usuario vea el resultado
   window.scrollTo(0, 0);
 }
@@ -2903,6 +2911,27 @@ function _bcpExtraerBarrasParaApp(campo) {
     if (entry.cr != null || entry.slope != null) {
       out.push(entry);
     }
+  }
+  return out;
+}
+
+// ─── Convierte par_hoyos_jsonb e indice_hoyos_jsonb del catálogo a
+//     formato que entiende buildHoyosEditor: array de {numero, par, indice}
+function _bcpExtraerHoyosParaApp(campo) {
+  const par = Array.isArray(campo.par_hoyos_jsonb) ? campo.par_hoyos_jsonb : null;
+  const idx = Array.isArray(campo.indice_hoyos_jsonb) ? campo.indice_hoyos_jsonb : null;
+  // Si NO hay datos en absoluto, devolver array vacío (el usuario rellenará a mano)
+  if (!par && !idx) return [];
+  // Determinar cuántos hoyos hay (usar la longitud del array más completo)
+  const len = Math.max(par ? par.length : 0, idx ? idx.length : 0);
+  if (len === 0) return [];
+  const out = [];
+  for (let i = 0; i < len; i++) {
+    const entry = { numero: i + 1 };
+    if (par && par[i] != null) entry.par = par[i];
+    if (idx && idx[i] != null) entry.indice = idx[i];
+    // Solo añadir si tiene al menos par o índice
+    if (entry.par != null || entry.indice != null) out.push(entry);
   }
   return out;
 }
