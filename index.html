@@ -31,9 +31,9 @@
 <style>
 :root{--hist-sticky:#233723;--bg:#1a2f1a;--bg2:rgba(255,255,255,0.04);--border:rgba(255,255,255,0.09);--gold:#c9a84c;--gold2:#e8c96a;--green:#7bc67a;--cream:#f5f0e8;--muted:rgba(255,255,255,0.35);--red:#e05555;--red-intenso:#cc0000;--text:#ffffff;--text2:rgba(255,255,255,0.65);--card-bg:rgba(255,255,255,0.04);--nav-bg:#0f1a0f;--input-bg:rgba(255,255,255,0.07);--splash-bg:#1a2f1a}
 :root.light{--hist-sticky:#e8f0e8;--bg:#f0f4f0;--text:#000000;--cream:#1a2f1a;--bg2:rgba(0,0,0,0.03);--border:rgba(0,0,0,0.12);--gold:#7a5a10;--gold2:#8a6a18;--green:#1a4a1a;--cream:#2a1a00;--muted:rgba(0,0,0,0.5);--red:#b01010;--red-intenso:#cc0000;--text:#000000;--text2:rgba(0,0,0,0.75);--card-bg:rgba(255,255,255,0.9);--nav-bg:#e0ebe0;--input-bg:#ffffff;--splash-bg:#f0f4f0}
-input::placeholder,textarea::placeholder{color:var(--gold);opacity:0.30}
-input::-webkit-input-placeholder,textarea::-webkit-input-placeholder{color:var(--gold);opacity:0.30}
-input::-moz-placeholder,textarea::-moz-placeholder{color:var(--gold);opacity:0.30}
+input::placeholder,textarea::placeholder{color:var(--gold);opacity:0.20}
+input::-webkit-input-placeholder,textarea::-webkit-input-placeholder{color:var(--gold);opacity:0.20}
+input::-moz-placeholder,textarea::-moz-placeholder{color:var(--gold);opacity:0.20}
 
 :root.light body,
 :root.light .page,
@@ -694,7 +694,7 @@ nav.nav-hidden{transform:translateY(100%)}
 .bcp-search-wrap{position:relative;margin-bottom:10px}
 .bcp-search-icon{position:absolute;left:9px;top:50%;transform:translateY(-50%);font-size:11px;pointer-events:none;opacity:.6}
 .bcp-search-input{width:100%;background:var(--input-bg);border:1px solid var(--border);border-radius:4px;color:var(--text);font-family:'DM Mono',monospace;font-size:11px;padding:6px 32px 6px 28px;-webkit-appearance:none;appearance:none;outline:none;transition:border-color .15s}
-.bcp-search-input::placeholder{color:var(--gold);opacity:0.30}
+.bcp-search-input::placeholder{color:var(--gold);opacity:0.20}
 .bcp-search-input:focus{border-color:var(--gold)}
 .bcp-clear-btn{position:absolute;right:5px;top:50%;transform:translateY(-50%);background:transparent;border:none;color:var(--muted);font-size:13px;cursor:pointer;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;-webkit-tap-highlight-color:transparent;transition:background .15s,color .15s;padding:0}
 .bcp-clear-btn:hover,.bcp-clear-btn:active{background:var(--bg2);color:var(--text)}
@@ -997,7 +997,7 @@ nav.nav-hidden{transform:translateY(100%)}
     <div class="modal-title">Editar Campo</div>
     <input type="hidden" id="edit-c-id">
     <div class="modal-err" id="edit-c-err"></div>
-    <div class="field" style="gap:3px;margin-bottom:8px"><label data-i18n="nombre_campo" style="display:inline">Nombre del campo</label> <span style="color:var(--muted);font-weight:normal;font-size:9px;display:inline" data-i18n="max15">(máx. 20 caracteres)</span><input id="edit-c-nombre" type="text" data-clearable placeholder="CLUB DE GOLF" maxlength="20" style="background:var(--input-bg);border:1px solid var(--border);border-radius:4px;color:var(--text);font-family:'DM Mono',monospace;font-size:13px;padding:5px 8px;width:100%;-webkit-appearance:none;outline:none;text-transform:uppercase;touch-action:manipulation" oninput="this.value=this.value.toUpperCase()"></div>
+    <div class="field" style="gap:3px;margin-bottom:8px"><label data-i18n="nombre_campo" style="display:inline">Nombre del campo</label><input id="edit-c-nombre" type="text" data-clearable placeholder="CLUB DE GOLF" style="background:var(--input-bg);border:1px solid var(--border);border-radius:4px;color:var(--text);font-family:'DM Mono',monospace;font-size:13px;padding:5px 8px;width:100%;-webkit-appearance:none;outline:none;text-transform:uppercase;touch-action:manipulation" oninput="this.value=this.value.toUpperCase()"></div>
     <div class="section-title" data-i18n="barras_salida">Barras de Salida</div>
     <div id="edit-barras-wrap"></div>
     <div class="section-title" data-i18n="par_indice">Par e Índice por Hoyo</div>
@@ -1089,7 +1089,7 @@ nav.nav-hidden{transform:translateY(100%)}
       </div>
     </div>
   </div>
-  <div id="version-tap" style="text-align:center;padding:12px 0 4px;font-size:9px;letter-spacing:2px;color:rgba(255,255,255,.2);font-family:'DM Mono',monospace" class="version-label">v1.34.006</div>
+  <div id="version-tap" style="text-align:center;padding:12px 0 4px;font-size:9px;letter-spacing:2px;color:rgba(255,255,255,.2);font-family:'DM Mono',monospace" class="version-label">v1.34.007</div>
   <div class="card" style="margin-bottom:8px;padding:12px 14px;display:none" id="mini-chart-wrap">
     <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px"><span style="font-size:11px;letter-spacing:1.5px;color:var(--gold2)" data-i18n="evolucion_hcp">EVOLUCIÓN HCP</span><span style="font-size:9px;color:var(--muted);letter-spacing:.5px" data-i18n="ultimas_20">20 últimas rondas</span></div>
     <canvas id="mini-hcp-chart" height="100" style="width:100%;display:block"></canvas>
@@ -1265,8 +1265,8 @@ nav.nav-hidden{transform:translateY(100%)}
       </div>
       <button class="btn-bcp-online" type="button" onclick="abrirBuscadorDesdeNuevoCampo()" data-i18n="bcp_btn_buscar_online">🔍 Buscar Campo OnLine</button>
       <div class="field" style="gap:3px;margin-bottom:8px">
-        <label data-i18n="nombre_campo">Nombre del campo</label> <span style="color:var(--muted);font-weight:normal;font-size:9px" data-i18n="max15">(máx. 20 caracteres)</span>
-        <input id="nc-nombre" type="text" data-clearable placeholder="CLUB DE GOLF" maxlength="20"
+        <label data-i18n="nombre_campo">Nombre del campo</label>
+        <input id="nc-nombre" type="text" data-clearable placeholder="CLUB DE GOLF"
           style="background:var(--input-bg);border:1px solid var(--border);border-radius:4px;color:var(--text);font-family:'DM Mono',monospace;font-size:13px;padding:5px 8px;width:100%;-webkit-appearance:none;outline:none;text-transform:uppercase" oninput="this.value=this.value.toUpperCase()">
       </div>
       <div class="section-title" data-i18n="barras_salida">Barras de Salida</div>
@@ -2750,6 +2750,42 @@ window._bcpElegirCampo = _bcpElegirCampo;
 // FASE 2D — Integración con formulario Nuevo Campo
 //*************************************************************************************************
 
+// Limpiador de nombres: quita prefijos genéricos para mostrar la parte
+// distintiva del campo (REAL CLUB DE GOLF SOTOGRANDE → SOTOGRANDE).
+// Los prefijos están ordenados del MÁS específico al MÁS genérico.
+const _BCP_PREFIJOS_LIMPIEZA = [
+  'CAMPO DE GOLF MUNICIPAL DE ',
+  'CAMPO MUNICIPAL DE GOLF ',
+  'CAMPO DE GOLF DE ',
+  'CAMPO MUNICIPAL DE ',
+  'CAMPO MUNICIPAL ',
+  'CAMPO DE GOLF ',
+  'REAL CLUB DE GOLF ',
+  'REAL CLUB DE CAMPO ',
+  'REAL CLUB ',
+  'CLUB DE GOLF ',
+  'CLUB DE CAMPO ',
+  'GOLF CLUB ',
+  'GOLF DE ',
+  'GOLF ',
+  'CLUB '
+];
+
+function limpiarNombreCampo(nombre) {
+  if (!nombre) return nombre;
+  // Comparación case-insensitive: si hay match al principio, recortar
+  // por la longitud del prefijo respetando el case original del nombre
+  const upper = nombre.toUpperCase().trim();
+  for (const p of _BCP_PREFIJOS_LIMPIEZA) {
+    if (upper.startsWith(p)) {
+      const cleaned = nombre.trim().substring(p.length).trim();
+      if (cleaned) return cleaned;
+    }
+  }
+  return nombre.trim();
+}
+window.limpiarNombreCampo = limpiarNombreCampo;
+
 // Mapeo plural (BD) → singular (app)
 const _BCP_BARRAS_MAP = {
   'blancas':'blanca','amarillas':'amarilla','azules':'azul','rojas':'roja',
@@ -2782,7 +2818,7 @@ function _bcpAplicarCampoANuevoCampo(campo) {
   }
 
   // 1. Rellenar nombre (truncar a 20 chars que es el maxlength del input)
-  const nombreLimpio = (campo.nombre || '').toUpperCase().substring(0, 20);
+  const nombreLimpio = limpiarNombreCampo(campo.nombre || '').toUpperCase();
   const inputNombre = $('nc-nombre');
   if (inputNombre) {
     inputNombre.value = nombreLimpio;
@@ -4914,7 +4950,7 @@ function renderCampos() {
     }).join('');
     return `<div class="campo-item">
       <div>
-        <div class="campo-name">${campo.nombre}</div>
+        <div class="campo-name">${limpiarNombreCampo(campo.nombre || '')}</div>
         <div class="campo-meta">Par ${campo.par_total || '—'} · ${campo.hoyos?.length || 0} ${lang==='pt'?'buracos':'hoyos'} · ${dots || t('sin_barras')}</div>
       </div>
       <div style="display:flex;gap:8px">
