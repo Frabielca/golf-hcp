@@ -1097,7 +1097,7 @@ nav.nav-hidden{transform:translateY(100%)}
       </div>
     </div>
   </div>
-  <div id="version-tap" style="text-align:center;padding:12px 0 4px;font-size:9px;letter-spacing:2px;color:rgba(255,255,255,.2);font-family:'DM Mono',monospace" class="version-label">v1.34.024</div>
+  <div id="version-tap" style="text-align:center;padding:12px 0 4px;font-size:9px;letter-spacing:2px;color:rgba(255,255,255,.2);font-family:'DM Mono',monospace" class="version-label">v1.34.025</div>
   <div class="card" style="margin-bottom:8px;padding:12px 14px;display:none" id="mini-chart-wrap">
     <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px"><span style="font-size:11px;letter-spacing:1.5px;color:var(--gold2)" data-i18n="evolucion_hcp">EVOLUCIÓN HCP</span><span style="font-size:9px;color:var(--muted);letter-spacing:.5px" data-i18n="ultimas_20">20 últimas rondas</span></div>
     <canvas id="mini-hcp-chart" height="100" style="width:100%;display:block"></canvas>
@@ -3112,7 +3112,7 @@ function _bcpAplicarCampoANuevoCampo(campo) {
                 '⚠️ {n} barra(s) del catálogo no compatible(s) con la app no se han importado: {l}';
     const msg = tpl.replace('{n}', barrasIgnoradas.length).replace('{l}', lista);
     if (typeof toast === 'function') {
-      toast(msg);
+      toast(msg, false, 5000);
     } else {
       console.warn(msg);
     }
@@ -3129,7 +3129,7 @@ function _bcpAplicarCampoANuevoCampo(campo) {
     const delay = barrasIgnoradas.length > 0 ? 3500 : 100;
     setTimeout(() => {
       if (typeof toast === 'function') {
-        toast(tpl9h);
+        toast(tpl9h, false, 5000);
       } else {
         console.info(tpl9h);
       }
@@ -3854,12 +3854,12 @@ window.acGuardarCampo = acGuardarCampo;
 const $ = id => document.getElementById(id);
 function setVal(id, v) { const el = $(id); if (el) el.value = (v == null ? '' : v); }
 let _toastTimer = null;
-function toast(msg, err=false) {
+function toast(msg, err=false, ms=3000) {
   const el = $('toast');
   el.textContent = msg;
   el.className = 'toast show' + (err ? ' err' : '');
   clearTimeout(_toastTimer);
-  _toastTimer = setTimeout(() => el.className = 'toast', 3000);
+  _toastTimer = setTimeout(() => el.className = 'toast', ms);
 }
 
 function cerrarModal(id) {
@@ -6136,7 +6136,7 @@ function onBarraChange() {
         const lbl = lang==='fr'?(BARRA_LABELS_FR[barra.color]||barra.color):lang==='pt'?(BARRA_LABELS_PT[barra.color]||barra.color):(BARRA_LABELS[barra.color]||barra.color);
         const tpl = (typeof t==='function' && t('aviso_cr_sospechoso_toast')) ||
                     '⚠️ CR de {b} muy bajo. Revisa los datos del campo.';
-        if (typeof toast==='function') toast(tpl.replace('{b}', lbl));
+        if (typeof toast==='function') toast(tpl.replace('{b}', lbl), false, 5000);
       }
     }
     // Show/hide 9H option based on selected barra
