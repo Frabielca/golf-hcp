@@ -1097,7 +1097,7 @@ nav.nav-hidden{transform:translateY(100%)}
       </div>
     </div>
   </div>
-  <div id="version-tap" style="text-align:center;padding:12px 0 4px;font-size:9px;letter-spacing:2px;color:rgba(255,255,255,.2);font-family:'DM Mono',monospace" class="version-label">v1.34.015</div>
+  <div id="version-tap" style="text-align:center;padding:12px 0 4px;font-size:9px;letter-spacing:2px;color:rgba(255,255,255,.2);font-family:'DM Mono',monospace" class="version-label">v1.34.016</div>
   <div class="card" style="margin-bottom:8px;padding:12px 14px;display:none" id="mini-chart-wrap">
     <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px"><span style="font-size:11px;letter-spacing:1.5px;color:var(--gold2)" data-i18n="evolucion_hcp">EVOLUCIÓN HCP</span><span style="font-size:9px;color:var(--muted);letter-spacing:.5px" data-i18n="ultimas_20">20 últimas rondas</span></div>
     <canvas id="mini-hcp-chart" height="100" style="width:100%;display:block"></canvas>
@@ -2725,6 +2725,34 @@ async function obtenerCampoPublico(id) {
   }
 }
 
+// ─────────────────────────────────────────────────────────────────────
+// obtenerCampoPublicoAdmin(id)
+// Variante para Admin BD pública: trae el campo SIN filtro de activo,
+// e incluye la columna 'activo' para que la UI sepa el estado.
+// No usa caché (datos siempre frescos, además la caché es del usuario
+// y solo contiene activos).
+// ─────────────────────────────────────────────────────────────────────
+async function obtenerCampoPublicoAdmin(id) {
+  if (!id || isNaN(parseInt(id))) return null;
+  const idNum = parseInt(id);
+  try {
+    const { data, error } = await sb
+      .from('campos_publicos')
+      .select('id, nombre, n_hoyos, par_total, distancias_jsonb, course_rating_jsonb, slope_rating_jsonb, par_hoyos_jsonb, indice_hoyos_jsonb, activo')
+      .eq('id', idNum)
+      .maybeSingle();
+    if (error) {
+      console.warn('[campos_publicos][admin] Error al cargar campo', idNum, ':', error.message);
+      return null;
+    }
+    return data;
+  } catch (e) {
+    console.warn('[campos_publicos][admin] Excepción al cargar campo', idNum, ':', e.message);
+    return null;
+  }
+}
+window.obtenerCampoPublicoAdmin = obtenerCampoPublicoAdmin;
+
 
 // ─────────────────────────────────────────────────────────────────────
 // 4. limpiarCacheCamposPublicos()
@@ -3302,7 +3330,7 @@ function _acRenderResultados(campos, query) {
 
 // ─── Abrir editor con un campo concreto ─────────────────────────────────
 async function acAbrirEditor(id) {
-  const campo = await obtenerCampoPublico(id);
+  const campo = await obtenerCampoPublicoAdmin(id);
   if (!campo) {
     toast('Campo no encontrado', true);
     return;
