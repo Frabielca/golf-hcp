@@ -1097,7 +1097,7 @@ nav.nav-hidden{transform:translateY(100%)}
       </div>
     </div>
   </div>
-  <div id="version-tap" style="text-align:center;padding:12px 0 4px;font-size:9px;letter-spacing:2px;color:rgba(255,255,255,.2);font-family:'DM Mono',monospace" class="version-label">v1.34.021</div>
+  <div id="version-tap" style="text-align:center;padding:12px 0 4px;font-size:9px;letter-spacing:2px;color:rgba(255,255,255,.2);font-family:'DM Mono',monospace" class="version-label">v1.34.022</div>
   <div class="card" style="margin-bottom:8px;padding:12px 14px;display:none" id="mini-chart-wrap">
     <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px"><span style="font-size:11px;letter-spacing:1.5px;color:var(--gold2)" data-i18n="evolucion_hcp">EVOLUCIÓN HCP</span><span style="font-size:9px;color:var(--muted);letter-spacing:.5px" data-i18n="ultimas_20">20 últimas rondas</span></div>
     <canvas id="mini-hcp-chart" height="100" style="width:100%;display:block"></canvas>
@@ -3395,10 +3395,48 @@ async function acAbrirEditor(id) {
 }
 
 function acVolverALista() {
+  // En modo CREAR (_acCampoEditando = null) preguntar si hay datos rellenos.
+  // En modo EDITAR no preguntar: los datos ya están en BD.
+  // Detectamos modo crear por: editor visible + _acCampoEditando null.
+  const editorVisible = $('ac-editor-wrap')?.style.display !== 'none';
+  const modoCrear = editorVisible && !_acCampoEditando;
+  if (modoCrear && _acTieneDatosFormulario()) {
+    const tpl = (typeof t === 'function' && t('c_cancelar_nuevo_campo')) ||
+                '¿Cancelar el campo? Los datos introducidos se perderán.';
+    if (!confirm(tpl)) return; // El usuario eligió quedarse
+  }
   $('ac-lista-wrap').style.display = '';
   $('ac-editor-wrap').style.display = 'none';
   _acCampoEditando = null;
   window.scrollTo(0, 0);
+}
+
+// Detecta si el formulario admin tiene datos significativos rellenos.
+// Considera: nombre, n_hoyos diferente del default 18, cualquier par/idx,
+// cualquier CR/Slope de barra (incluyendo 9h).
+function _acTieneDatosFormulario() {
+  if (($('ac-nombre')?.value || '').trim() !== '') return true;
+  // n_hoyos por defecto es 18; si el usuario lo cambió, considerarlo dato
+  const nh = ($('ac-n-hoyos')?.value || '').trim();
+  if (nh !== '' && nh !== '18') return true;
+  // Cualquier par o índice rellenos
+  for (let i = 1; i <= 18; i++) {
+    if (($('ac-par-' + i)?.value || '').trim() !== '') return true;
+    if (($('ac-idx-' + i)?.value || '').trim() !== '') return true;
+  }
+  // Cualquier CR/Slope (18h o 9h) rellenos en cualquier barra
+  const colores = ['blanca','amarilla','azul','roja','violeta','naranja','negra'];
+  for (const c of colores) {
+    if (($('ac-cr-' + c)?.value || '').trim() !== '') return true;
+    if (($('ac-slope-' + c)?.value || '').trim() !== '') return true;
+    if (($('ac-cr_out-' + c)?.value || '').trim() !== '') return true;
+    if (($('ac-slope_out-' + c)?.value || '').trim() !== '') return true;
+    if (($('ac-par_out-' + c)?.value || '').trim() !== '') return true;
+    if (($('ac-cr_in-' + c)?.value || '').trim() !== '') return true;
+    if (($('ac-slope_in-' + c)?.value || '').trim() !== '') return true;
+    if (($('ac-par_in-' + c)?.value || '').trim() !== '') return true;
+  }
+  return false;
 }
 
 // ─── Convierte JSONB del catálogo a formato editor (singular) ───────────
