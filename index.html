@@ -871,7 +871,7 @@ nav.nav-hidden{transform:translateY(100%)}
     <button class="auth-btn" id="btn-login" onclick="doLogin()" data-i18n="btn_entrar">Entrar</button>
     <div class="auth-link"><span data-i18n="sin_cuenta">¿Sin cuenta?</span> <span onclick="showAuth('register')" data-i18n="registrate">Regístrate</span></div>
     <div class="auth-link" style="margin-top:16px;font-size:10px;opacity:.6"><a href="privacy.html" target="_blank" style="color:var(--muted);text-decoration:none" data-i18n="politica_priv">Política de Privacidad</a></div>
-    <div style="text-align:center;margin-top:8px;font-size:9px;color:rgba(255,255,255,.2);letter-spacing:1px">v1.34.031</div>
+    <div style="text-align:center;margin-top:8px;font-size:9px;color:rgba(255,255,255,.2);letter-spacing:1px">v1.34.033</div>
   </div>
 </div>
 
@@ -1097,7 +1097,7 @@ nav.nav-hidden{transform:translateY(100%)}
       </div>
     </div>
   </div>
-  <div id="version-tap" style="text-align:center;padding:12px 0 4px;font-size:9px;letter-spacing:2px;color:rgba(255,255,255,.2);font-family:'DM Mono',monospace" class="version-label">v1.34.031</div>
+  <div id="version-tap" style="text-align:center;padding:12px 0 4px;font-size:9px;letter-spacing:2px;color:rgba(255,255,255,.2);font-family:'DM Mono',monospace" class="version-label">v1.34.033</div>
   <div class="card" style="margin-bottom:8px;padding:12px 14px;display:none" id="mini-chart-wrap">
     <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px"><span style="font-size:11px;letter-spacing:1.5px;color:var(--gold2)" data-i18n="evolucion_hcp">EVOLUCIÓN HCP</span><span style="font-size:9px;color:var(--muted);letter-spacing:.5px" data-i18n="ultimas_20">20 últimas rondas</span></div>
     <canvas id="mini-hcp-chart" height="100" style="width:100%;display:block"></canvas>
@@ -1383,11 +1383,7 @@ nav.nav-hidden{transform:translateY(100%)}
       Solo aparecen campos <strong>desactivados</strong>. Para borrar uno activo, vuelve a la lista, ábrelo y pulsa <strong>"Desactivar"</strong> primero.
     </div>
     <div class="card">
-      <div class="bcp-search-wrap">
-        <span class="bcp-search-icon" aria-hidden="true">🔍</span>
-        <input type="text" id="ac-borrar-search-input" class="bcp-search-input" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Escribe nombre del campo...">
-        <button type="button" id="ac-borrar-clear-btn" class="bcp-clear-btn" onclick="acBorrarLimpiarBusqueda()" style="display:none" aria-label="Limpiar">✕</button>
-      </div>
+      <!-- v1.34.033: buscador eliminado (innecesario al haber pocos desactivados) -->
       <div class="bcp-count" id="ac-borrar-count">Cargando catálogo...</div>
       <div class="bcp-results" id="ac-borrar-results"></div>
       <div class="bcp-empty" id="ac-borrar-empty" style="display:none">
@@ -3856,13 +3852,11 @@ async function acAbrirEditorNuevo() {
 }
 window.acAbrirEditorNuevo = acAbrirEditorNuevo;
 
-// ─── v1.34.029: BORRADO FISICO DE CAMPO PUBLICO (con buscador) ────────
-// El admin abre un buscador, selecciona el campo y confirma con el dialog
-// nativo. Llama a la funcion SQL admin_delete_campo_publico_by_id.
+// ─── v1.34.029-033: BORRADO FISICO DE CAMPO PUBLICO ───────────────────
+// El admin abre la vista, ve la lista de campos DESACTIVADOS y selecciona
+// uno. confirm() nativo. Llama a admin_delete_campo_publico_by_id.
 // Distinto del Desactivar (UPDATE activo=false, reversible).
-
-let _acBorrarUltimaQuery = '';
-let _acBorrarDebounceTimer = null;
+// v1.34.033: buscador eliminado (los campos desactivados suelen ser pocos).
 
 async function acAbrirBuscadorBorrar() {
   if (!state.user?.is_admin) { toast('Sin permisos', true); return; }
@@ -3873,26 +3867,15 @@ async function acAbrirBuscadorBorrar() {
   $('ac-editor-wrap').style.display = 'none';
   $('ac-borrar-wrap').style.display = '';
 
-  // Reset estado del buscador
-  const input = $('ac-borrar-search-input');
-  if (input) input.value = '';
-  _acBorrarUltimaQuery = '';
-  $('ac-borrar-clear-btn').style.display = 'none';
+  // Reset visual
   $('ac-borrar-empty').style.display = 'none';
   $('ac-borrar-count').textContent = 'Cargando catálogo...';
   $('ac-borrar-results').innerHTML = '';
 
-  // Listener del input (solo una vez)
-  if (input && !input.dataset.acBorrarListenerAttached) {
-    input.addEventListener('input', _acBorrarOnInput);
-    input.dataset.acBorrarListenerAttached = '1';
-  }
-
-  // Cargar TODOS los campos (forzar recarga para reflejar cambios)
+  // v1.34.033: cargar y filtrar solo desactivados, sin buscador
   try {
     if (typeof limpiarCacheCamposPublicos === 'function') limpiarCacheCamposPublicos();
     const todos = await listarTodosCamposPublicosAdmin();
-    // v1.34.031: solo desactivados son borrables (doble proteccion)
     const desactivados = (todos || []).filter(c => c.activo === false);
     _acRenderResultadosBorrar(desactivados, '');
   } catch (e) {
@@ -3900,7 +3883,6 @@ async function acAbrirBuscadorBorrar() {
     $('ac-borrar-count').textContent = 'Error al cargar el catálogo.';
   }
 
-  if (input) setTimeout(() => { try { input.focus(); } catch(e) {} }, 200);
   window.scrollTo(0, 0);
 }
 window.acAbrirBuscadorBorrar = acAbrirBuscadorBorrar;
@@ -3914,40 +3896,9 @@ function acVolverDesdeBorrar() {
 }
 window.acVolverDesdeBorrar = acVolverDesdeBorrar;
 
-async function _acBorrarOnInput(e) {
-  const q = e.target.value;
-  $('ac-borrar-clear-btn').style.display = q ? 'flex' : 'none';
-  if (_acBorrarDebounceTimer) clearTimeout(_acBorrarDebounceTimer);
-  _acBorrarDebounceTimer = setTimeout(async () => {
-    if (q === _acBorrarUltimaQuery) return;
-    _acBorrarUltimaQuery = q;
-    try {
-      const resultados = q.trim()
-        ? await buscarCamposPublicosAdmin(q)
-        : await listarTodosCamposPublicosAdmin();
-      // v1.34.031: solo desactivados son borrables
-      const desactivados = (resultados || []).filter(c => c.activo === false);
-      _acRenderResultadosBorrar(desactivados, q);
-    } catch (err) {
-      console.error('[_acBorrarOnInput] error:', err);
-    }
-  }, 200);
-}
-
-function acBorrarLimpiarBusqueda() {
-  const input = $('ac-borrar-search-input');
-  if (!input) return;
-  input.value = '';
-  _acBorrarUltimaQuery = '';
-  $('ac-borrar-clear-btn').style.display = 'none';
-  // v1.34.031: solo desactivados son borrables
-  listarTodosCamposPublicosAdmin().then(todos => {
-    const desactivados = (todos || []).filter(c => c.activo === false);
-    _acRenderResultadosBorrar(desactivados, '');
-  });
-  try { input.focus(); } catch(e) {}
-}
-window.acBorrarLimpiarBusqueda = acBorrarLimpiarBusqueda;
+// v1.34.033: eliminadas _acBorrarOnInput, acBorrarLimpiarBusqueda
+// y las variables _acBorrarUltimaQuery / _acBorrarDebounceTimer
+// (el buscador del wrapper de borrar fue retirado).
 
 function _acRenderResultadosBorrar(items, q) {
   const resultsEl = $('ac-borrar-results');
@@ -3985,11 +3936,10 @@ async function acConfirmarBorrarCampoPorId(id, nombre) {
   if (!state.user?.is_admin) { toast('Sin permisos', true); return; }
 
   if (!confirm(
-    '🗑️ CONFIRMAR BORRADO DE CAMPO\n\n' +
+    '🗑️ Borrar campo definitivamente\n\n' +
     'Campo: ' + nombre + '\n' +
     'ID: ' + id + '\n\n' +
-    'Se eliminará la fila completa de campos_publicos.\n' +
-    'Acción IRREVERSIBLE.\n\n' +
+    'Esta acción no se puede deshacer.\n\n' +
     '¿Continuar?'
   )) return;
 
@@ -3998,16 +3948,12 @@ async function acConfirmarBorrarCampoPorId(id, nombre) {
     if (error) throw error;
     if (data && data.ok) {
       toast('✓ Campo "' + (data.deleted_nombre || nombre) + '" (id=' + data.deleted_id + ') borrado', false, 5000);
-      // Refrescar la propia lista del buscador (sin salir)
+      // Refrescar la lista (sin salir) — v1.34.033: ya no hay buscador
       try {
         if (typeof limpiarCacheCamposPublicos === 'function') limpiarCacheCamposPublicos();
-        const q = $('ac-borrar-search-input')?.value || '';
-        const items = q.trim()
-          ? await buscarCamposPublicosAdmin(q)
-          : await listarTodosCamposPublicosAdmin();
-        // v1.34.031: solo desactivados son borrables
-        const desactivados = (items || []).filter(c => c.activo === false);
-        _acRenderResultadosBorrar(desactivados, q);
+        const todos = await listarTodosCamposPublicosAdmin();
+        const desactivados = (todos || []).filter(c => c.activo === false);
+        _acRenderResultadosBorrar(desactivados, '');
       } catch (refreshErr) {
         console.warn('[acConfirmarBorrarCampoPorId] refresco fallido:', refreshErr);
       }
@@ -7682,8 +7628,8 @@ function contactarGolfHCP() {
   const ios = ua.match(/iPhone OS ([\d_]+)/);
   const android = ua.match(/Android ([\d.]+)/);
   const sys = ios ? 'iOS ' + ios[1].replace(/_/g,'.') : android ? 'Android ' + android[1] : 'Web';
-  const appVer = document.title.includes('HCP') ? 'v1.34.031' : 'Golf HCP';
-  const body = encodeURIComponent('Hola,\n\n[Escribe tu consulta aqui]\n\n\n-- \nGolf HCP v1.34.031\n' + sys);
+  const appVer = document.title.includes('HCP') ? 'v1.34.033' : 'Golf HCP';
+  const body = encodeURIComponent('Hola,\n\n[Escribe tu consulta aqui]\n\n\n-- \nGolf HCP v1.34.033\n' + sys);
   window.open('mailto:golf.hcp.webmaster@gmail.com?subject=Golf%20HCP%20App&body=' + body, '_blank');
 }
 
