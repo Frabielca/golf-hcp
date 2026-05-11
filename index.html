@@ -871,7 +871,7 @@ nav.nav-hidden{transform:translateY(100%)}
     <button class="auth-btn" id="btn-login" onclick="doLogin()" data-i18n="btn_entrar">Entrar</button>
     <div class="auth-link"><span data-i18n="sin_cuenta">¿Sin cuenta?</span> <span onclick="showAuth('register')" data-i18n="registrate">Regístrate</span></div>
     <div class="auth-link" style="margin-top:16px;font-size:10px;opacity:.6"><a href="privacy.html" target="_blank" style="color:var(--muted);text-decoration:none" data-i18n="politica_priv">Política de Privacidad</a></div>
-    <div style="text-align:center;margin-top:8px;font-size:9px;color:rgba(255,255,255,.2);letter-spacing:1px">v1.34.029</div>
+    <div style="text-align:center;margin-top:8px;font-size:9px;color:rgba(255,255,255,.2);letter-spacing:1px">v1.34.031</div>
   </div>
 </div>
 
@@ -1097,7 +1097,7 @@ nav.nav-hidden{transform:translateY(100%)}
       </div>
     </div>
   </div>
-  <div id="version-tap" style="text-align:center;padding:12px 0 4px;font-size:9px;letter-spacing:2px;color:rgba(255,255,255,.2);font-family:'DM Mono',monospace" class="version-label">v1.34.029</div>
+  <div id="version-tap" style="text-align:center;padding:12px 0 4px;font-size:9px;letter-spacing:2px;color:rgba(255,255,255,.2);font-family:'DM Mono',monospace" class="version-label">v1.34.031</div>
   <div class="card" style="margin-bottom:8px;padding:12px 14px;display:none" id="mini-chart-wrap">
     <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px"><span style="font-size:11px;letter-spacing:1.5px;color:var(--gold2)" data-i18n="evolucion_hcp">EVOLUCIÓN HCP</span><span style="font-size:9px;color:var(--muted);letter-spacing:.5px" data-i18n="ultimas_20">20 últimas rondas</span></div>
     <canvas id="mini-hcp-chart" height="100" style="width:100%;display:block"></canvas>
@@ -1377,9 +1377,10 @@ nav.nav-hidden{transform:translateY(100%)}
       </button>
     </div>
     <div style="font-size:16px;letter-spacing:1.5px;text-transform:uppercase;color:var(--red-intenso);padding:0 4px 4px;font-family:'DM Mono',monospace;text-align:center">🗑️ Borrar Campo</div>
-    <div style="text-align:center;font-size:9px;color:var(--muted);letter-spacing:1px;margin-bottom:14px;font-family:'DM Mono',monospace">Selecciona el campo a eliminar definitivamente</div>
+    <div style="text-align:center;font-size:9px;color:var(--muted);letter-spacing:1px;margin-bottom:14px;font-family:'DM Mono',monospace">Selecciona el campo desactivado a eliminar</div>
     <div style="background:rgba(204,0,0,.05);border:1px solid var(--red-intenso);border-radius:8px;padding:10px 12px;margin-bottom:14px;font-size:10px;color:var(--cream);line-height:1.5;font-family:'DM Mono',monospace">
-      <strong style="color:var(--red-intenso)">Aviso:</strong> al confirmar se eliminará la fila completa de <code>campos_publicos</code>. Acción <strong style="color:var(--red-intenso)">irreversible</strong>. Si solo quieres ocultar el campo a los usuarios, usa "Desactivar" desde el editor.
+      <strong style="color:var(--red-intenso)">Borrado definitivo.</strong> El campo desaparece de la base de datos y no se puede recuperar.<br>
+      Solo aparecen campos <strong>desactivados</strong>. Para borrar uno activo, vuelve a la lista, ábrelo y pulsa <strong>"Desactivar"</strong> primero.
     </div>
     <div class="card">
       <div class="bcp-search-wrap">
@@ -1390,7 +1391,7 @@ nav.nav-hidden{transform:translateY(100%)}
       <div class="bcp-count" id="ac-borrar-count">Cargando catálogo...</div>
       <div class="bcp-results" id="ac-borrar-results"></div>
       <div class="bcp-empty" id="ac-borrar-empty" style="display:none">
-        <p>Sin resultados.</p>
+        <p style="font-size:11px;color:var(--muted);line-height:1.5">No hay campos desactivados que borrar.<br>Para borrar uno, primero vuelve a la lista, ábrelo y pulsa <strong>"Desactivar"</strong>.</p>
       </div>
     </div>
   </div>
@@ -3891,7 +3892,9 @@ async function acAbrirBuscadorBorrar() {
   try {
     if (typeof limpiarCacheCamposPublicos === 'function') limpiarCacheCamposPublicos();
     const todos = await listarTodosCamposPublicosAdmin();
-    _acRenderResultadosBorrar(todos, '');
+    // v1.34.031: solo desactivados son borrables (doble proteccion)
+    const desactivados = (todos || []).filter(c => c.activo === false);
+    _acRenderResultadosBorrar(desactivados, '');
   } catch (e) {
     console.error('[acAbrirBuscadorBorrar] Error al cargar catálogo:', e);
     $('ac-borrar-count').textContent = 'Error al cargar el catálogo.';
@@ -3922,7 +3925,9 @@ async function _acBorrarOnInput(e) {
       const resultados = q.trim()
         ? await buscarCamposPublicosAdmin(q)
         : await listarTodosCamposPublicosAdmin();
-      _acRenderResultadosBorrar(resultados, q);
+      // v1.34.031: solo desactivados son borrables
+      const desactivados = (resultados || []).filter(c => c.activo === false);
+      _acRenderResultadosBorrar(desactivados, q);
     } catch (err) {
       console.error('[_acBorrarOnInput] error:', err);
     }
@@ -3935,7 +3940,11 @@ function acBorrarLimpiarBusqueda() {
   input.value = '';
   _acBorrarUltimaQuery = '';
   $('ac-borrar-clear-btn').style.display = 'none';
-  listarTodosCamposPublicosAdmin().then(todos => _acRenderResultadosBorrar(todos, ''));
+  // v1.34.031: solo desactivados son borrables
+  listarTodosCamposPublicosAdmin().then(todos => {
+    const desactivados = (todos || []).filter(c => c.activo === false);
+    _acRenderResultadosBorrar(desactivados, '');
+  });
   try { input.focus(); } catch(e) {}
 }
 window.acBorrarLimpiarBusqueda = acBorrarLimpiarBusqueda;
@@ -3957,16 +3966,15 @@ function _acRenderResultadosBorrar(items, q) {
   countEl.textContent = items.length + (items.length === 1 ? ' campo' : ' campos');
 
   // Render simple: cada item es un botón clickable con nombre + id
+  // v1.34.031: el listado ya viene filtrado a solo desactivados, no hace falta el sufijo
   const safe = s => String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
   let html = '';
   items.forEach(item => {
     const nombre = safe(item.nombre || '(sin nombre)');
     const id = parseInt(item.id, 10);
-    const inactivo = item.activo === false;
-    const subEstado = inactivo ? '<span style="color:var(--muted);font-size:9px;margin-left:6px">(desactivado)</span>' : '';
     html += '<button type="button" onclick="acConfirmarBorrarCampoPorId(' + id + ',&quot;' + nombre.replace(/"/g,'\\"') + '&quot;)" ' +
             'style="display:flex;align-items:center;justify-content:space-between;width:100%;text-align:left;background:transparent;border:1px solid var(--border);border-radius:6px;padding:10px 12px;margin-bottom:6px;cursor:pointer;color:var(--cream);font-family:\'DM Mono\',monospace">' +
-              '<span style="font-size:12px">' + nombre + subEstado + '</span>' +
+              '<span style="font-size:12px">' + nombre + '</span>' +
               '<span style="font-size:9px;color:var(--muted);letter-spacing:1px">ID ' + id + ' &nbsp;🗑️</span>' +
             '</button>';
   });
@@ -3997,7 +4005,9 @@ async function acConfirmarBorrarCampoPorId(id, nombre) {
         const items = q.trim()
           ? await buscarCamposPublicosAdmin(q)
           : await listarTodosCamposPublicosAdmin();
-        _acRenderResultadosBorrar(items, q);
+        // v1.34.031: solo desactivados son borrables
+        const desactivados = (items || []).filter(c => c.activo === false);
+        _acRenderResultadosBorrar(desactivados, q);
       } catch (refreshErr) {
         console.warn('[acConfirmarBorrarCampoPorId] refresco fallido:', refreshErr);
       }
@@ -7672,8 +7682,8 @@ function contactarGolfHCP() {
   const ios = ua.match(/iPhone OS ([\d_]+)/);
   const android = ua.match(/Android ([\d.]+)/);
   const sys = ios ? 'iOS ' + ios[1].replace(/_/g,'.') : android ? 'Android ' + android[1] : 'Web';
-  const appVer = document.title.includes('HCP') ? 'v1.34.029' : 'Golf HCP';
-  const body = encodeURIComponent('Hola,\n\n[Escribe tu consulta aqui]\n\n\n-- \nGolf HCP v1.34.029\n' + sys);
+  const appVer = document.title.includes('HCP') ? 'v1.34.031' : 'Golf HCP';
+  const body = encodeURIComponent('Hola,\n\n[Escribe tu consulta aqui]\n\n\n-- \nGolf HCP v1.34.031\n' + sys);
   window.open('mailto:golf.hcp.webmaster@gmail.com?subject=Golf%20HCP%20App&body=' + body, '_blank');
 }
 
