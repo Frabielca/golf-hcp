@@ -871,7 +871,7 @@ nav.nav-hidden{transform:translateY(100%)}
     <button class="auth-btn" id="btn-login" onclick="doLogin()" data-i18n="btn_entrar">Entrar</button>
     <div class="auth-link"><span data-i18n="sin_cuenta">¿Sin cuenta?</span> <span onclick="showAuth('register')" data-i18n="registrate">Regístrate</span></div>
     <div class="auth-link" style="margin-top:16px;font-size:10px;opacity:.6"><a href="privacy.html" target="_blank" style="color:var(--muted);text-decoration:none" data-i18n="politica_priv">Política de Privacidad</a></div>
-    <div style="text-align:center;margin-top:8px;font-size:9px;color:rgba(255,255,255,.2);letter-spacing:1px">v1.34.028</div>
+    <div style="text-align:center;margin-top:8px;font-size:9px;color:rgba(255,255,255,.2);letter-spacing:1px">v1.34.029</div>
   </div>
 </div>
 
@@ -1097,7 +1097,7 @@ nav.nav-hidden{transform:translateY(100%)}
       </div>
     </div>
   </div>
-  <div id="version-tap" style="text-align:center;padding:12px 0 4px;font-size:9px;letter-spacing:2px;color:rgba(255,255,255,.2);font-family:'DM Mono',monospace" class="version-label">v1.34.028</div>
+  <div id="version-tap" style="text-align:center;padding:12px 0 4px;font-size:9px;letter-spacing:2px;color:rgba(255,255,255,.2);font-family:'DM Mono',monospace" class="version-label">v1.34.029</div>
   <div class="card" style="margin-bottom:8px;padding:12px 14px;display:none" id="mini-chart-wrap">
     <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px"><span style="font-size:11px;letter-spacing:1.5px;color:var(--gold2)" data-i18n="evolucion_hcp">EVOLUCIÓN HCP</span><span style="font-size:9px;color:var(--muted);letter-spacing:.5px" data-i18n="ultimas_20">20 últimas rondas</span></div>
     <canvas id="mini-hcp-chart" height="100" style="width:100%;display:block"></canvas>
@@ -1323,7 +1323,7 @@ nav.nav-hidden{transform:translateY(100%)}
       <!-- v1.34.028: columna con +Nuevo arriba y Borrar debajo, ambos compactos -->
       <div style="display:flex;flex-direction:column;gap:4px;flex-shrink:0">
         <button id="ac-btn-nuevo" onclick="acAbrirEditorNuevo()" style="padding:4px 8px;border:1px solid var(--gold2);border-radius:5px;background:rgba(201,168,76,.06);color:var(--gold2);font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.5px;cursor:pointer;text-transform:uppercase;font-weight:600;white-space:nowrap" data-i18n="ac_nuevo_campo">+ Nuevo</button>
-        <button id="ac-btn-borrar" onclick="acBorrarCampoPorNombre()" style="padding:4px 8px;border:1px solid var(--red-intenso);border-radius:5px;background:rgba(204,0,0,.06);color:var(--red-intenso);font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.5px;cursor:pointer;text-transform:uppercase;font-weight:600;white-space:nowrap">🗑️ Borrar</button>
+        <button id="ac-btn-borrar" onclick="acAbrirBuscadorBorrar()" style="padding:4px 8px;border:1px solid var(--red-intenso);border-radius:5px;background:rgba(204,0,0,.06);color:var(--red-intenso);font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.5px;cursor:pointer;text-transform:uppercase;font-weight:600;white-space:nowrap">🗑️ Borrar</button>
       </div>
     </div>
     <div style="text-align:center;font-size:9px;color:var(--muted);letter-spacing:1px;margin-bottom:18px;font-family:'DM Mono',monospace" data-i18n="admin_cat_sub">Editar catálogo Online de campos</div>
@@ -1364,6 +1364,33 @@ nav.nav-hidden{transform:translateY(100%)}
       <div class="bcp-results" id="ac-results"></div>
       <div class="bcp-empty" id="ac-empty" style="display:none">
         <p data-i18n="bcp_vacio_titulo">Sin resultados.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- BORRAR: aparece al pulsar el botón 🗑️ Borrar — v1.34.029 -->
+  <div id="ac-borrar-wrap" style="display:none">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+      <button onclick="acVolverDesdeBorrar()" style="background:none;border:none;color:var(--muted);font-family:'DM Mono',monospace;font-size:12px;cursor:pointer;padding:0;display:flex;align-items:center;gap:5px;height:32px">
+        <svg viewBox="0 0 24 24" style="width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2"><polyline points="15 18 9 12 15 6"/></svg>
+        <span>VOLVER A LA LISTA</span>
+      </button>
+    </div>
+    <div style="font-size:16px;letter-spacing:1.5px;text-transform:uppercase;color:var(--red-intenso);padding:0 4px 4px;font-family:'DM Mono',monospace;text-align:center">🗑️ Borrar Campo</div>
+    <div style="text-align:center;font-size:9px;color:var(--muted);letter-spacing:1px;margin-bottom:14px;font-family:'DM Mono',monospace">Selecciona el campo a eliminar definitivamente</div>
+    <div style="background:rgba(204,0,0,.05);border:1px solid var(--red-intenso);border-radius:8px;padding:10px 12px;margin-bottom:14px;font-size:10px;color:var(--cream);line-height:1.5;font-family:'DM Mono',monospace">
+      <strong style="color:var(--red-intenso)">Aviso:</strong> al confirmar se eliminará la fila completa de <code>campos_publicos</code>. Acción <strong style="color:var(--red-intenso)">irreversible</strong>. Si solo quieres ocultar el campo a los usuarios, usa "Desactivar" desde el editor.
+    </div>
+    <div class="card">
+      <div class="bcp-search-wrap">
+        <span class="bcp-search-icon" aria-hidden="true">🔍</span>
+        <input type="text" id="ac-borrar-search-input" class="bcp-search-input" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Escribe nombre del campo...">
+        <button type="button" id="ac-borrar-clear-btn" class="bcp-clear-btn" onclick="acBorrarLimpiarBusqueda()" style="display:none" aria-label="Limpiar">✕</button>
+      </div>
+      <div class="bcp-count" id="ac-borrar-count">Cargando catálogo...</div>
+      <div class="bcp-results" id="ac-borrar-results"></div>
+      <div class="bcp-empty" id="ac-borrar-empty" style="display:none">
+        <p>Sin resultados.</p>
       </div>
     </div>
   </div>
@@ -3356,6 +3383,7 @@ async function abrirAdminCatalogo() {
   $('ac-lista-wrap').style.display = '';
   $('ac-editor-wrap').style.display = 'none';
   $('ac-cabecera-lista').style.display = '';  // v1.34.028
+  $('ac-borrar-wrap').style.display = 'none';  // v1.34.029
   _acCampoEditando = null;
 
   // Reset input de búsqueda
@@ -3499,6 +3527,7 @@ async function acAbrirEditor(id) {
   $('ac-lista-wrap').style.display = 'none';
   $('ac-editor-wrap').style.display = '';
   $('ac-cabecera-lista').style.display = 'none';  // v1.34.028
+  $('ac-borrar-wrap').style.display = 'none';  // v1.34.029
   $('ac-err').classList.remove('show');
 
   // Rellenar inputs simples
@@ -3550,6 +3579,7 @@ function acVolverALista() {
   $('ac-lista-wrap').style.display = '';
   $('ac-editor-wrap').style.display = 'none';
   $('ac-cabecera-lista').style.display = '';  // v1.34.028
+  $('ac-borrar-wrap').style.display = 'none';  // v1.34.029
   _acCampoEditando = null;
   window.scrollTo(0, 0);
 }
@@ -3791,6 +3821,7 @@ async function acAbrirEditorNuevo() {
   $('ac-lista-wrap').style.display = 'none';
   $('ac-editor-wrap').style.display = '';
   $('ac-cabecera-lista').style.display = 'none';  // v1.34.028
+  $('ac-borrar-wrap').style.display = 'none';  // v1.34.029
   $('ac-err').classList.remove('show');
 
   // Limpiar inputs principales
@@ -3824,39 +3855,151 @@ async function acAbrirEditorNuevo() {
 }
 window.acAbrirEditorNuevo = acAbrirEditorNuevo;
 
-// ─── v1.34.028: borrado fisico de campo publico por nombre ────────────
+// ─── v1.34.029: BORRADO FISICO DE CAMPO PUBLICO (con buscador) ────────
+// El admin abre un buscador, selecciona el campo y confirma con el dialog
+// nativo. Llama a la funcion SQL admin_delete_campo_publico_by_id.
 // Distinto del Desactivar (UPDATE activo=false, reversible).
-// Llama a la funcion SQL admin_delete_campo_publico_by_nombre (SECURITY DEFINER).
-async function acBorrarCampoPorNombre() {
+
+let _acBorrarUltimaQuery = '';
+let _acBorrarDebounceTimer = null;
+
+async function acAbrirBuscadorBorrar() {
   if (!state.user?.is_admin) { toast('Sin permisos', true); return; }
 
-  const nombre = prompt('Introduce el NOMBRE EXACTO del campo a borrar:\n(case-insensitive, se ignoran espacios al inicio/fin)\n\nOJO: BORRADO IRREVERSIBLE. Si solo quieres ocultarlo, usa "Desactivar" desde el editor del campo.');
-  if (!nombre || !nombre.trim()) return;
+  // Cambiar de vista: solo el wrapper de borrar visible
+  $('ac-cabecera-lista').style.display = 'none';
+  $('ac-lista-wrap').style.display = 'none';
+  $('ac-editor-wrap').style.display = 'none';
+  $('ac-borrar-wrap').style.display = '';
 
-  const nombreLimpio = nombre.trim();
+  // Reset estado del buscador
+  const input = $('ac-borrar-search-input');
+  if (input) input.value = '';
+  _acBorrarUltimaQuery = '';
+  $('ac-borrar-clear-btn').style.display = 'none';
+  $('ac-borrar-empty').style.display = 'none';
+  $('ac-borrar-count').textContent = 'Cargando catálogo...';
+  $('ac-borrar-results').innerHTML = '';
+
+  // Listener del input (solo una vez)
+  if (input && !input.dataset.acBorrarListenerAttached) {
+    input.addEventListener('input', _acBorrarOnInput);
+    input.dataset.acBorrarListenerAttached = '1';
+  }
+
+  // Cargar TODOS los campos (forzar recarga para reflejar cambios)
+  try {
+    if (typeof limpiarCacheCamposPublicos === 'function') limpiarCacheCamposPublicos();
+    const todos = await listarTodosCamposPublicosAdmin();
+    _acRenderResultadosBorrar(todos, '');
+  } catch (e) {
+    console.error('[acAbrirBuscadorBorrar] Error al cargar catálogo:', e);
+    $('ac-borrar-count').textContent = 'Error al cargar el catálogo.';
+  }
+
+  if (input) setTimeout(() => { try { input.focus(); } catch(e) {} }, 200);
+  window.scrollTo(0, 0);
+}
+window.acAbrirBuscadorBorrar = acAbrirBuscadorBorrar;
+
+function acVolverDesdeBorrar() {
+  $('ac-borrar-wrap').style.display = 'none';
+  $('ac-cabecera-lista').style.display = '';
+  $('ac-lista-wrap').style.display = '';
+  $('ac-editor-wrap').style.display = 'none';
+  window.scrollTo(0, 0);
+}
+window.acVolverDesdeBorrar = acVolverDesdeBorrar;
+
+async function _acBorrarOnInput(e) {
+  const q = e.target.value;
+  $('ac-borrar-clear-btn').style.display = q ? 'flex' : 'none';
+  if (_acBorrarDebounceTimer) clearTimeout(_acBorrarDebounceTimer);
+  _acBorrarDebounceTimer = setTimeout(async () => {
+    if (q === _acBorrarUltimaQuery) return;
+    _acBorrarUltimaQuery = q;
+    try {
+      const resultados = q.trim()
+        ? await buscarCamposPublicosAdmin(q)
+        : await listarTodosCamposPublicosAdmin();
+      _acRenderResultadosBorrar(resultados, q);
+    } catch (err) {
+      console.error('[_acBorrarOnInput] error:', err);
+    }
+  }, 200);
+}
+
+function acBorrarLimpiarBusqueda() {
+  const input = $('ac-borrar-search-input');
+  if (!input) return;
+  input.value = '';
+  _acBorrarUltimaQuery = '';
+  $('ac-borrar-clear-btn').style.display = 'none';
+  listarTodosCamposPublicosAdmin().then(todos => _acRenderResultadosBorrar(todos, ''));
+  try { input.focus(); } catch(e) {}
+}
+window.acBorrarLimpiarBusqueda = acBorrarLimpiarBusqueda;
+
+function _acRenderResultadosBorrar(items, q) {
+  const resultsEl = $('ac-borrar-results');
+  const emptyEl   = $('ac-borrar-empty');
+  const countEl   = $('ac-borrar-count');
+  if (!resultsEl) return;
+
+  if (!items || items.length === 0) {
+    resultsEl.innerHTML = '';
+    emptyEl.style.display = '';
+    countEl.textContent = q ? ('Sin resultados para "' + q + '"') : 'Sin resultados.';
+    return;
+  }
+
+  emptyEl.style.display = 'none';
+  countEl.textContent = items.length + (items.length === 1 ? ' campo' : ' campos');
+
+  // Render simple: cada item es un botón clickable con nombre + id
+  const safe = s => String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  let html = '';
+  items.forEach(item => {
+    const nombre = safe(item.nombre || '(sin nombre)');
+    const id = parseInt(item.id, 10);
+    const inactivo = item.activo === false;
+    const subEstado = inactivo ? '<span style="color:var(--muted);font-size:9px;margin-left:6px">(desactivado)</span>' : '';
+    html += '<button type="button" onclick="acConfirmarBorrarCampoPorId(' + id + ',&quot;' + nombre.replace(/"/g,'\\"') + '&quot;)" ' +
+            'style="display:flex;align-items:center;justify-content:space-between;width:100%;text-align:left;background:transparent;border:1px solid var(--border);border-radius:6px;padding:10px 12px;margin-bottom:6px;cursor:pointer;color:var(--cream);font-family:\'DM Mono\',monospace">' +
+              '<span style="font-size:12px">' + nombre + subEstado + '</span>' +
+              '<span style="font-size:9px;color:var(--muted);letter-spacing:1px">ID ' + id + ' &nbsp;🗑️</span>' +
+            '</button>';
+  });
+  resultsEl.innerHTML = html;
+}
+
+async function acConfirmarBorrarCampoPorId(id, nombre) {
+  if (!state.user?.is_admin) { toast('Sin permisos', true); return; }
 
   if (!confirm(
     '🗑️ CONFIRMAR BORRADO DE CAMPO\n\n' +
-    'Nombre: ' + nombreLimpio + '\n\n' +
+    'Campo: ' + nombre + '\n' +
+    'ID: ' + id + '\n\n' +
     'Se eliminará la fila completa de campos_publicos.\n' +
     'Acción IRREVERSIBLE.\n\n' +
     '¿Continuar?'
   )) return;
 
   try {
-    const { data, error } = await sb.rpc('admin_delete_campo_publico_by_nombre', { target_nombre: nombreLimpio });
+    const { data, error } = await sb.rpc('admin_delete_campo_publico_by_id', { target_id: id });
     if (error) throw error;
     if (data && data.ok) {
-      toast('✓ Campo "' + (data.deleted_nombre || nombreLimpio) + '" (id=' + data.deleted_id + ') borrado', false, 5000);
-      // Refrescar la lista del catálogo sin resetear filtros ni buscador
+      toast('✓ Campo "' + (data.deleted_nombre || nombre) + '" (id=' + data.deleted_id + ') borrado', false, 5000);
+      // Refrescar la propia lista del buscador (sin salir)
       try {
         if (typeof limpiarCacheCamposPublicos === 'function') limpiarCacheCamposPublicos();
-        if (typeof listarTodosCamposPublicosAdmin === 'function' && typeof _acRenderResultados === 'function') {
-          const todos = await listarTodosCamposPublicosAdmin();
-          _acRenderResultados(todos, $('ac-search-input')?.value || '');
-        }
+        const q = $('ac-borrar-search-input')?.value || '';
+        const items = q.trim()
+          ? await buscarCamposPublicosAdmin(q)
+          : await listarTodosCamposPublicosAdmin();
+        _acRenderResultadosBorrar(items, q);
       } catch (refreshErr) {
-        console.warn('[acBorrarCampoPorNombre] refresco fallido:', refreshErr);
+        console.warn('[acConfirmarBorrarCampoPorId] refresco fallido:', refreshErr);
       }
     } else {
       toast(data?.error || 'No se pudo borrar', true, 7000);
@@ -3865,7 +4008,7 @@ async function acBorrarCampoPorNombre() {
     toast('Error: ' + (e.message || e), true, 7000);
   }
 }
-window.acBorrarCampoPorNombre = acBorrarCampoPorNombre;
+window.acConfirmarBorrarCampoPorId = acConfirmarBorrarCampoPorId;
 
 // ─── Toggle activo/inactivo del campo (borrado lógico) ────────────────
 async function acToggleActivo() {
@@ -7529,8 +7672,8 @@ function contactarGolfHCP() {
   const ios = ua.match(/iPhone OS ([\d_]+)/);
   const android = ua.match(/Android ([\d.]+)/);
   const sys = ios ? 'iOS ' + ios[1].replace(/_/g,'.') : android ? 'Android ' + android[1] : 'Web';
-  const appVer = document.title.includes('HCP') ? 'v1.34.028' : 'Golf HCP';
-  const body = encodeURIComponent('Hola,\n\n[Escribe tu consulta aqui]\n\n\n-- \nGolf HCP v1.34.028\n' + sys);
+  const appVer = document.title.includes('HCP') ? 'v1.34.029' : 'Golf HCP';
+  const body = encodeURIComponent('Hola,\n\n[Escribe tu consulta aqui]\n\n\n-- \nGolf HCP v1.34.029\n' + sys);
   window.open('mailto:golf.hcp.webmaster@gmail.com?subject=Golf%20HCP%20App&body=' + body, '_blank');
 }
 
