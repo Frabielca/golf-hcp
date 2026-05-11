@@ -871,7 +871,7 @@ nav.nav-hidden{transform:translateY(100%)}
     <button class="auth-btn" id="btn-login" onclick="doLogin()" data-i18n="btn_entrar">Entrar</button>
     <div class="auth-link"><span data-i18n="sin_cuenta">¿Sin cuenta?</span> <span onclick="showAuth('register')" data-i18n="registrate">Regístrate</span></div>
     <div class="auth-link" style="margin-top:16px;font-size:10px;opacity:.6"><a href="privacy.html" target="_blank" style="color:var(--muted);text-decoration:none" data-i18n="politica_priv">Política de Privacidad</a></div>
-    <div style="text-align:center;margin-top:8px;font-size:9px;color:rgba(255,255,255,.2);letter-spacing:1px">v1.34.027</div>
+    <div style="text-align:center;margin-top:8px;font-size:9px;color:rgba(255,255,255,.2);letter-spacing:1px">v1.34.028</div>
   </div>
 </div>
 
@@ -1097,7 +1097,7 @@ nav.nav-hidden{transform:translateY(100%)}
       </div>
     </div>
   </div>
-  <div id="version-tap" style="text-align:center;padding:12px 0 4px;font-size:9px;letter-spacing:2px;color:rgba(255,255,255,.2);font-family:'DM Mono',monospace" class="version-label">v1.34.027</div>
+  <div id="version-tap" style="text-align:center;padding:12px 0 4px;font-size:9px;letter-spacing:2px;color:rgba(255,255,255,.2);font-family:'DM Mono',monospace" class="version-label">v1.34.028</div>
   <div class="card" style="margin-bottom:8px;padding:12px 14px;display:none" id="mini-chart-wrap">
     <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px"><span style="font-size:11px;letter-spacing:1.5px;color:var(--gold2)" data-i18n="evolucion_hcp">EVOLUCIÓN HCP</span><span style="font-size:9px;color:var(--muted);letter-spacing:.5px" data-i18n="ultimas_20">20 últimas rondas</span></div>
     <canvas id="mini-hcp-chart" height="100" style="width:100%;display:block"></canvas>
@@ -1311,15 +1311,23 @@ nav.nav-hidden{transform:translateY(100%)}
       <span data-i18n="volver_btn">VOLVER</span>
     </button>
   </div>
-  <div style="display:flex;align-items:center;gap:8px;padding:4px 2px">
-    <div style="flex:1;font-size:20px;letter-spacing:2px;text-transform:uppercase;color:var(--gold2);font-family:'DM Mono',monospace;text-align:center" data-i18n="admin_cat_titulo">Admin BD pública</div>
-    <button id="ac-btn-filtro" onclick="acAbrirMenuFiltro(event)" style="flex-shrink:0;padding:6px 8px;border:1px solid var(--border);border-radius:5px;background:transparent;color:var(--cream);font-family:'DM Mono',monospace;font-size:10px;letter-spacing:1px;cursor:pointer;display:flex;align-items:center;gap:5px;white-space:nowrap" title="Filtrar">
-      <span class="dot-status" id="ac-filtro-dot" style="width:8px;height:8px"></span>
-      <span style="font-size:10px">▼</span>
-    </button>
-    <button id="ac-btn-nuevo" onclick="acAbrirEditorNuevo()" style="flex-shrink:0;padding:6px 10px;border:1px solid var(--gold2);border-radius:5px;background:rgba(201,168,76,.06);color:var(--gold2);font-family:'DM Mono',monospace;font-size:10px;letter-spacing:1px;cursor:pointer;text-transform:uppercase;font-weight:600;white-space:nowrap" data-i18n="ac_nuevo_campo">+ Nuevo</button>
+  <!-- v1.34.028: cabecera completa de la LISTA envuelta en ac-cabecera-lista
+       para poder ocultarla al entrar en modo edicion -->
+  <div id="ac-cabecera-lista">
+    <div style="display:flex;align-items:flex-start;gap:8px;padding:4px 2px">
+      <div style="flex:1;font-size:20px;letter-spacing:2px;text-transform:uppercase;color:var(--gold2);font-family:'DM Mono',monospace;text-align:center" data-i18n="admin_cat_titulo">Admin BD pública</div>
+      <button id="ac-btn-filtro" onclick="acAbrirMenuFiltro(event)" style="flex-shrink:0;padding:6px 8px;border:1px solid var(--border);border-radius:5px;background:transparent;color:var(--cream);font-family:'DM Mono',monospace;font-size:10px;letter-spacing:1px;cursor:pointer;display:flex;align-items:center;gap:5px;white-space:nowrap" title="Filtrar">
+        <span class="dot-status" id="ac-filtro-dot" style="width:8px;height:8px"></span>
+        <span style="font-size:10px">▼</span>
+      </button>
+      <!-- v1.34.028: columna con +Nuevo arriba y Borrar debajo, ambos compactos -->
+      <div style="display:flex;flex-direction:column;gap:4px;flex-shrink:0">
+        <button id="ac-btn-nuevo" onclick="acAbrirEditorNuevo()" style="padding:4px 8px;border:1px solid var(--gold2);border-radius:5px;background:rgba(201,168,76,.06);color:var(--gold2);font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.5px;cursor:pointer;text-transform:uppercase;font-weight:600;white-space:nowrap" data-i18n="ac_nuevo_campo">+ Nuevo</button>
+        <button id="ac-btn-borrar" onclick="acBorrarCampoPorNombre()" style="padding:4px 8px;border:1px solid var(--red-intenso);border-radius:5px;background:rgba(204,0,0,.06);color:var(--red-intenso);font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.5px;cursor:pointer;text-transform:uppercase;font-weight:600;white-space:nowrap">🗑️ Borrar</button>
+      </div>
+    </div>
+    <div style="text-align:center;font-size:9px;color:var(--muted);letter-spacing:1px;margin-bottom:18px;font-family:'DM Mono',monospace" data-i18n="admin_cat_sub">Editar catálogo Online de campos</div>
   </div>
-  <div style="text-align:center;font-size:9px;color:var(--muted);letter-spacing:1px;margin-bottom:18px;font-family:'DM Mono',monospace" data-i18n="admin_cat_sub">Editar catálogo Online de campos</div>
 
   <!-- Menú desplegable del filtro de estado -->
   <div id="ac-filtro-menu" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;z-index:1000;background:rgba(0,0,0,.5)" onclick="acCerrarMenuFiltro(event)">
@@ -3347,6 +3355,7 @@ async function abrirAdminCatalogo() {
   // Mostrar lista, ocultar editor
   $('ac-lista-wrap').style.display = '';
   $('ac-editor-wrap').style.display = 'none';
+  $('ac-cabecera-lista').style.display = '';  // v1.34.028
   _acCampoEditando = null;
 
   // Reset input de búsqueda
@@ -3489,6 +3498,7 @@ async function acAbrirEditor(id) {
   // Cambiar de vista: ocultar lista, mostrar editor
   $('ac-lista-wrap').style.display = 'none';
   $('ac-editor-wrap').style.display = '';
+  $('ac-cabecera-lista').style.display = 'none';  // v1.34.028
   $('ac-err').classList.remove('show');
 
   // Rellenar inputs simples
@@ -3539,6 +3549,7 @@ function acVolverALista() {
   }
   $('ac-lista-wrap').style.display = '';
   $('ac-editor-wrap').style.display = 'none';
+  $('ac-cabecera-lista').style.display = '';  // v1.34.028
   _acCampoEditando = null;
   window.scrollTo(0, 0);
 }
@@ -3779,6 +3790,7 @@ async function acAbrirEditorNuevo() {
   // Cambiar de vista: ocultar lista, mostrar editor
   $('ac-lista-wrap').style.display = 'none';
   $('ac-editor-wrap').style.display = '';
+  $('ac-cabecera-lista').style.display = 'none';  // v1.34.028
   $('ac-err').classList.remove('show');
 
   // Limpiar inputs principales
@@ -3811,6 +3823,49 @@ async function acAbrirEditorNuevo() {
   window.scrollTo(0, 0);
 }
 window.acAbrirEditorNuevo = acAbrirEditorNuevo;
+
+// ─── v1.34.028: borrado fisico de campo publico por nombre ────────────
+// Distinto del Desactivar (UPDATE activo=false, reversible).
+// Llama a la funcion SQL admin_delete_campo_publico_by_nombre (SECURITY DEFINER).
+async function acBorrarCampoPorNombre() {
+  if (!state.user?.is_admin) { toast('Sin permisos', true); return; }
+
+  const nombre = prompt('Introduce el NOMBRE EXACTO del campo a borrar:\n(case-insensitive, se ignoran espacios al inicio/fin)\n\nOJO: BORRADO IRREVERSIBLE. Si solo quieres ocultarlo, usa "Desactivar" desde el editor del campo.');
+  if (!nombre || !nombre.trim()) return;
+
+  const nombreLimpio = nombre.trim();
+
+  if (!confirm(
+    '🗑️ CONFIRMAR BORRADO DE CAMPO\n\n' +
+    'Nombre: ' + nombreLimpio + '\n\n' +
+    'Se eliminará la fila completa de campos_publicos.\n' +
+    'Acción IRREVERSIBLE.\n\n' +
+    '¿Continuar?'
+  )) return;
+
+  try {
+    const { data, error } = await sb.rpc('admin_delete_campo_publico_by_nombre', { target_nombre: nombreLimpio });
+    if (error) throw error;
+    if (data && data.ok) {
+      toast('✓ Campo "' + (data.deleted_nombre || nombreLimpio) + '" (id=' + data.deleted_id + ') borrado', false, 5000);
+      // Refrescar la lista del catálogo sin resetear filtros ni buscador
+      try {
+        if (typeof limpiarCacheCamposPublicos === 'function') limpiarCacheCamposPublicos();
+        if (typeof listarTodosCamposPublicosAdmin === 'function' && typeof _acRenderResultados === 'function') {
+          const todos = await listarTodosCamposPublicosAdmin();
+          _acRenderResultados(todos, $('ac-search-input')?.value || '');
+        }
+      } catch (refreshErr) {
+        console.warn('[acBorrarCampoPorNombre] refresco fallido:', refreshErr);
+      }
+    } else {
+      toast(data?.error || 'No se pudo borrar', true, 7000);
+    }
+  } catch (e) {
+    toast('Error: ' + (e.message || e), true, 7000);
+  }
+}
+window.acBorrarCampoPorNombre = acBorrarCampoPorNombre;
 
 // ─── Toggle activo/inactivo del campo (borrado lógico) ────────────────
 async function acToggleActivo() {
@@ -7474,8 +7529,8 @@ function contactarGolfHCP() {
   const ios = ua.match(/iPhone OS ([\d_]+)/);
   const android = ua.match(/Android ([\d.]+)/);
   const sys = ios ? 'iOS ' + ios[1].replace(/_/g,'.') : android ? 'Android ' + android[1] : 'Web';
-  const appVer = document.title.includes('HCP') ? 'v1.34.027' : 'Golf HCP';
-  const body = encodeURIComponent('Hola,\n\n[Escribe tu consulta aqui]\n\n\n-- \nGolf HCP v1.34.027\n' + sys);
+  const appVer = document.title.includes('HCP') ? 'v1.34.028' : 'Golf HCP';
+  const body = encodeURIComponent('Hola,\n\n[Escribe tu consulta aqui]\n\n\n-- \nGolf HCP v1.34.028\n' + sys);
   window.open('mailto:golf.hcp.webmaster@gmail.com?subject=Golf%20HCP%20App&body=' + body, '_blank');
 }
 
