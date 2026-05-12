@@ -871,7 +871,7 @@ nav.nav-hidden{transform:translateY(100%)}
     <button class="auth-btn" id="btn-login" onclick="doLogin()" data-i18n="btn_entrar">Entrar</button>
     <div class="auth-link"><span data-i18n="sin_cuenta">¿Sin cuenta?</span> <span onclick="showAuth('register')" data-i18n="registrate">Regístrate</span></div>
     <div class="auth-link" style="margin-top:16px;font-size:10px;opacity:.6"><a href="privacy.html" target="_blank" style="color:var(--muted);text-decoration:none" data-i18n="politica_priv">Política de Privacidad</a></div>
-    <div style="text-align:center;margin-top:8px;font-size:9px;color:rgba(255,255,255,.2);letter-spacing:1px">v1.34.033</div>
+    <div style="text-align:center;margin-top:8px;font-size:9px;color:rgba(255,255,255,.2);letter-spacing:1px">v1.34.034</div>
   </div>
 </div>
 
@@ -1097,7 +1097,7 @@ nav.nav-hidden{transform:translateY(100%)}
       </div>
     </div>
   </div>
-  <div id="version-tap" style="text-align:center;padding:12px 0 4px;font-size:9px;letter-spacing:2px;color:rgba(255,255,255,.2);font-family:'DM Mono',monospace" class="version-label">v1.34.033</div>
+  <div id="version-tap" style="text-align:center;padding:12px 0 4px;font-size:9px;letter-spacing:2px;color:rgba(255,255,255,.2);font-family:'DM Mono',monospace" class="version-label">v1.34.034</div>
   <div class="card" style="margin-bottom:8px;padding:12px 14px;display:none" id="mini-chart-wrap">
     <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px"><span style="font-size:11px;letter-spacing:1.5px;color:var(--gold2)" data-i18n="evolucion_hcp">EVOLUCIÓN HCP</span><span style="font-size:9px;color:var(--muted);letter-spacing:.5px" data-i18n="ultimas_20">20 últimas rondas</span></div>
     <canvas id="mini-hcp-chart" height="100" style="width:100%;display:block"></canvas>
@@ -3562,13 +3562,15 @@ async function acAbrirEditor(id) {
   window.scrollTo(0, 0);
 }
 
-function acVolverALista() {
+function acVolverALista(force) {
+  // v1.34.034: parametro force omite el confirm de cambios sin guardar.
+  // Lo usan acGuardarCampo (tras INSERT/UPDATE ok) y acToggleActivo.
   // En modo CREAR (_acCampoEditando = null) preguntar si hay datos rellenos.
   // En modo EDITAR no preguntar: los datos ya están en BD.
   // Detectamos modo crear por: editor visible + _acCampoEditando null.
   const editorVisible = $('ac-editor-wrap')?.style.display !== 'none';
   const modoCrear = editorVisible && !_acCampoEditando;
-  if (modoCrear && _acTieneDatosFormulario()) {
+  if (!force && modoCrear && _acTieneDatosFormulario()) {
     const tpl = (typeof t === 'function' && t('c_cancelar_nuevo_campo')) ||
                 '¿Cancelar el campo? Los datos introducidos se perderán.';
     if (!confirm(tpl)) return; // El usuario eligió quedarse
@@ -3792,7 +3794,9 @@ async function acGuardarCampo() {
       toast((typeof t==='function' && t('t_campo_actualizado')) || '✓ Campo actualizado');
     }
     // Volver a la lista (refresca al re-abrir)
-    acVolverALista();
+    // v1.34.034: force=true para evitar confirm de "cambios sin guardar"
+    // tras un INSERT/UPDATE exitoso (el formulario aún tiene datos).
+    acVolverALista(true);
     // Recargar lista en background
     const todos = await listarTodosCamposPublicosAdmin();
     _acRenderResultados(todos, _acUltimaQuery);
@@ -4004,7 +4008,9 @@ async function acToggleActivo() {
     toast(okMsg);
 
     // Volver a la lista y refrescar
-    acVolverALista();
+    // v1.34.034: force=true por defensa (_acCampoEditando esta poblado aqui,
+    // asi que no se dispararia el confirm de todos modos, pero por simetria).
+    acVolverALista(true);
     const todos = await listarTodosCamposPublicosAdmin();
     _acRenderResultados(todos, _acUltimaQuery);
   } catch (e) {
@@ -7628,8 +7634,8 @@ function contactarGolfHCP() {
   const ios = ua.match(/iPhone OS ([\d_]+)/);
   const android = ua.match(/Android ([\d.]+)/);
   const sys = ios ? 'iOS ' + ios[1].replace(/_/g,'.') : android ? 'Android ' + android[1] : 'Web';
-  const appVer = document.title.includes('HCP') ? 'v1.34.033' : 'Golf HCP';
-  const body = encodeURIComponent('Hola,\n\n[Escribe tu consulta aqui]\n\n\n-- \nGolf HCP v1.34.033\n' + sys);
+  const appVer = document.title.includes('HCP') ? 'v1.34.034' : 'Golf HCP';
+  const body = encodeURIComponent('Hola,\n\n[Escribe tu consulta aqui]\n\n\n-- \nGolf HCP v1.34.034\n' + sys);
   window.open('mailto:golf.hcp.webmaster@gmail.com?subject=Golf%20HCP%20App&body=' + body, '_blank');
 }
 
