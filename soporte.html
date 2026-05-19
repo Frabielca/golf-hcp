@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Soporte y preguntas frecuentes de Golf HCP, la calculadora de hándicap WHS 2020.">
+<title>Soporte · Golf HCP</title>
+<link rel="canonical" href="https://handicap-whs.github.io/golf-hcp/soporte.html">
+<style>
+  :root {
+    --bg: #fafafa;
+    --surface: #ffffff;
+    --ink: #2a2a2a;
+    --ink-soft: #555555;
+    --line: #e4e4e4;
+    --accent: #2e6b3a;
+    --accent-soft: #f0f5f1;
+    --warn: #b85b00;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font: 16px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    -webkit-text-size-adjust: 100%;
+  }
+  main {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 24px 18px 60px;
+  }
+  header {
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 18px;
+    margin-bottom: 28px;
+  }
+  h1 {
+    margin: 0 0 6px;
+    font-size: 26px;
+    font-weight: 600;
+    letter-spacing: -0.5px;
+  }
+  .subtitle {
+    margin: 0;
+    color: var(--ink-soft);
+    font-size: 15px;
+  }
+  h2 {
+    margin: 36px 0 14px;
+    font-size: 19px;
+    font-weight: 600;
+    color: var(--accent);
+    letter-spacing: -0.2px;
+  }
+  h3 {
+    margin: 20px 0 6px;
+    font-size: 16px;
+    font-weight: 600;
+  }
+  p { margin: 10px 0; }
+  a {
+    color: var(--accent);
+    text-decoration: none;
+  }
+  a:hover { text-decoration: underline; }
+  ul { padding-left: 22px; margin: 10px 0; }
+  li { margin: 4px 0; }
+  .lang-switcher {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 18px;
+  }
+  .lang-switcher button {
+    flex: 0 0 auto;
+    padding: 7px 14px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    color: var(--ink-soft);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    letter-spacing: 0.3px;
+  }
+  .lang-switcher button.active {
+    background: var(--accent-soft);
+    color: var(--accent);
+    border-color: var(--accent);
+  }
+  .lang-switcher button:hover { border-color: var(--accent); }
+  .contact-box {
+    background: var(--accent-soft);
+    border-left: 3px solid var(--accent);
+    padding: 14px 18px;
+    margin: 18px 0;
+    border-radius: 4px;
+  }
+  .contact-box .email {
+    font-size: 17px;
+    font-weight: 500;
+    word-break: break-all;
+  }
+  .note {
+    font-size: 14px;
+    color: var(--ink-soft);
+    margin-top: 6px;
+  }
+  details {
+    border-top: 1px solid var(--line);
+    padding: 12px 0;
+  }
+  details summary {
+    cursor: pointer;
+    font-weight: 500;
+    padding: 4px 0;
+    list-style: none;
+    position: relative;
+    padding-right: 28px;
+  }
+  details summary::-webkit-details-marker { display: none; }
+  details summary::after {
+    content: "+";
+    position: absolute;
+    right: 6px;
+    top: 4px;
+    font-size: 20px;
+    color: var(--accent);
+    transition: transform 0.15s;
+  }
+  details[open] summary::after { content: "−"; }
+  details > *:not(summary) { margin-top: 8px; }
+  .legal {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 14px 18px;
+    font-size: 14px;
+    color: var(--ink-soft);
+    margin: 28px 0 0;
+  }
+  footer {
+    margin-top: 40px;
+    padding-top: 22px;
+    border-top: 1px solid var(--line);
+    font-size: 13px;
+    color: var(--ink-soft);
+    text-align: center;
+  }
+  footer a { color: var(--ink-soft); }
+  [data-lang] { display: none; }
+  [data-lang].show { display: block; }
+  code {
+    background: var(--accent-soft);
+    padding: 2px 5px;
+    border-radius: 3px;
+    font-size: 0.93em;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  }
+</style>
+</head>
+<body>
+<main>
+
+  <!-- LANGUAGE SWITCHER -->
+  <div class="lang-switcher" role="tablist" aria-label="Idioma">
+    <button type="button" data-set-lang="es" class="active">Español</button>
+    <button type="button" data-set-lang="pt">Português</button>
+    <button type="button" data-set-lang="fr">Français</button>
+  </div>
+
+  <!-- ============ ESPAÑOL ============ -->
+  <div data-lang="es" class="show">
+    <header>
+      <h1>Soporte · Golf HCP</h1>
+      <p class="subtitle">Preguntas frecuentes y contacto para usuarios de Golf HCP, la calculadora de hándicap WHS 2020 (actualizado 2024).</p>
+    </header>
+
+    <h2>Contacto directo</h2>
+    <div class="contact-box">
+      <div class="email"><a href="mailto:golf.hcp.webmaster@gmail.com">golf.hcp.webmaster@gmail.com</a></div>
+      <div class="note">Si tienes una pregunta, una sugerencia o has encontrado un error, escríbenos. Solemos responder en 24-48 horas.</div>
+    </div>
+
+    <p>Antes de escribir, te recomendamos revisar las preguntas frecuentes de abajo. Es posible que tu duda ya esté resuelta.</p>
+
+    <h2>Preguntas frecuentes</h2>
+
+    <details>
+      <summary>¿Qué es Golf HCP y para qué sirve?</summary>
+      <p>Golf HCP es una calculadora de hándicap pensada para golfistas amateur. Implementa el sistema oficial <strong>WHS 2020 con la actualización 2024</strong>, el mismo que usan The R&amp;A, la USGA y las federaciones nacionales. Permite registrar rondas hoyo a hoyo, calcular Stableford automáticamente y llevar el historial de tu juego.</p>
+    </details>
+
+    <details>
+      <summary>¿Cómo calcula la app mi Hándicap Index?</summary>
+      <p>La app aplica la fórmula oficial WHS 2020: toma la media de los 8 mejores diferenciales entre tus últimas 20 rondas, multiplica por 0,96 y aplica el tope de 54,0. Si tienes menos de 20 rondas registradas, usa la tabla oficial reducida del WHS.</p>
+      <p>El Course Handicap se calcula con: <code>HI × SR ÷ 113 + (CR − Par)</code>, incluyendo el factor CR−Par de la actualización 2024.</p>
+    </details>
+
+    <details>
+      <summary>¿Cómo registro una ronda nueva?</summary>
+      <p>Desde la pantalla "Inicio" pulsa <strong>Nueva ronda</strong>. Selecciona campo y barra de salida, indica si son 9 o 18 hoyos, e introduce los golpes hoyo a hoyo. La app calcula automáticamente los puntos Stableford y el diferencial de la ronda.</p>
+    </details>
+
+    <details>
+      <summary>¿Puedo registrar rondas de 9 hoyos?</summary>
+      <p>Sí. La app soporta rondas de 9 hoyos (ida o vuelta) y de 18. Las rondas de 9 se combinan automáticamente en pares para integrarse en el cálculo WHS.</p>
+    </details>
+
+    <details>
+      <summary>¿Qué significa el símbolo "R" en una ronda?</summary>
+      <p>Si recoges la bola en un hoyo (juego informal, partidos por tiempo, etc.), márcalo con <strong>"R" (Bola Retirada)</strong>. La app aplica automáticamente el <em>Net Double Bogey</em> en ese hoyo conforme a la regla 3.3c del WHS, manteniendo la ronda válida para el cálculo del hándicap.</p>
+    </details>
+
+    <details>
+      <summary>¿Cómo añado un campo nuevo?</summary>
+      <p>Desde Ajustes → Campos puedes crear un campo personalizado con su par, hasta 7 barras de salida (blanca, amarilla, azul, roja, violeta, naranja y negra), CR y Slope por barra, e índice de hándicap por hoyo. Una vez guardado, podrás seleccionarlo al registrar nuevas rondas.</p>
+    </details>
+
+    <details>
+      <summary>¿La app comparte mis datos con terceros?</summary>
+      <p>No. Golf HCP no muestra publicidad, no comparte datos con terceros publicitarios, no usa cámara, no usa ubicación, no accede a contactos. Los datos se almacenan en una base de datos cifrada (Supabase) vinculada exclusivamente a tu cuenta de email.</p>
+    </details>
+
+    <details>
+      <summary>¿Cómo cambio de idioma o de modo claro/oscuro?</summary>
+      <p>Desde Ajustes → Idioma puedes elegir entre español, portugués y francés. Desde Ajustes → Apariencia puedes alternar entre modo claro y modo oscuro.</p>
+    </details>
+
+    <details>
+      <summary>¿Cómo descargo mis datos?</summary>
+      <p>Desde Ajustes → Eliminar cuenta encontrarás el botón <strong>Descargar mis datos (2 archivos CSV)</strong>. Genera dos archivos: uno con todas tus rondas y otro con todos tus campos. No tienes que borrar la cuenta para descargar.</p>
+    </details>
+
+    <details>
+      <summary>¿Cómo elimino mi cuenta?</summary>
+      <p>Desde Ajustes → <strong>Eliminar cuenta</strong>. La app te ofrecerá primero descargar tus datos en CSV. Tras confirmar, se eliminan permanentemente tu cuenta y todos tus datos asociados: rondas, campos, barras de salida, estadísticas y perfil. La acción es <strong>irreversible</strong>.</p>
+    </details>
+
+    <details>
+      <summary>¿Qué hago si he olvidado la contraseña?</summary>
+      <p>En la pantalla de inicio de sesión pulsa <strong>¿Olvidaste tu contraseña?</strong>. Recibirás un email con un enlace para crear una contraseña nueva. Si no te llega, comprueba la carpeta de spam y, si sigue sin aparecer, escríbenos.</p>
+    </details>
+
+    <details>
+      <summary>¿Mis cálculos son válidos para competiciones oficiales?</summary>
+      <p>No. Golf HCP es una herramienta de cálculo de hándicap de uso <strong>personal e informativo</strong>. Los cálculos son aproximados y orientativos. Para competiciones oficiales consulta siempre con tu federación o club de golf.</p>
+    </details>
+
+    <h2>Glosario rápido</h2>
+    <ul>
+      <li><strong>HCP / Hándicap Index</strong>: medida estandarizada de la habilidad de un jugador. Se calcula a partir de las rondas registradas.</li>
+      <li><strong>WHS 2020</strong>: World Handicap System, sistema oficial unificado de The R&amp;A y la USGA desde 2020, con actualización 2024.</li>
+      <li><strong>Course HCP</strong>: golpes que recibe el jugador en un campo y barra concretos. Se calcula con HI × SR ÷ 113 + (CR − Par).</li>
+      <li><strong>Stableford</strong>: sistema de puntuación por hoyo en función de los golpes recibidos y los efectivos.</li>
+      <li><strong>Barras de salida</strong>: cada campo tiene varias salidas (blanca, amarilla, azul, roja, violeta, naranja, negra) con CR y Slope distintos.</li>
+      <li><strong>R (Bola Retirada)</strong>: hoyo no terminado donde se aplica Net Double Bogey conforme a la regla WHS 3.3c.</li>
+      <li><strong>CR / Slope</strong>: Course Rating y Slope Rating, dos parámetros oficiales que definen la dificultad de cada barra de salida en un campo.</li>
+    </ul>
+
+    <div class="legal">
+      <strong>Aviso legal:</strong> Golf HCP es una herramienta de cálculo de hándicap de uso personal e informativo. <strong>No está afiliada, asociada ni respaldada</strong> por The R&amp;A ni por la USGA (United States Golf Association). El sistema WHS es propiedad de The R&amp;A y la USGA.
+      <br><br>
+      Consulta también la <a href="privacy.html">política de privacidad</a>.
+    </div>
+  </div>
+
+  <!-- ============ PORTUGUÊS ============ -->
+  <div data-lang="pt">
+    <header>
+      <h1>Suporte · Golf HCP</h1>
+      <p class="subtitle">Perguntas frequentes e contato para usuários do Golf HCP, a calculadora de handicap WHS 2020 (atualizado 2024).</p>
+    </header>
+
+    <h2>Contato direto</h2>
+    <div class="contact-box">
+      <div class="email"><a href="mailto:golf.hcp.webmaster@gmail.com">golf.hcp.webmaster@gmail.com</a></div>
+      <div class="note">Se tiver uma dúvida, sugestão ou encontrou um erro, escreva-nos. Costumamos responder em 24-48 horas.</div>
+    </div>
+
+    <p>Antes de escrever, recomendamos consultar as perguntas frequentes abaixo. É possível que sua dúvida já esteja resolvida.</p>
+
+    <h2>Perguntas frequentes</h2>
+
+    <details>
+      <summary>O que é o Golf HCP e para que serve?</summary>
+      <p>Golf HCP é uma calculadora de handicap pensada para golfistas amadores. Implementa o sistema oficial <strong>WHS 2020 com a atualização 2024</strong>, o mesmo usado pela R&amp;A, USGA e federações nacionais. Permite registrar rodadas buraco a buraco, calcular Stableford automaticamente e acompanhar o histórico do seu jogo.</p>
+    </details>
+
+    <details>
+      <summary>Como o app calcula meu Handicap Index?</summary>
+      <p>O app aplica a fórmula oficial WHS 2020: pega a média dos 8 melhores diferenciais entre suas últimas 20 rodadas, multiplica por 0,96 e aplica o teto de 54,0. Se você tem menos de 20 rodadas registradas, usa a tabela oficial reduzida do WHS.</p>
+      <p>O Course Handicap é calculado com: <code>HI × SR ÷ 113 + (CR − Par)</code>, incluindo o fator CR−Par da atualização 2024.</p>
+    </details>
+
+    <details>
+      <summary>Como registro uma nova rodada?</summary>
+      <p>Na tela "Início" toque em <strong>Nova rodada</strong>. Selecione campo e barra de saída, indique se são 9 ou 18 buracos, e insira as tacadas buraco a buraco. O app calcula automaticamente os pontos Stableford e o diferencial da rodada.</p>
+    </details>
+
+    <details>
+      <summary>Posso registrar rodadas de 9 buracos?</summary>
+      <p>Sim. O app suporta rodadas de 9 buracos (ida ou volta) e de 18. As rodadas de 9 se combinam automaticamente em pares para integrarem o cálculo WHS.</p>
+    </details>
+
+    <details>
+      <summary>O que significa o símbolo "R" em uma rodada?</summary>
+      <p>Se você recolhe a bola em um buraco (jogo informal, partidas cronometradas, etc.), marque com <strong>"R" (Bola Retirada)</strong>. O app aplica automaticamente o <em>Net Double Bogey</em> nesse buraco conforme a regra 3.3c do WHS, mantendo a rodada válida para o cálculo do handicap.</p>
+    </details>
+
+    <details>
+      <summary>Como adiciono um campo novo?</summary>
+      <p>Em Configurações → Campos é possível criar um campo personalizado com seu par, até 7 barras de saída (branca, amarela, azul, vermelha, violeta, laranja e preta), CR e Slope por barra, e índice de handicap por buraco. Uma vez salvo, ele aparecerá ao registrar novas rodadas.</p>
+    </details>
+
+    <details>
+      <summary>O app compartilha meus dados com terceiros?</summary>
+      <p>Não. Golf HCP não exibe publicidade, não compartilha dados com terceiros publicitários, não usa câmera, não usa localização, não acessa contatos. Os dados são armazenados em um banco de dados criptografado (Supabase) vinculado exclusivamente à sua conta de e-mail.</p>
+    </details>
+
+    <details>
+      <summary>Como mudo o idioma ou o modo claro/escuro?</summary>
+      <p>Em Configurações → Idioma você pode escolher entre português, espanhol e francês. Em Configurações → Aparência pode alternar entre modo claro e modo escuro.</p>
+    </details>
+
+    <details>
+      <summary>Como baixo meus dados?</summary>
+      <p>Em Configurações → Eliminar conta encontrará o botão <strong>Baixar meus dados (2 arquivos CSV)</strong>. Gera dois arquivos: um com todas as suas rodadas e outro com todos os seus campos. Não é necessário excluir a conta para baixar.</p>
+    </details>
+
+    <details>
+      <summary>Como elimino minha conta?</summary>
+      <p>Em Configurações → <strong>Eliminar conta</strong>. O app oferecerá primeiro baixar seus dados em CSV. Após confirmar, sua conta e todos os dados associados são eliminados permanentemente: rodadas, campos, barras de saída, estatísticas e perfil. A ação é <strong>irreversível</strong>.</p>
+    </details>
+
+    <details>
+      <summary>O que faço se esqueci a senha?</summary>
+      <p>Na tela de login toque em <strong>Esqueceu sua senha?</strong>. Você receberá um e-mail com um link para criar uma senha nova. Se não chegar, verifique a pasta de spam e, se ainda não aparecer, escreva-nos.</p>
+    </details>
+
+    <details>
+      <summary>Meus cálculos valem para competições oficiais?</summary>
+      <p>Não. Golf HCP é uma ferramenta de cálculo de handicap para uso <strong>pessoal e informativo</strong>. Os cálculos são aproximados e orientativos. Para competições oficiais, consulte sempre sua federação ou clube de golfe.</p>
+    </details>
+
+    <h2>Glossário rápido</h2>
+    <ul>
+      <li><strong>HCP / Handicap Index</strong>: medida padronizada da habilidade de um jogador, calculada a partir das rodadas registradas.</li>
+      <li><strong>WHS 2020</strong>: World Handicap System, sistema oficial unificado da R&amp;A e USGA desde 2020, com atualização 2024.</li>
+      <li><strong>Course HCP</strong>: tacadas que o jogador recebe em um campo e barra específicos. Calcula-se com HI × SR ÷ 113 + (CR − Par).</li>
+      <li><strong>Stableford</strong>: sistema de pontuação por buraco em função das tacadas recebidas e efetivas.</li>
+      <li><strong>Barras de saída</strong>: cada campo tem várias saídas (branca, amarela, azul, vermelha, violeta, laranja, preta) com CR e Slope distintos.</li>
+      <li><strong>R (Bola Retirada)</strong>: buraco não terminado onde se aplica Net Double Bogey conforme a regra WHS 3.3c.</li>
+      <li><strong>CR / Slope</strong>: Course Rating e Slope Rating, dois parâmetros oficiais que definem a dificuldade de cada barra de saída em um campo.</li>
+    </ul>
+
+    <div class="legal">
+      <strong>Aviso legal:</strong> Golf HCP é uma ferramenta de cálculo de handicap para uso pessoal e informativo. <strong>Não está afiliada, associada nem apoiada</strong> pela R&amp;A nem pela USGA (United States Golf Association). O sistema WHS é propriedade da R&amp;A e da USGA.
+      <br><br>
+      Consulte também a <a href="privacy.html">política de privacidade</a>.
+    </div>
+  </div>
+
+  <!-- ============ FRANÇAIS ============ -->
+  <div data-lang="fr">
+    <header>
+      <h1>Support · Golf HCP</h1>
+      <p class="subtitle">Foire aux questions et contact pour les utilisateurs de Golf HCP, le calculateur de handicap WHS 2020 (mis à jour 2024).</p>
+    </header>
+
+    <h2>Contact direct</h2>
+    <div class="contact-box">
+      <div class="email"><a href="mailto:golf.hcp.webmaster@gmail.com">golf.hcp.webmaster@gmail.com</a></div>
+      <div class="note">Pour une question, une suggestion ou un bug, écrivez-nous. Nous répondons généralement sous 24-48 heures.</div>
+    </div>
+
+    <p>Avant d'écrire, nous vous conseillons de consulter la FAQ ci-dessous. Votre question est peut-être déjà traitée.</p>
+
+    <h2>Questions fréquentes</h2>
+
+    <details>
+      <summary>Qu'est-ce que Golf HCP et à quoi ça sert ?</summary>
+      <p>Golf HCP est un calculateur de handicap conçu pour les golfeurs amateurs. Il implémente le système officiel <strong>WHS 2020 avec la mise à jour 2024</strong>, le même utilisé par The R&amp;A, l'USGA et les fédérations nationales. Il permet d'enregistrer des parties trou par trou, de calculer le Stableford automatiquement et de suivre l'historique de votre jeu.</p>
+    </details>
+
+    <details>
+      <summary>Comment l'app calcule-t-elle mon Handicap Index ?</summary>
+      <p>L'app applique la formule officielle WHS 2020 : moyenne des 8 meilleurs différentiels parmi vos 20 dernières parties, multipliée par 0,96, avec plafond à 54,0. Avec moins de 20 parties enregistrées, elle utilise la table officielle réduite du WHS.</p>
+      <p>Le Course Handicap est calculé avec : <code>HI × SR ÷ 113 + (CR − Par)</code>, incluant le facteur CR−Par de la mise à jour 2024.</p>
+    </details>
+
+    <details>
+      <summary>Comment enregistrer une nouvelle partie ?</summary>
+      <p>Depuis l'écran "Accueil", touchez <strong>Nouvelle partie</strong>. Sélectionnez parcours et départ, indiquez 9 ou 18 trous, et saisissez les coups trou par trou. L'app calcule automatiquement les points Stableford et le différentiel de la partie.</p>
+    </details>
+
+    <details>
+      <summary>Puis-je enregistrer des parties de 9 trous ?</summary>
+      <p>Oui. L'app supporte les parties de 9 trous (aller ou retour) et de 18. Les parties de 9 se combinent automatiquement par paires pour le calcul WHS.</p>
+    </details>
+
+    <details>
+      <summary>Que signifie le symbole "R" sur une partie ?</summary>
+      <p>Si vous ramassez la balle sur un trou (jeu informel, parties chronométrées, etc.), marquez-le avec <strong>"R" (Balle Ramassée)</strong>. L'app applique automatiquement le <em>Net Double Bogey</em> sur ce trou selon la règle 3.3c du WHS, gardant la partie valide pour le calcul du handicap.</p>
+    </details>
+
+    <details>
+      <summary>Comment ajouter un nouveau parcours ?</summary>
+      <p>Dans Réglages → Parcours, vous pouvez créer un parcours personnalisé avec son par, jusqu'à 7 départs (blanc, jaune, bleu, rouge, violet, orange et noir), CR et Slope par départ, et index de handicap par trou. Une fois sauvegardé, il sera disponible lors de l'enregistrement de nouvelles parties.</p>
+    </details>
+
+    <details>
+      <summary>L'app partage-t-elle mes données avec des tiers ?</summary>
+      <p>Non. Golf HCP n'affiche pas de publicité, ne partage pas de données avec des tiers publicitaires, n'utilise pas la caméra, ne utilise pas la localisation, n'accède pas aux contacts. Les données sont stockées dans une base de données chiffrée (Supabase) liée exclusivement à votre compte email.</p>
+    </details>
+
+    <details>
+      <summary>Comment changer de langue ou de mode clair/sombre ?</summary>
+      <p>Dans Réglages → Langue, vous pouvez choisir entre français, espagnol et portugais. Dans Réglages → Apparence, vous pouvez basculer entre mode clair et mode sombre.</p>
+    </details>
+
+    <details>
+      <summary>Comment télécharger mes données ?</summary>
+      <p>Dans Réglages → Supprimer le compte, vous trouverez le bouton <strong>Télécharger mes données (2 fichiers CSV)</strong>. Il génère deux fichiers : un avec toutes vos parties et un autre avec tous vos parcours. Vous n'avez pas besoin de supprimer le compte pour télécharger.</p>
+    </details>
+
+    <details>
+      <summary>Comment supprimer mon compte ?</summary>
+      <p>Dans Réglages → <strong>Supprimer le compte</strong>. L'app vous proposera d'abord de télécharger vos données en CSV. Après confirmation, votre compte et toutes les données associées sont supprimés définitivement : parties, parcours, départs, statistiques et profil. L'action est <strong>irréversible</strong>.</p>
+    </details>
+
+    <details>
+      <summary>Que faire si j'ai oublié mon mot de passe ?</summary>
+      <p>Sur l'écran de connexion, touchez <strong>Mot de passe oublié ?</strong>. Vous recevrez un email avec un lien pour créer un nouveau mot de passe. Si vous ne le recevez pas, vérifiez le dossier spam et, si toujours rien, écrivez-nous.</p>
+    </details>
+
+    <details>
+      <summary>Mes calculs sont-ils valables pour les compétitions officielles ?</summary>
+      <p>Non. Golf HCP est un outil de calcul de handicap à usage <strong>personnel et informatif</strong>. Les calculs sont approximatifs et indicatifs. Pour les compétitions officielles, consultez toujours votre fédération ou club de golf.</p>
+    </details>
+
+    <h2>Glossaire rapide</h2>
+    <ul>
+      <li><strong>HCP / Handicap Index</strong> : mesure standardisée du niveau d'un joueur, calculée à partir des parties enregistrées.</li>
+      <li><strong>WHS 2020</strong> : World Handicap System, système officiel unifié de The R&amp;A et l'USGA depuis 2020, avec mise à jour 2024.</li>
+      <li><strong>Course HCP</strong> : coups reçus par le joueur sur un parcours et un départ donnés. Calculé avec HI × SR ÷ 113 + (CR − Par).</li>
+      <li><strong>Stableford</strong> : système de notation par trou selon les coups reçus et effectifs.</li>
+      <li><strong>Départs</strong> : chaque parcours a plusieurs départs (blanc, jaune, bleu, rouge, violet, orange, noir) avec CR et Slope distincts.</li>
+      <li><strong>R (Balle Ramassée)</strong> : trou non terminé où s'applique le Net Double Bogey selon la règle WHS 3.3c.</li>
+      <li><strong>CR / Slope</strong> : Course Rating et Slope Rating, deux paramètres officiels qui définissent la difficulté de chaque départ d'un parcours.</li>
+    </ul>
+
+    <div class="legal">
+      <strong>Avis légal :</strong> Golf HCP est un outil de calcul de handicap à usage personnel et informatif. <strong>N'est pas affilié, associé ni soutenu</strong> par The R&amp;A ni par l'USGA (United States Golf Association). Le système WHS est la propriété de The R&amp;A et de l'USGA.
+      <br><br>
+      Consultez aussi la <a href="privacy.html">politique de confidentialité</a>.
+    </div>
+  </div>
+
+  <!-- FOOTER (común) -->
+  <footer>
+    Golf HCP &nbsp;·&nbsp; <a href="https://handicap-whs.github.io/golf-hcp">handicap-whs.github.io/golf-hcp</a>
+    <br>
+    © 2026 &nbsp;·&nbsp; <a href="mailto:golf.hcp.webmaster@gmail.com">golf.hcp.webmaster@gmail.com</a>
+  </footer>
+
+</main>
+
+<script>
+  // Selector de idioma con persistencia en localStorage + soporte de hash (#es, #pt, #fr)
+  (function () {
+    const buttons = document.querySelectorAll('[data-set-lang]');
+    const blocks = document.querySelectorAll('[data-lang]');
+
+    function setLang(lang) {
+      if (!['es', 'pt', 'fr'].includes(lang)) lang = 'es';
+      blocks.forEach(b => b.classList.toggle('show', b.dataset.lang === lang));
+      buttons.forEach(b => b.classList.toggle('active', b.dataset.setLang === lang));
+      document.documentElement.lang = lang;
+      try { localStorage.setItem('golfhcp-soporte-lang', lang); } catch (e) {}
+    }
+
+    // Inicial: hash > localStorage > navigator.language > 'es'
+    let initial = (location.hash || '').replace('#', '').toLowerCase();
+    if (!['es', 'pt', 'fr'].includes(initial)) {
+      try { initial = localStorage.getItem('golfhcp-soporte-lang') || ''; } catch (e) {}
+    }
+    if (!['es', 'pt', 'fr'].includes(initial)) {
+      const nav = (navigator.language || 'es').slice(0, 2).toLowerCase();
+      initial = (nav === 'pt' || nav === 'fr') ? nav : 'es';
+    }
+    setLang(initial);
+
+    buttons.forEach(btn => {
+      btn.addEventListener('click', () => setLang(btn.dataset.setLang));
+    });
+
+    window.addEventListener('hashchange', () => {
+      const h = location.hash.replace('#', '').toLowerCase();
+      if (['es', 'pt', 'fr'].includes(h)) setLang(h);
+    });
+  })();
+</script>
+
+</body>
+</html>
