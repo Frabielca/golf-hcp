@@ -392,9 +392,10 @@ nav.nav-hidden{transform:translateY(100%)}
 .s-doble{border-radius:50%!important;background:rgba(150,150,150,.4)!important;border:2px solid rgba(200,200,200,.8)!important;color:#fff!important;outline:2px solid rgba(200,200,200,.8)!important;outline-offset:3px!important}
 .s-peor{border-radius:3px!important;background:#000!important;border:2px solid rgba(255,255,255,.5)!important;color:#fff!important}
 .s-retirada{border-radius:3px!important;background:var(--red-intenso)!important;border:2px solid var(--red-intenso)!important;color:#fff!important;-webkit-text-fill-color:#fff!important;font-weight:bold!important}
-.ndb-badge{font-size:11px;font-family:'DM Mono',monospace;color:var(--red-intenso);text-align:center;font-weight:700;line-height:1.1;letter-spacing:.3px}
-.ndb-badge:empty{display:none}
-.ndb-badge:not(:empty){margin-top:3px}
+.hoyo-input-wrap{position:relative;width:100%}
+.hoyo-input-wrap.has-ndb input.s-retirada{text-align:left!important;padding-left:6px!important;padding-right:22px!important}
+.ndb-overlay{position:absolute;top:50%;right:4px;transform:translateY(-50%);font-size:11px;font-family:'DM Mono',monospace;color:#fff;font-weight:700;line-height:1;letter-spacing:.3px;pointer-events:none;text-shadow:0 1px 1px rgba(0,0,0,.3)}
+.ndb-overlay:empty{display:none}
 .btn-modor{display:inline-flex;align-items:center;padding:3px 8px;border-radius:3px;background:transparent;color:rgba(255,255,255,.55);border:1px solid var(--red-intenso);font-family:inherit;font-size:9px;cursor:pointer;line-height:1.2;transition:background .12s,color .12s}
 .btn-modor.active{background:var(--red-intenso);color:#fff}
 .btn-modor.active .btn-modor-label,.btn-modor.active{color:#fff!important;-webkit-text-fill-color:#fff!important}
@@ -6458,11 +6459,13 @@ function buildHoyoInputs(campo, numHoyos, vuelta) {
       </div>
       <div id="gh-rdots-${h.numero}" style="height:6px;display:flex;gap:1px;align-items:center;justify-content:center"></div>
       <div id="gh-dots-${h.numero}" style="height:6px;display:flex;gap:1px;align-items:center;justify-content:center"></div>
-      <input class="hoyo-input" type="text" inputmode="numeric" id="gh-${h.numero}"
-        maxlength="2" placeholder="—"
-        onclick="checkModoRClick(this,'nueva')"
-        oninput="this.value=this.value.replace(/[^0-9rR]/g,'').toUpperCase();if(this.value==='R'){this.classList.add('s-retirada');}else{this.classList.remove('s-retirada');if(parseInt(this.value)>19)this.value='19';}updateTotals();golfShot(this,'${nextId}')">
-      <div id="gh-ndb-${h.numero}" class="ndb-badge"></div>`;
+      <div class="hoyo-input-wrap">
+        <input class="hoyo-input" type="text" inputmode="numeric" id="gh-${h.numero}"
+          maxlength="2" placeholder="—"
+          onclick="checkModoRClick(this,'nueva')"
+          oninput="this.value=this.value.replace(/[^0-9rR]/g,'').toUpperCase();if(this.value==='R'){this.classList.add('s-retirada');}else{this.classList.remove('s-retirada');if(parseInt(this.value)>19)this.value='19';}updateTotals();golfShot(this,'${nextId}')">
+        <span id="gh-ndb-${h.numero}" class="ndb-overlay"></span>
+      </div>`;
     grid.appendChild(cell);
   }
 }
@@ -6565,22 +6568,26 @@ function updateTotals() {
   for (let i = startH; i <= endH; i++) {
     const raw = ($('gh-' + i)?.value || '').trim();
     const ndbBadge = $('gh-ndb-' + i);
+    const wrap = ndbBadge?.parentElement;
     if (raw === 'R' && campo) {
       const hoyoR = campo.hoyos.find(h => h.numero === i);
       const ndb = calcNDBForHole(hoyoR, playingHCP);
       if (ndb != null) {
         total += ndb; shots.push(ndb); bolaRetirada.push(true);
         if (i <= 9) { outTotal += ndb; outShots.push(ndb); } else { inTotal += ndb; inShots.push(ndb); }
-        if (ndbBadge) ndbBadge.textContent = ndb; // v1.34.036 badge con num golpes WHS
+        if (ndbBadge) ndbBadge.textContent = '· ' + ndb; // v1.34.036 overlay junto a la R
+        if (wrap) wrap.classList.add('has-ndb');
         continue;
       }
       // Si aún no hay HCP/CR/Slope, no podemos calcular NDB — tratamos como incompleto
       complete = false; shots.push(null); bolaRetirada.push(false);
       if (i <= 9) outShots.push(null); else inShots.push(null);
       if (ndbBadge) ndbBadge.textContent = '';
+      if (wrap) wrap.classList.remove('has-ndb');
       continue;
     }
-    if (ndbBadge) ndbBadge.textContent = ''; // limpiar badge si no es R
+    if (ndbBadge) ndbBadge.textContent = ''; // limpiar overlay si no es R
+    if (wrap) wrap.classList.remove('has-ndb');
     const v = parseInt(raw);
     if (isNaN(v) || v < 1) {
       complete = false; shots.push(null); bolaRetirada.push(false);
@@ -7005,11 +7012,13 @@ function buildEditHoyos(campo, existing, numHoyos, vuelta, bolaRetirada) {
       </div>
       <div id="edit-rdots-${i}" style="height:6px;display:flex;gap:1px;align-items:center;justify-content:center"></div>
       <div id="edit-dots-${i}" style="height:6px;display:flex;gap:1px;align-items:center;justify-content:center"></div>
-      <input class="${initialClass}" type="text" inputmode="numeric" id="edit-gh-${i}"
-        maxlength="2" value="${val}"
-        onclick="checkModoRClick(this,'edit')"
-        oninput="this.value=this.value.replace(/[^0-9rR]/g,'').toUpperCase();if(this.value==='R'){this.classList.add('s-retirada');}else{this.classList.remove('s-retirada');if(parseInt(this.value)>19)this.value='19';}recalcEditStbl();golfShot(this,'${nextId}')">
-      <div id="edit-ndb-${i}" class="ndb-badge"></div>`;
+      <div class="hoyo-input-wrap">
+        <input class="${initialClass}" type="text" inputmode="numeric" id="edit-gh-${i}"
+          maxlength="2" value="${val}"
+          onclick="checkModoRClick(this,'edit')"
+          oninput="this.value=this.value.replace(/[^0-9rR]/g,'').toUpperCase();if(this.value==='R'){this.classList.add('s-retirada');}else{this.classList.remove('s-retirada');if(parseInt(this.value)>19)this.value='19';}recalcEditStbl();golfShot(this,'${nextId}')">
+        <span id="edit-ndb-${i}" class="ndb-overlay"></span>
+      </div>`;
     grid.appendChild(cell);
   }
 }
@@ -7097,21 +7106,25 @@ function recalcEditStbl() {
   for (let i = startI; i <= endI; i++) {
     const raw = ($('edit-gh-' + i)?.value || '').trim();
     const ndbBadge = $('edit-ndb-' + i);
+    const wrap = ndbBadge?.parentElement;
     if (raw === 'R' && campo) {
       const hoyoR = campo.hoyos.find(h => h.numero === i);
       const ndb = calcNDBForHole(hoyoR, playingHCPEdit);
       if (ndb != null) {
         total += ndb; shots.push(ndb); bolaRetirada.push(true);
         if (i <= 9) { outTotal += ndb; outShots.push(ndb); } else { inTotal += ndb; inShots.push(ndb); }
-        if (ndbBadge) ndbBadge.textContent = ndb; // v1.34.036
+        if (ndbBadge) ndbBadge.textContent = '· ' + ndb; // v1.34.036 overlay junto a R
+        if (wrap) wrap.classList.add('has-ndb');
         continue;
       }
       complete = false; shots.push(null); bolaRetirada.push(false);
       if (i <= 9) outShots.push(null); else inShots.push(null);
       if (ndbBadge) ndbBadge.textContent = '';
+      if (wrap) wrap.classList.remove('has-ndb');
       continue;
     }
     if (ndbBadge) ndbBadge.textContent = '';
+    if (wrap) wrap.classList.remove('has-ndb');
     const v = parseInt(raw);
     if (isNaN(v) || v < 1) {
       complete = false; shots.push(null); bolaRetirada.push(false);
