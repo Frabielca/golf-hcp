@@ -183,6 +183,7 @@ nav button.active svg{stroke:var(--gold)}
 :root.light .target-box{background:rgba(0,0,0,.04);border-color:rgba(0,0,0,.1)}
 :root.light .used-badge{background:rgba(40,120,40,.15);color:#1a5c1a}
 :root.light .stbl-badge{color:var(--gold)}
+:root.light .stbl-dot{background:#f5a623}
 :root.light .barra-9h{background:rgba(59,130,246,.06);border-color:rgba(59,130,246,.2)}
 
 :root.light .light-select{background:#f8f8f8!important;-webkit-appearance:none!important;-moz-appearance:none!important;appearance:none!important;color:#000!important;-webkit-text-fill-color:#000!important;border:1px solid rgba(0,0,0,.2)!important}
@@ -391,6 +392,9 @@ nav.nav-hidden{transform:translateY(100%)}
 .s-doble{border-radius:50%!important;background:rgba(150,150,150,.4)!important;border:2px solid rgba(200,200,200,.8)!important;color:#fff!important;outline:2px solid rgba(200,200,200,.8)!important;outline-offset:3px!important}
 .s-peor{border-radius:3px!important;background:#000!important;border:2px solid rgba(255,255,255,.5)!important;color:#fff!important}
 .s-retirada{border-radius:3px!important;background:var(--red-intenso)!important;border:2px solid var(--red-intenso)!important;color:#fff!important;-webkit-text-fill-color:#fff!important;font-weight:bold!important}
+.ndb-badge{font-size:11px;font-family:'DM Mono',monospace;color:var(--red-intenso);text-align:center;font-weight:700;line-height:1.1;letter-spacing:.3px}
+.ndb-badge:empty{display:none}
+.ndb-badge:not(:empty){margin-top:3px}
 .btn-modor{display:inline-flex;align-items:center;padding:3px 8px;border-radius:3px;background:transparent;color:rgba(255,255,255,.55);border:1px solid var(--red-intenso);font-family:inherit;font-size:9px;cursor:pointer;line-height:1.2;transition:background .12s,color .12s}
 .btn-modor.active{background:var(--red-intenso);color:#fff}
 .btn-modor.active .btn-modor-label,.btn-modor.active{color:#fff!important;-webkit-text-fill-color:#fff!important}
@@ -989,10 +993,10 @@ nav.nav-hidden{transform:translateY(100%)}
         <button type="button" id="btn-modor-edit" class="btn-modor" onclick="toggleModoR('edit')"><span class="btn-modor-icon">R</span><span class="btn-modor-label" data-i18n="btn_marcar_r">Marcar bola retirada</span></button>
       </div>
       <div class="hoyo-section"><div class="hoyo-label" data-i18n="salida_19">Ida 1–9</div><div class="hoyo-grid" id="edit-grid-out"></div></div>
-      <div id="edit-grid-out-subtotal" style="display:none;text-align:right;font-size:10px;color:var(--muted);margin:4px 2px 0 0;font-family:'DM Mono',monospace;letter-spacing:.3px"></div>
+      <div id="edit-grid-out-subtotal" style="display:none;text-align:right;font-size:10px;color:var(--muted);margin:2px 2px 0 0;font-family:'DM Mono',monospace;letter-spacing:.3px"></div>
       <div class="hoyo-separator"></div>
       <div class="hoyo-section"><div class="hoyo-label" id="edit-grid-in-label">Vuelta 10–18</div><div class="hoyo-grid" id="edit-grid-in"></div></div>
-      <div id="edit-grid-in-subtotal" style="display:none;text-align:right;font-size:10px;color:var(--muted);margin:4px 2px 0 0;font-family:'DM Mono',monospace;letter-spacing:.3px"></div>
+      <div id="edit-grid-in-subtotal" style="display:none;text-align:right;font-size:10px;color:var(--muted);margin:2px 2px 0 0;font-family:'DM Mono',monospace;letter-spacing:.3px"></div>
     </div>
     <div class="modal-actions">
       <button class="btn" style="margin-top:0" id="btn-guardar-ronda" onclick="guardarEditRonda()" data-i18n="guardar">Guardar</button>
@@ -1216,10 +1220,10 @@ nav.nav-hidden{transform:translateY(100%)}
     <div id="hoyos-wrap" style="display:none;margin-bottom:12px">
       <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:12px" data-i18n="golpes_hoyo">Golpes por hoyo</div>
       <div class="hoyo-section"><div class="hoyo-label" id="grid-out-label" data-i18n="salida_19">Ida 1–9</div><div class="hoyo-grid" id="grid-out"></div></div>
-      <div id="grid-out-subtotal" style="display:none;text-align:right;font-size:10px;color:var(--muted);margin:4px 2px 0 0;font-family:'DM Mono',monospace;letter-spacing:.3px"></div>
+      <div id="grid-out-subtotal" style="display:none;text-align:right;font-size:10px;color:var(--muted);margin:2px 2px 0 0;font-family:'DM Mono',monospace;letter-spacing:.3px"></div>
       <div class="hoyo-separator"></div>
       <div class="hoyo-section"><div class="hoyo-label" id="grid-in-label" data-i18n="vuelta_1018">Vuelta 10–18</div><div class="hoyo-grid" id="grid-in"></div></div>
-      <div id="grid-in-subtotal" style="display:none;text-align:right;font-size:10px;color:var(--muted);margin:4px 2px 0 0;font-family:'DM Mono',monospace;letter-spacing:.3px"></div>
+      <div id="grid-in-subtotal" style="display:none;text-align:right;font-size:10px;color:var(--muted);margin:2px 2px 0 0;font-family:'DM Mono',monospace;letter-spacing:.3px"></div>
       <div style="display:flex;gap:10px;font-size:11px;color:var(--muted);margin-top:8px">
         <span>Total: <strong id="total-golpes" style="color:var(--cream)">—</strong></span>
         <span>Stableford: <strong id="preview-stbl" style="color:var(--gold2)">—</strong></span>
@@ -2284,7 +2288,7 @@ const i18n = {
     'golpes_brutos':'Golpes brutos','par_campo':'Par campo','stbl_label_f':'Stableford',
     'nombre_label':'Nombre','par_label':'Par','slope_label':'Slope',
     'cr_18h':'CR 18H','slope_18h':'Slope 18H','confirmar_label':'Confirmar',
-    'hcp_campo':'HCP Campo','hcp_campo_title':'Handicap de Campo','guardar_campo':'Guardar Campo','guardar':'Guardar','ida_label':'IDA','vuelta_label':'VOLTA','opcional_9h':'OPCIONAL: 9 BURACOS','par_label':'Par','ind_label':'Índ','ida_label':'IDA','vuelta_label':'VUELTA','opcional_9h':'OPCIONAL: 9 BURACOS','par_label':'Par','ind_label':'Índ',
+    'hcp_campo':'HCP Campo','hcp_campo_title':'Handicap de Campo','guardar_campo':'Guardar Campo','guardar':'Guardar','ida_label':'IDA','vuelta_label':'VOLTA','opcional_9h':'OPCIONAL: 9 BURACOS','par_label':'Par','ind_label':'Índ',
     'editar':'Editar','eliminar':'Eliminar',
     'cambiar_clave':'Cambiar Contraseña','nueva_pass':'Nueva contraseña','confirmar_pass':'Confirmar contraseña',
     'min6':'mínimo 6 caracteres','repite_pass':'repite la contraseña','cambiar':'Cambiar',
@@ -6458,7 +6462,7 @@ function buildHoyoInputs(campo, numHoyos, vuelta) {
         maxlength="2" placeholder="—"
         onclick="checkModoRClick(this,'nueva')"
         oninput="this.value=this.value.replace(/[^0-9rR]/g,'').toUpperCase();if(this.value==='R'){this.classList.add('s-retirada');}else{this.classList.remove('s-retirada');if(parseInt(this.value)>19)this.value='19';}updateTotals();golfShot(this,'${nextId}')">
-      <div id="gh-ndb-${h.numero}" class="ndb-badge" style="height:9px;font-size:8px;font-family:'DM Mono',monospace;color:var(--red-intenso);text-align:center;margin-top:2px;font-weight:600;line-height:1"></div>`;
+      <div id="gh-ndb-${h.numero}" class="ndb-badge"></div>`;
     grid.appendChild(cell);
   }
 }
@@ -7005,7 +7009,7 @@ function buildEditHoyos(campo, existing, numHoyos, vuelta, bolaRetirada) {
         maxlength="2" value="${val}"
         onclick="checkModoRClick(this,'edit')"
         oninput="this.value=this.value.replace(/[^0-9rR]/g,'').toUpperCase();if(this.value==='R'){this.classList.add('s-retirada');}else{this.classList.remove('s-retirada');if(parseInt(this.value)>19)this.value='19';}recalcEditStbl();golfShot(this,'${nextId}')">
-      <div id="edit-ndb-${i}" class="ndb-badge" style="height:9px;font-size:8px;font-family:'DM Mono',monospace;color:var(--red-intenso);text-align:center;margin-top:2px;font-weight:600;line-height:1"></div>`;
+      <div id="edit-ndb-${i}" class="ndb-badge"></div>`;
     grid.appendChild(cell);
   }
 }
