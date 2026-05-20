@@ -871,7 +871,7 @@ nav.nav-hidden{transform:translateY(100%)}
     <button class="auth-btn" id="btn-login" onclick="doLogin()" data-i18n="btn_entrar">Entrar</button>
     <div class="auth-link"><span data-i18n="sin_cuenta">¿Sin cuenta?</span> <span onclick="showAuth('register')" data-i18n="registrate">Regístrate</span></div>
     <div class="auth-link" style="margin-top:16px;font-size:10px;opacity:.6"><a href="privacy.html" target="_blank" style="color:var(--muted);text-decoration:none" data-i18n="politica_priv">Política de Privacidad</a></div>
-    <div style="text-align:center;margin-top:8px;font-size:9px;color:rgba(255,255,255,.2);letter-spacing:1px">v1.34.035</div>
+    <div style="text-align:center;margin-top:8px;font-size:9px;color:rgba(255,255,255,.2);letter-spacing:1px">v1.34.036</div>
   </div>
 </div>
 
@@ -988,9 +988,11 @@ nav.nav-hidden{transform:translateY(100%)}
       <div style="display:flex;justify-content:center;margin-top:10px">
         <button type="button" id="btn-modor-edit" class="btn-modor" onclick="toggleModoR('edit')"><span class="btn-modor-icon">R</span><span class="btn-modor-label" data-i18n="btn_marcar_r">Marcar bola retirada</span></button>
       </div>
-      <div class="hoyo-section"><div class="hoyo-label">Salida 1–9</div><div class="hoyo-grid" id="edit-grid-out"></div></div>
+      <div class="hoyo-section"><div class="hoyo-label" data-i18n="salida_19">Ida 1–9</div><div class="hoyo-grid" id="edit-grid-out"></div></div>
+      <div id="edit-grid-out-subtotal" style="display:none;text-align:right;font-size:10px;color:var(--muted);margin:4px 2px 0 0;font-family:'DM Mono',monospace;letter-spacing:.3px"></div>
       <div class="hoyo-separator"></div>
       <div class="hoyo-section"><div class="hoyo-label" id="edit-grid-in-label">Vuelta 10–18</div><div class="hoyo-grid" id="edit-grid-in"></div></div>
+      <div id="edit-grid-in-subtotal" style="display:none;text-align:right;font-size:10px;color:var(--muted);margin:4px 2px 0 0;font-family:'DM Mono',monospace;letter-spacing:.3px"></div>
     </div>
     <div class="modal-actions">
       <button class="btn" style="margin-top:0" id="btn-guardar-ronda" onclick="guardarEditRonda()" data-i18n="guardar">Guardar</button>
@@ -1097,7 +1099,7 @@ nav.nav-hidden{transform:translateY(100%)}
       </div>
     </div>
   </div>
-  <div id="version-tap" style="text-align:center;padding:12px 0 4px;font-size:9px;letter-spacing:2px;color:rgba(255,255,255,.2);font-family:'DM Mono',monospace" class="version-label">v1.34.035</div>
+  <div id="version-tap" style="text-align:center;padding:12px 0 4px;font-size:9px;letter-spacing:2px;color:rgba(255,255,255,.2);font-family:'DM Mono',monospace" class="version-label">v1.34.036</div>
   <div class="card" style="margin-bottom:8px;padding:12px 14px;display:none" id="mini-chart-wrap">
     <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px"><span style="font-size:11px;letter-spacing:1.5px;color:var(--gold2)" data-i18n="evolucion_hcp">EVOLUCIÓN HCP</span><span style="font-size:9px;color:var(--muted);letter-spacing:.5px" data-i18n="ultimas_20">20 últimas rondas</span></div>
     <canvas id="mini-hcp-chart" height="100" style="width:100%;display:block"></canvas>
@@ -1213,9 +1215,11 @@ nav.nav-hidden{transform:translateY(100%)}
     </div>
     <div id="hoyos-wrap" style="display:none;margin-bottom:12px">
       <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:12px" data-i18n="golpes_hoyo">Golpes por hoyo</div>
-      <div class="hoyo-section"><div class="hoyo-label" id="grid-out-label" data-i18n="salida_19">Salida 1–9</div><div class="hoyo-grid" id="grid-out"></div></div>
+      <div class="hoyo-section"><div class="hoyo-label" id="grid-out-label" data-i18n="salida_19">Ida 1–9</div><div class="hoyo-grid" id="grid-out"></div></div>
+      <div id="grid-out-subtotal" style="display:none;text-align:right;font-size:10px;color:var(--muted);margin:4px 2px 0 0;font-family:'DM Mono',monospace;letter-spacing:.3px"></div>
       <div class="hoyo-separator"></div>
       <div class="hoyo-section"><div class="hoyo-label" id="grid-in-label" data-i18n="vuelta_1018">Vuelta 10–18</div><div class="hoyo-grid" id="grid-in"></div></div>
+      <div id="grid-in-subtotal" style="display:none;text-align:right;font-size:10px;color:var(--muted);margin:4px 2px 0 0;font-family:'DM Mono',monospace;letter-spacing:.3px"></div>
       <div style="display:flex;gap:10px;font-size:11px;color:var(--muted);margin-top:8px">
         <span>Total: <strong id="total-golpes" style="color:var(--cream)">—</strong></span>
         <span>Stableford: <strong id="preview-stbl" style="color:var(--gold2)">—</strong></span>
@@ -2264,7 +2268,7 @@ const i18n = {
     'selecciona_campo':'— Selecciona campo —','selecciona_campo_calc':'Selecciona un campo para calcular.','fi_dif_formula':'Diferencial = (Golpes − CR) × 113 / Slope','selecciona_barra':'— Selecciona barra —','selecciona_hoyos':'— Hoyos —',
     'hcp_jugador':'HCP Jugador','handicap_jugador':'Handicap Jugador','hcp_campo':'HCP de Campo','course_rating':'Course Rating','slope_rating':'Slope Rating',
     'total_golpes':'Total Golpes','formato':'Formato de juego',
-    'golpes_hoyo':'Golpes por hoyo','salida_19':'Salida 1–9','vuelta_1018':'Vuelta 10–18',
+    'golpes_hoyo':'Golpes por hoyo','salida_19':'Ida 1–9','vuelta_1018':'Vuelta 10–18',
     'golpe_ventaja':'Golpe de ventaja (HCP campo)','punto_stbl':'Punto Stableford',
     'fmt_100_lbl':'100%<br>Informal','fmt_100':'100% — Informal','fmt_95_lbl':'95%<br>Medal/Otblf','fmt_95':'95% — Medal / Stblf','fmt_85_lbl':'85%<br>Four Ball','fmt_85':'85% — Four Ball',
     'total_label':'Total:','stbl_label':'Stableford:',
@@ -2379,7 +2383,7 @@ const i18n = {
     'selecciona_campo':'— Selecione campo —','selecciona_campo_calc':'Selecione um campo para calcular.','fi_dif_formula':'Diferencial = (Pancadas − CR) × 113 / Slope','selecciona_barra':'— Selecione barra —','selecciona_hoyos':'— Buracos —',
     'hcp_jugador':'HCP Jogador','handicap_jugador':'Handicap Jogador','hcp_campo':'HCP do Campo','course_rating':'Course Rating','slope_rating':'Slope Rating',
     'total_golpes':'Total Pancadas','formato':'Formato de jogo',
-    'golpes_hoyo':'Pancadas por buraco','salida_19':'Saída 1–9','vuelta_1018':'Volta 10–18',
+    'golpes_hoyo':'Pancadas por buraco','salida_19':'Ida 1–9','vuelta_1018':'Volta 10–18',
     'golpe_ventaja':'Golpe de vantagem (HCP campo)','punto_stbl':'Ponto Stableford',
     'fmt_100_lbl':'100%<br>Informal','fmt_100':'100% — Informal','fmt_95_lbl':'95%<br>Medal/Otblf','fmt_95':'95% — Medal / Stblf','fmt_85_lbl':'85%<br>Four Ball','fmt_85':'85% — Four Ball',
     'total_label':'Total:','stbl_label':'Stableford:',
@@ -6453,7 +6457,8 @@ function buildHoyoInputs(campo, numHoyos, vuelta) {
       <input class="hoyo-input" type="text" inputmode="numeric" id="gh-${h.numero}"
         maxlength="2" placeholder="—"
         onclick="checkModoRClick(this,'nueva')"
-        oninput="this.value=this.value.replace(/[^0-9rR]/g,'').toUpperCase();if(this.value==='R'){this.classList.add('s-retirada');}else{this.classList.remove('s-retirada');if(parseInt(this.value)>19)this.value='19';}updateTotals();golfShot(this,'${nextId}')">`;
+        oninput="this.value=this.value.replace(/[^0-9rR]/g,'').toUpperCase();if(this.value==='R'){this.classList.add('s-retirada');}else{this.classList.remove('s-retirada');if(parseInt(this.value)>19)this.value='19';}updateTotals();golfShot(this,'${nextId}')">
+      <div id="gh-ndb-${h.numero}" class="ndb-badge" style="height:9px;font-size:8px;font-family:'DM Mono',monospace;color:var(--red-intenso);text-align:center;margin-top:2px;font-weight:600;line-height:1"></div>`;
     grid.appendChild(cell);
   }
 }
@@ -6550,22 +6555,36 @@ function updateTotals() {
       playingHCP = Math.round(chcpRawN * fmtN / 100);
     }
   }
+  // v1.34.036: acumuladores separados ida/vuelta para subtotales en tiempo real
+  let outTotal = 0, inTotal = 0;
+  const outShots = [], inShots = [];
   for (let i = startH; i <= endH; i++) {
     const raw = ($('gh-' + i)?.value || '').trim();
+    const ndbBadge = $('gh-ndb-' + i);
     if (raw === 'R' && campo) {
       const hoyoR = campo.hoyos.find(h => h.numero === i);
       const ndb = calcNDBForHole(hoyoR, playingHCP);
       if (ndb != null) {
         total += ndb; shots.push(ndb); bolaRetirada.push(true);
+        if (i <= 9) { outTotal += ndb; outShots.push(ndb); } else { inTotal += ndb; inShots.push(ndb); }
+        if (ndbBadge) ndbBadge.textContent = ndb; // v1.34.036 badge con num golpes WHS
         continue;
       }
       // Si aún no hay HCP/CR/Slope, no podemos calcular NDB — tratamos como incompleto
       complete = false; shots.push(null); bolaRetirada.push(false);
+      if (i <= 9) outShots.push(null); else inShots.push(null);
+      if (ndbBadge) ndbBadge.textContent = '';
       continue;
     }
+    if (ndbBadge) ndbBadge.textContent = ''; // limpiar badge si no es R
     const v = parseInt(raw);
-    if (isNaN(v) || v < 1) { complete = false; shots.push(null); bolaRetirada.push(false); }
-    else { total += v; shots.push(v); bolaRetirada.push(false); }
+    if (isNaN(v) || v < 1) {
+      complete = false; shots.push(null); bolaRetirada.push(false);
+      if (i <= 9) outShots.push(null); else inShots.push(null);
+    } else {
+      total += v; shots.push(v); bolaRetirada.push(false);
+      if (i <= 9) { outTotal += v; outShots.push(v); } else { inTotal += v; inShots.push(v); }
+    }
   }
   // Mostrar total parcial en tiempo real (aunque no estén todos los hoyos)
   const validCount = shots.filter(s => s != null).length;
@@ -6575,6 +6594,8 @@ function updateTotals() {
   const startHoyoS = (numH === 9 && vultaU === 2) ? 10 : 1;
   if (campo) renderScoreSymbols('gh-', campo.hoyos, shots, startHoyoS, bolaRetirada);
   const startHoyoU = (numH === 9 && vultaU === 2) ? 10 : 1;
+  // v1.34.036: cálculo de subtotales stableford ida/vuelta para mostrar en tiempo real
+  let outStblPts = null, inStblPts = null;
   if (campo && !isNaN(hcp)) {
     const fCR = parseFloat($('f-cr').value);
     const fSlope = parseFloat($('f-slope').value);
@@ -6584,9 +6605,43 @@ function updateTotals() {
     // Mostrar stableford parcial en tiempo real
     $('preview-stbl').textContent = stbl && stbl.total > 0 ? stbl.total + ' pts' + (complete ? '' : '…') : '—';
     renderHoleDots('gh-', stbl?.byHole || null, startHoyoU);
+    // Calcular subtotal stableford ida y vuelta sumando byHole
+    if (stbl?.byHole && Array.isArray(stbl.byHole)) {
+      outStblPts = 0; inStblPts = 0;
+      for (let k = 0; k < stbl.byHole.length; k++) {
+        const holeNum = startHoyoS + k;
+        const pts = stbl.byHole[k];
+        if (pts != null) {
+          if (holeNum <= 9) outStblPts += pts; else inStblPts += pts;
+        }
+      }
+    }
   } else {
     $('preview-stbl').textContent = '—';
     renderHoleDots('gh-', null, startHoyoU);
+  }
+  // v1.34.036: pintar subtotales IDA / VUELTA en tiempo real
+  const subOutEl = $('grid-out-subtotal');
+  const subInEl  = $('grid-in-subtotal');
+  if (subOutEl) {
+    const validOut = outShots.filter(s => s != null).length;
+    if (validOut > 0 && startH <= 9) {
+      const ptsTxt = outStblPts != null ? ' · ' + outStblPts + ' pts' : '';
+      subOutEl.textContent = t('ida_label') + ': ' + outTotal + ptsTxt;
+      subOutEl.style.display = '';
+    } else {
+      subOutEl.style.display = 'none';
+    }
+  }
+  if (subInEl) {
+    const validIn = inShots.filter(s => s != null).length;
+    if (validIn > 0 && endH >= 10) {
+      const ptsTxt = inStblPts != null ? ' · ' + inStblPts + ' pts' : '';
+      subInEl.textContent = t('vuelta_label') + ': ' + inTotal + ptsTxt;
+      subInEl.style.display = '';
+    } else {
+      subInEl.style.display = 'none';
+    }
   }
 }
 
@@ -6949,7 +7004,8 @@ function buildEditHoyos(campo, existing, numHoyos, vuelta, bolaRetirada) {
       <input class="${initialClass}" type="text" inputmode="numeric" id="edit-gh-${i}"
         maxlength="2" value="${val}"
         onclick="checkModoRClick(this,'edit')"
-        oninput="this.value=this.value.replace(/[^0-9rR]/g,'').toUpperCase();if(this.value==='R'){this.classList.add('s-retirada');}else{this.classList.remove('s-retirada');if(parseInt(this.value)>19)this.value='19';}recalcEditStbl();golfShot(this,'${nextId}')">`;
+        oninput="this.value=this.value.replace(/[^0-9rR]/g,'').toUpperCase();if(this.value==='R'){this.classList.add('s-retirada');}else{this.classList.remove('s-retirada');if(parseInt(this.value)>19)this.value='19';}recalcEditStbl();golfShot(this,'${nextId}')">
+      <div id="edit-ndb-${i}" class="ndb-badge" style="height:9px;font-size:8px;font-family:'DM Mono',monospace;color:var(--red-intenso);text-align:center;margin-top:2px;font-weight:600;line-height:1"></div>`;
     grid.appendChild(cell);
   }
 }
@@ -7031,21 +7087,35 @@ function recalcEditStbl() {
       playingHCPEdit = Math.round(chcpRawE * fmtE2 / 100);
     }
   }
+  // v1.34.036: acumuladores separados ida/vuelta para subtotales en tiempo real
+  let outTotal = 0, inTotal = 0;
+  const outShots = [], inShots = [];
   for (let i = startI; i <= endI; i++) {
     const raw = ($('edit-gh-' + i)?.value || '').trim();
+    const ndbBadge = $('edit-ndb-' + i);
     if (raw === 'R' && campo) {
       const hoyoR = campo.hoyos.find(h => h.numero === i);
       const ndb = calcNDBForHole(hoyoR, playingHCPEdit);
       if (ndb != null) {
         total += ndb; shots.push(ndb); bolaRetirada.push(true);
+        if (i <= 9) { outTotal += ndb; outShots.push(ndb); } else { inTotal += ndb; inShots.push(ndb); }
+        if (ndbBadge) ndbBadge.textContent = ndb; // v1.34.036
         continue;
       }
       complete = false; shots.push(null); bolaRetirada.push(false);
+      if (i <= 9) outShots.push(null); else inShots.push(null);
+      if (ndbBadge) ndbBadge.textContent = '';
       continue;
     }
+    if (ndbBadge) ndbBadge.textContent = '';
     const v = parseInt(raw);
-    if (isNaN(v) || v < 1) { complete = false; shots.push(null); bolaRetirada.push(false); }
-    else { total += v; shots.push(v); bolaRetirada.push(false); }
+    if (isNaN(v) || v < 1) {
+      complete = false; shots.push(null); bolaRetirada.push(false);
+      if (i <= 9) outShots.push(null); else inShots.push(null);
+    } else {
+      total += v; shots.push(v); bolaRetirada.push(false);
+      if (i <= 9) { outTotal += v; outShots.push(v); } else { inTotal += v; inShots.push(v); }
+    }
   }
 
   // Símbolos en tiempo real (siempre, no solo cuando complete)
@@ -7054,15 +7124,50 @@ function recalcEditStbl() {
   const hcp = parseFloat($('edit-r-hcp').value);
   // v1.31.088: leer formato de juego para aplicar a Stableford y strokes rojos
   const editFmt = parseInt($('edit-fmt')?.value || '100');
+  // v1.34.036: subtotales stableford ida/vuelta
+  let outStblPts = null, inStblPts = null;
   if (!isNaN(hcp)) {
     const eCR = parseFloat($('edit-r-cr').value);
     const eSlope = parseFloat($('edit-r-slope').value);
     const stbl = calcStableford(hcp, campo, shots, eCR, eSlope, editVuelta, editFmt);
     renderHoleDots('edit-', stbl?.byHole || null, startHoyo);
+    if (stbl?.byHole && Array.isArray(stbl.byHole)) {
+      outStblPts = 0; inStblPts = 0;
+      for (let k = 0; k < stbl.byHole.length; k++) {
+        const holeNum = startHoyo + k;
+        const pts = stbl.byHole[k];
+        if (pts != null) {
+          if (holeNum <= 9) outStblPts += pts; else inStblPts += pts;
+        }
+      }
+    }
   }
 
   const validEditCount = shots.filter(s => s != null).length;
   $('edit-total').textContent = validEditCount > 0 ? total + (complete ? '' : '…') : '—';
+  // v1.34.036: subtotales IDA / VUELTA en tiempo real
+  const subOutE = $('edit-grid-out-subtotal');
+  const subInE  = $('edit-grid-in-subtotal');
+  if (subOutE) {
+    const validOut = outShots.filter(s => s != null).length;
+    if (validOut > 0 && startI <= 9) {
+      const ptsTxt = outStblPts != null ? ' · ' + outStblPts + ' pts' : '';
+      subOutE.textContent = t('ida_label') + ': ' + outTotal + ptsTxt;
+      subOutE.style.display = '';
+    } else {
+      subOutE.style.display = 'none';
+    }
+  }
+  if (subInE) {
+    const validIn = inShots.filter(s => s != null).length;
+    if (validIn > 0 && endI >= 10) {
+      const ptsTxt = inStblPts != null ? ' · ' + inStblPts + ' pts' : '';
+      subInE.textContent = t('vuelta_label') + ': ' + inTotal + ptsTxt;
+      subInE.style.display = '';
+    } else {
+      subInE.style.display = 'none';
+    }
+  }
   if (complete) {
     $('edit-r-gross').value = total;
     const gd = $('edit-r-gross-disp'); if(gd) gd.textContent = total + ' golpes';
@@ -7647,8 +7752,8 @@ function contactarGolfHCP() {
   const ios = ua.match(/iPhone OS ([\d_]+)/);
   const android = ua.match(/Android ([\d.]+)/);
   const sys = ios ? 'iOS ' + ios[1].replace(/_/g,'.') : android ? 'Android ' + android[1] : 'Web';
-  const appVer = document.title.includes('HCP') ? 'v1.34.035' : 'Golf HCP';
-  const body = encodeURIComponent('Hola,\n\n[Escribe tu consulta aqui]\n\n\n-- \nGolf HCP v1.34.035\n' + sys);
+  const appVer = document.title.includes('HCP') ? 'v1.34.036' : 'Golf HCP';
+  const body = encodeURIComponent('Hola,\n\n[Escribe tu consulta aqui]\n\n\n-- \nGolf HCP v1.34.036\n' + sys);
   window.open('mailto:golf.hcp.webmaster@gmail.com?subject=Golf%20HCP%20App&body=' + body, '_blank');
 }
 
