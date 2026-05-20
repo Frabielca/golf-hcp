@@ -392,8 +392,8 @@ nav.nav-hidden{transform:translateY(100%)}
 .s-doble{border-radius:50%!important;background:rgba(150,150,150,.4)!important;border:2px solid rgba(200,200,200,.8)!important;color:#fff!important;outline:2px solid rgba(200,200,200,.8)!important;outline-offset:3px!important}
 .s-peor{border-radius:3px!important;background:#000!important;border:2px solid rgba(255,255,255,.5)!important;color:#fff!important}
 .s-retirada{border-radius:3px!important;background:var(--red-intenso)!important;border:2px solid var(--red-intenso)!important;color:#fff!important;-webkit-text-fill-color:#fff!important;font-weight:bold!important}
-.hoyo-input-wrap{position:relative;width:100%}
-.ndb-overlay{position:absolute;top:50%;right:3px;transform:translateY(-50%);font-size:10px;font-family:'DM Mono',monospace;color:#fff;font-weight:700;line-height:1;letter-spacing:0;pointer-events:none;text-shadow:0 1px 1px rgba(0,0,0,.4);white-space:nowrap}
+.hoyo-input-wrap{position:relative;width:100%;overflow:visible}
+.ndb-overlay{position:absolute;top:-5px;right:-5px;min-width:14px;height:14px;padding:0 3px;background:#fff;color:var(--red-intenso);border:1px solid var(--red-intenso);border-radius:8px;font-size:9px;font-family:'DM Mono',monospace;font-weight:700;line-height:12px;text-align:center;pointer-events:none;box-shadow:0 1px 2px rgba(0,0,0,.25);z-index:2;box-sizing:border-box}
 .ndb-overlay:empty{display:none}
 .btn-modor{display:inline-flex;align-items:center;padding:3px 8px;border-radius:3px;background:transparent;color:rgba(255,255,255,.55);border:1px solid var(--red-intenso);font-family:inherit;font-size:9px;cursor:pointer;line-height:1.2;transition:background .12s,color .12s}
 .btn-modor.active{background:var(--red-intenso);color:#fff}
@@ -6574,7 +6574,7 @@ function updateTotals() {
       if (ndb != null) {
         total += ndb; shots.push(ndb); bolaRetirada.push(true);
         if (i <= 9) { outTotal += ndb; outShots.push(ndb); } else { inTotal += ndb; inShots.push(ndb); }
-        if (ndbBadge) ndbBadge.textContent = '· ' + ndb; // v1.34.036 overlay junto a la R
+        if (ndbBadge) ndbBadge.textContent = ndb; // v1.34.036 badge iOS junto a la R
         if (wrap) wrap.classList.add('has-ndb');
         continue;
       }
@@ -7112,7 +7112,7 @@ function recalcEditStbl() {
       if (ndb != null) {
         total += ndb; shots.push(ndb); bolaRetirada.push(true);
         if (i <= 9) { outTotal += ndb; outShots.push(ndb); } else { inTotal += ndb; inShots.push(ndb); }
-        if (ndbBadge) ndbBadge.textContent = '· ' + ndb; // v1.34.036 overlay junto a R
+        if (ndbBadge) ndbBadge.textContent = ndb; // v1.34.036 badge iOS junto a R
         if (wrap) wrap.classList.add('has-ndb');
         continue;
       }
