@@ -875,7 +875,7 @@ nav.nav-hidden{transform:translateY(100%)}
     <button class="auth-btn" id="btn-login" onclick="doLogin()" data-i18n="btn_entrar">Entrar</button>
     <div class="auth-link"><span data-i18n="sin_cuenta">¿Sin cuenta?</span> <span onclick="showAuth('register')" data-i18n="registrate">Regístrate</span></div>
     <div class="auth-link" style="margin-top:16px;font-size:10px;opacity:.6"><a href="privacy.html" target="_blank" style="color:var(--muted);text-decoration:none" data-i18n="politica_priv">Política de Privacidad</a></div>
-    <div style="text-align:center;margin-top:8px;font-size:9px;color:rgba(255,255,255,.2);letter-spacing:1px">v1.34.042</div>
+    <div style="text-align:center;margin-top:8px;font-size:9px;color:rgba(255,255,255,.2);letter-spacing:1px">v1.34.043</div>
   </div>
 </div>
 
@@ -1103,7 +1103,7 @@ nav.nav-hidden{transform:translateY(100%)}
       </div>
     </div>
   </div>
-  <div id="version-tap" style="text-align:center;padding:12px 0 4px;font-size:9px;letter-spacing:2px;color:rgba(255,255,255,.2);font-family:'DM Mono',monospace" class="version-label">v1.34.042</div>
+  <div id="version-tap" style="text-align:center;padding:12px 0 4px;font-size:9px;letter-spacing:2px;color:rgba(255,255,255,.2);font-family:'DM Mono',monospace" class="version-label">v1.34.043</div>
   <div class="card" style="margin-bottom:8px;padding:12px 14px;display:none" id="mini-chart-wrap">
     <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px"><span style="font-size:11px;letter-spacing:1.5px;color:var(--gold2)" data-i18n="evolucion_hcp">EVOLUCIÓN HCP</span><span style="font-size:9px;color:var(--muted);letter-spacing:.5px" data-i18n="ultimas_20">20 últimas rondas</span></div>
     <canvas id="mini-hcp-chart" height="100" style="width:100%;display:block"></canvas>
@@ -2278,12 +2278,13 @@ const i18n = {
     'total_label':'Total:','stbl_label':'Stableford:',
     'nueva_ronda':'Nueva Ronda','campo':'Campo','fecha':'Fecha','hoyos':'Hoyos','vuelta':'Vuelta',
     'ida':'Ida (1–9)','vuelta2':'Vuelta (10–18)','hoyos_18':'18 hoyos','hoyos_9':'9 hoyos',
-    'barra_salida':'Barra de salida','hcp_idx':'HCP Index','registrar_ronda':'+ Registrar Ronda',
+    'barra_salida':'Barra de salida','hcp_idx':'HCP Index','golpes':'Golpes','registrar_ronda':'+ Registrar Ronda',
     'cancelar':'Cancelar','guardando':'Guardando…',
     'historial':'Historial de Rondas','toca_ronda':'Toca una ronda para más detalles','fecha_col':'Fecha','campo_col':'Campo','golpes_col':'Golpes','dif_col':'Dif.','barra_col':'Barra','stbl_col':'Stbl',
     'borrar_todo':'Borrar todas las rondas',
     'mis_campos':'Mis Campos','nuevo_campo':'+ Nuevo','nuevo_campo_title':'Nuevo Campo',
     'nombre_campo':'Nombre del campo','max15':'(máx. 20 caracteres)','barras_salida':'Barras de Salida',
+    'blanca':'Blanca','amarilla':'Amarilla','azul':'Azul','roja':'Roja','violeta':'Violeta','naranja':'Naranja','negra':'Negra',
     'par_indice':'Par e Índice por Hoyo',
     'golpes_brutos':'Golpes brutos','par_campo':'Par campo','stbl_label_f':'Stableford',
     'nombre_label':'Nombre','par_label':'Par','slope_label':'Slope',
@@ -2393,12 +2394,13 @@ const i18n = {
     'total_label':'Total:','stbl_label':'Stableford:',
     'nueva_ronda':'Nova Volta','campo':'Campo','fecha':'Data','hoyos':'Buracos','vuelta':'Volta',
     'ida':'Ida (1–9)','vuelta2':'Volta (10–18)','hoyos_18':'18 buracos','hoyos_9':'9 buracos',
-    'barra_salida':'Tee de saída','hcp_idx':'HCP Index','registrar_ronda':'+ Registar Volta',
+    'barra_salida':'Tee de saída','hcp_idx':'HCP Index','golpes':'Pancadas','registrar_ronda':'+ Registar Volta',
     'cancelar':'Cancelar','guardando':'A guardar…',
     'historial':'Histórico de Voltas','toca_ronda':'Toca uma volta para mais detalhes','fecha_col':'Data','campo_col':'Campo','golpes_col':'Pancadas','dif_col':'Dif.','barra_col':'Tee','stbl_col':'Stbl',
     'borrar_todo':'Apagar todas as voltas',
     'mis_campos':'Os Meus Campos','nuevo_campo':'+ Novo','nuevo_campo_title':'Novo Campo',
     'nombre_campo':'Nome do campo','max15':'(máx. 20 caracteres)','barras_salida':'Tees de Saída',
+    'blanca':'Branca','amarilla':'Amarela','azul':'Azul','roja':'Vermelha','violeta':'Violeta','naranja':'Laranja','negra':'Preta',
     'par_indice':'Par e Índice por Buraco',
     'golpes_brutos':'Pancadas brutas','par_campo':'Par campo','stbl_label_f':'Stableford',
     'nombre_label':'Nome','par_label':'Par','slope_label':'Slope',
@@ -6907,13 +6909,15 @@ function abrirEditRonda(id) {
   $('edit-r-id').value  = r.id;
   $('edit-r-campo-id').value = r.campo_id || '';
   // Solo lectura — rellenar divs display
-  const _bl = {'blanca':'⬜ Blanca','amarilla':'🟡 Amarilla','azul':'🔵 Azul','roja':'🔴 Roja'};
+  // v1.34.043: usar i18n para nombres de barras (antes hardcoded en castellano)
+  const _emo = {'blanca':'⬜','amarilla':'🟡','azul':'🔵','roja':'🔴','violeta':'🟣','naranja':'🟠','negra':'⚫'};
+  const _bl = (color) => color ? (_emo[color]||'') + ' ' + (t(color) || color) : '';
   const _setDisp = (id, v) => { const el=$(id); if(el) el.textContent = v||'—'; };
   _setDisp('edit-r-nombre', r.name);
   _setDisp('edit-r-cr-disp', r.cr ? r.cr+' CR' : null);
   _setDisp('edit-r-slope-disp', r.slope ? r.slope+' Slope' : null);
-  _setDisp('edit-r-barra-disp', _bl[r.barra_color] || '— Sin especificar —');
-  _setDisp('edit-r-gross-disp', r.gross ? r.gross+' golpes' : null);
+  _setDisp('edit-r-barra-disp', _bl(r.barra_color) || '— ' + (t('sin_barras')||'sin especificar') + ' —');
+  _setDisp('edit-r-gross-disp', r.gross ? r.gross+' '+(t('golpes')||'golpes').toLowerCase() : null);
   _setDisp('edit-r-stbl-disp', r.stableford != null ? r.stableford+' pts' : null);
   // v1.32.004: la fecha es ahora un input type=date editable; no hay disp aparte.
   // El input nativo formatea según locale del usuario (DD/MM/YYYY en ES).
@@ -7769,8 +7773,8 @@ function contactarGolfHCP() {
   const ios = ua.match(/iPhone OS ([\d_]+)/);
   const android = ua.match(/Android ([\d.]+)/);
   const sys = ios ? 'iOS ' + ios[1].replace(/_/g,'.') : android ? 'Android ' + android[1] : 'Web';
-  const appVer = document.title.includes('HCP') ? 'v1.34.042' : 'Golf HCP';
-  const body = encodeURIComponent('Hola,\n\n[Escribe tu consulta aqui]\n\n\n-- \nGolf HCP v1.34.042\n' + sys);
+  const appVer = document.title.includes('HCP') ? 'v1.34.043' : 'Golf HCP';
+  const body = encodeURIComponent('Hola,\n\n[Escribe tu consulta aqui]\n\n\n-- \nGolf HCP v1.34.043\n' + sys);
   window.open('mailto:golf.hcp.webmaster@gmail.com?subject=Golf%20HCP%20App&body=' + body, '_blank');
 }
 
