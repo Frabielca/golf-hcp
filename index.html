@@ -875,7 +875,7 @@ nav.nav-hidden{transform:translateY(100%)}
     <button class="auth-btn" id="btn-login" onclick="doLogin()" data-i18n="btn_entrar">Entrar</button>
     <div class="auth-link"><span data-i18n="sin_cuenta">¿Sin cuenta?</span> <span onclick="showAuth('register')" data-i18n="registrate">Regístrate</span></div>
     <div class="auth-link" style="margin-top:16px;font-size:10px;opacity:.6"><a href="privacy.html" target="_blank" style="color:var(--muted);text-decoration:none" data-i18n="politica_priv">Política de Privacidad</a></div>
-    <div style="text-align:center;margin-top:8px;font-size:9px;color:rgba(255,255,255,.2);letter-spacing:1px">v1.34.046</div>
+    <div style="text-align:center;margin-top:8px;font-size:9px;color:rgba(255,255,255,.2);letter-spacing:1px">v1.34.047</div>
   </div>
 </div>
 
@@ -1103,7 +1103,7 @@ nav.nav-hidden{transform:translateY(100%)}
       </div>
     </div>
   </div>
-  <div id="version-tap" style="text-align:center;padding:12px 0 4px;font-size:9px;letter-spacing:2px;color:rgba(255,255,255,.2);font-family:'DM Mono',monospace" class="version-label">v1.34.046</div>
+  <div id="version-tap" style="text-align:center;padding:12px 0 4px;font-size:9px;letter-spacing:2px;color:rgba(255,255,255,.2);font-family:'DM Mono',monospace" class="version-label">v1.34.047</div>
   <div class="card" style="margin-bottom:8px;padding:12px 14px;display:none" id="mini-chart-wrap">
     <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px"><span style="font-size:11px;letter-spacing:1.5px;color:var(--gold2)" data-i18n="evolucion_hcp">EVOLUCIÓN HCP</span><span style="font-size:9px;color:var(--muted);letter-spacing:.5px" data-i18n="ultimas_20">20 últimas rondas</span></div>
     <canvas id="mini-hcp-chart" height="100" style="width:100%;display:block"></canvas>
@@ -3757,11 +3757,12 @@ async function acGuardarCampo() {
   const payload = _acRecogerPayload();
   if (!payload) return; // Error mostrado en _acRecogerPayload
 
-  // Validacion estricta extra para modo CREAR:
+  // v1.34.047: validaciones estrictas SIEMPRE (crear Y editar)
   // - par y indices de los hoyos completos
   // - indices 1..nHoyos sin repetir
   // - al menos 1 barra con CR + Slope
-  if (modoCrear) {
+  // - nombre unico SOLO al crear (al editar el nombre puede coincidir consigo mismo)
+  {
     const nh = payload.n_hoyos;
     const par = payload.par_hoyos_jsonb;
     const idx = payload.indice_hoyos_jsonb;
@@ -3787,13 +3788,15 @@ async function acGuardarCampo() {
     if (barrasComp.length === 0) {
       return showErr((typeof t==='function' && t('ac_err_sin_barras')) || 'Al menos 1 barra con CR y Slope requerida');
     }
-    // Comprobar que el nombre no exista (UNIQUE en BD daria error igualmente, pero damos mensaje claro)
-    try {
-      const { data: existe } = await sb.from('campos_publicos').select('id').eq('nombre', payload.nombre).maybeSingle();
-      if (existe) {
-        return showErr((typeof t==='function' && t('ac_err_nombre_existe')) || 'Ya existe un campo con ese nombre. Cambia el nombre o edita el existente.');
-      }
-    } catch(e) { /* si la query falla, dejamos que la BD reclame con UNIQUE */ }
+    // Nombre unico: solo al CREAR (al editar el nombre actual coincide consigo mismo y daria falso positivo)
+    if (modoCrear) {
+      try {
+        const { data: existe } = await sb.from('campos_publicos').select('id').eq('nombre', payload.nombre).maybeSingle();
+        if (existe) {
+          return showErr((typeof t==='function' && t('ac_err_nombre_existe')) || 'Ya existe un campo con ese nombre. Cambia el nombre o edita el existente.');
+        }
+      } catch(e) { /* si la query falla, dejamos que la BD reclame con UNIQUE */ }
+    }
   }
 
   const btn = $('ac-btn-guardar');
@@ -7776,8 +7779,8 @@ function contactarGolfHCP() {
   const ios = ua.match(/iPhone OS ([\d_]+)/);
   const android = ua.match(/Android ([\d.]+)/);
   const sys = ios ? 'iOS ' + ios[1].replace(/_/g,'.') : android ? 'Android ' + android[1] : 'Web';
-  const appVer = document.title.includes('HCP') ? 'v1.34.046' : 'Golf HCP';
-  const body = encodeURIComponent('Hola,\n\n[Escribe tu consulta aqui]\n\n\n-- \nGolf HCP v1.34.046\n' + sys);
+  const appVer = document.title.includes('HCP') ? 'v1.34.047' : 'Golf HCP';
+  const body = encodeURIComponent('Hola,\n\n[Escribe tu consulta aqui]\n\n\n-- \nGolf HCP v1.34.047\n' + sys);
   window.open('mailto:golf.hcp.webmaster@gmail.com?subject=Golf%20HCP%20App&body=' + body, '_blank');
 }
 
